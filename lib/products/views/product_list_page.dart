@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todavenda/commons/widgets/exception_widget.dart';
 import 'package:todavenda/commons/widgets/loading_widget.dart';
-import 'package:todavenda/products/bloc/bloc/product_list_bloc.dart';
+import 'package:todavenda/products/bloc/product_list_bloc.dart';
 import 'package:todavenda/products/models/product.dart';
 import 'package:todavenda/products/services/product_repository.dart';
 
