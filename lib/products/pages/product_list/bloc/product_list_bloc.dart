@@ -1,15 +1,14 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:todavenda/products/models/product.dart';
-import 'package:todavenda/products/services/product_repository.dart';
+
+import '../../../models/product.dart';
+import '../../../services/product_repository.dart';
 
 part 'product_list_event.dart';
 part 'product_list_state.dart';
 
 class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
-  ProductListBloc({
-    required this.productRepository,
-  }) : super(ProductListLoading()) {
+  ProductListBloc(this.productRepository) : super(ProductListLoading()) {
     on<ProductListStarted>(_onStarted);
   }
 

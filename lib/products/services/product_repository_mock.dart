@@ -1,7 +1,8 @@
-import 'package:todavenda/products/models/product.dart';
-import 'package:todavenda/products/models/product_category.dart';
-import 'package:todavenda/products/services/product_repository.dart';
 import 'package:uuid/uuid.dart';
+
+import '../models/product.dart';
+import '../models/product_category.dart';
+import '../services/product_repository.dart';
 
 const _delay = Duration(milliseconds: 800);
 
@@ -48,10 +49,24 @@ class ProductRepositoryMock implements ProductRepository {
       Future.delayed(_delay, () => _productCategories);
 
   @override
-  void createProduct(Product product) =>
-      Future.delayed(_delay, () => _products.add(product));
+  Future<Product> createProduct({
+    required String description,
+    required List<ProductCategory> categories,
+    required double price,
+  }) async {
+    final product = Product(
+      id: uuid.v4(),
+      description: description,
+      price: price,
+      categories: categories,
+    );
+    await Future.delayed(_delay, () => _products.add(product));
+    return product;
+  }
 
   @override
-  void removeProduct(Product product) =>
-      Future.delayed(_delay, () => _products.remove(product));
+  Future<void> removeProduct(String uuid) async {
+    await Future.delayed(
+        _delay, () => _products.removeWhere((p) => p.id == uuid));
+  }
 }

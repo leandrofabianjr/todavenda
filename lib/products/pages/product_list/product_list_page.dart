@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todavenda/commons/widgets/exception_widget.dart';
 import 'package:todavenda/commons/widgets/loading_widget.dart';
-import 'package:todavenda/products/bloc/product_list_bloc.dart';
-import 'package:todavenda/products/models/product.dart';
-import 'package:todavenda/products/services/product_repository.dart';
+
+import './bloc/product_list_bloc.dart';
+import '../../models/product.dart';
+import '../../services/product_repository.dart';
 
 class ProductListPage extends StatelessWidget {
   const ProductListPage({super.key});
@@ -12,9 +13,8 @@ class ProductListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ProductListBloc(
-        productRepository: context.read<ProductRepository>(),
-      )..add(ProductListStarted()),
+      create: (context) => ProductListBloc(context.read<ProductRepository>())
+        ..add(ProductListStarted()),
       child: const ProductListView(),
     );
   }
@@ -52,6 +52,14 @@ class ProductListView extends StatelessWidget {
             },
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.of(context).pushNamed('/produtos/novo').then(
+          (value) {
+            context.read<ProductListBloc>().add(ProductListStarted());
+          },
+        ),
+        child: const Icon(Icons.add),
       ),
     );
   }

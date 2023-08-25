@@ -1,12 +1,16 @@
-import 'package:todavenda/products/models/product.dart';
-import 'package:todavenda/products/models/product_category.dart';
+import '../models/product.dart';
+import '../models/product_category.dart';
 
 abstract class ProductRepository {
   Future<List<Product>> loadProducts();
 
   Future<List<ProductCategory>> loadProductCategories();
 
-  void createProduct(Product product);
+  Future<Product> createProduct({
+    required String description,
+    required List<ProductCategory> categories,
+    required double price,
+  });
 
-  void removeProduct(Product product);
+  Future<void> removeProduct(String uuid);
 }

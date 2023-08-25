@@ -14,7 +14,7 @@ class ExceptionWidget extends StatelessWidget {
         children: [
           const Text('Erro'),
           child ?? const SizedBox(),
-          exception == null ? ErrorWidget(exception!) : const SizedBox(),
+          exception != null ? ErrorWidget(exception!) : const SizedBox(),
         ],
       ),
     );

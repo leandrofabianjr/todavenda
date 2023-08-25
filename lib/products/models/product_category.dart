@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:todavenda/products/models/product.dart';
+
+import 'product.dart';
 
 class ProductCategory extends Equatable {
   final String? id;

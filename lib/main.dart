@@ -15,7 +15,8 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
-      value: ProductRepositoryMock(),
+      // ignore: unnecessary_cast
+      value: ProductRepositoryMock() as ProductRepository,
       child: const AppView(),
     );
   }
@@ -35,6 +36,17 @@ class AppView extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const ProductListPage(),
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/':
+          case '/produtos':
+            return MaterialPageRoute(builder: (_) => const ProductListPage());
+          case '/produtos/novo':
+            return MaterialPageRoute(builder: (_) => const ProductFormPage());
+          default:
+            return null;
+        }
+      },
     );
   }
 }
