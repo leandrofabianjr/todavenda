@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/commons/validators.dart';
 
 import '../../../models/product_category.dart';
@@ -22,7 +23,7 @@ class ProductFormBloc extends Bloc<ProductFormEvent, ProductFormState> {
     final descriptionError = Validators.stringNotEmpty(event.description);
 
     if (descriptionError != null) {
-      emit(
+      return emit(
         (state as ProductFormEditing).copyWith(
           descriptionError: descriptionError,
         ),

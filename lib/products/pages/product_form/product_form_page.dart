@@ -27,9 +27,15 @@ class ProductFormView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Novo produto')),
-      body: BlocBuilder<ProductFormBloc, ProductFormState>(
+      body: BlocConsumer<ProductFormBloc, ProductFormState>(
+        listener: (context, state) {
+          if (state is ProductFormSuccessfullySubmitted) {
+            Navigator.of(context).pop();
+          }
+        },
         builder: (context, state) {
-          if (state is ProductFormSubmitting) {
+          if (state is ProductFormSubmitting ||
+              state is ProductFormSuccessfullySubmitted) {
             return const LoadingWidget();
           }
 
@@ -81,7 +87,9 @@ class ProductFormView extends StatelessWidget {
             );
           }
 
-          return const ExceptionWidget();
+          return ExceptionWidget(
+            exception: state is ProductFormException ? state.ex : null,
+          );
         },
       ),
     );

@@ -48,7 +48,11 @@ class ProductListView extends StatelessWidget {
                 );
               }
 
-              return const SliverFillRemaining(child: ExceptionWidget());
+              return SliverFillRemaining(
+                child: ExceptionWidget(
+                  exception: state is ProductListException ? state.ex : null,
+                ),
+              );
             },
           ),
         ],
