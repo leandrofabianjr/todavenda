@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todavenda/products/widgets/form_fields/product_categories_selector/product_categories_selector_list_page.dart';
+import 'package:todavenda/products/widgets/product_categories_chip_list.dart';
 
 import '../../../models/product_category.dart';
 
@@ -36,7 +37,10 @@ class _ProductCategoriesSelectorState extends State<ProductCategoriesSelector> {
       child: Row(
         children: [
           Expanded(child: _buildSelectedCategories()),
-          _buildAddIcon(context)
+          IconButton(
+            onPressed: () => openAddPage(),
+            icon: const Icon(Icons.add),
+          )
         ],
       ),
     );
@@ -44,48 +48,36 @@ class _ProductCategoriesSelectorState extends State<ProductCategoriesSelector> {
 
   Widget _buildSelectedCategories() {
     if (selecteds.isEmpty) {
-      return const Text('Nenhuma categoria selecionada');
+      return GestureDetector(
+        onTap: openAddPage,
+        child: const Text('Nenhuma categoria selecionada'),
+      );
     }
-    return Wrap(
-      children: selecteds
-          .map((e) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: Chip(
-                  backgroundColor:
-                      Theme.of(context).colorScheme.primaryContainer,
-                  padding: EdgeInsets.zero,
-                  label: Text(e.name),
-                  deleteIcon: const Icon(Icons.close),
-                  onDeleted: () {
-                    setState(() => selecteds.remove(e));
-                    widget.onChanged(selecteds);
-                  },
-                ),
-              ))
-          .toList(),
+
+    return ProductCategoriesChipList(
+      categories: selecteds,
+      onDeleted: (category) {
+        setState(() => selecteds.remove(category));
+        widget.onChanged(selecteds);
+      },
     );
   }
 
-  IconButton _buildAddIcon(BuildContext context) {
-    return IconButton(
-      onPressed: () => Navigator.of(context)
-          .push<List<ProductCategory>>(
-        MaterialPageRoute(
-          builder: (context) => ProductCategoriesSelectorListPage(
-            selectedCategories: selecteds,
-          ),
-          fullscreenDialog: true,
-        ),
-      )
-          .then(
-        (selecteds) {
-          if (selecteds != null && selecteds.isNotEmpty) {
-            setState(() => this.selecteds = selecteds);
-            widget.onChanged(selecteds);
-          }
-        },
+  void openAddPage() {
+    final page = MaterialPageRoute<List<ProductCategory>>(
+      builder: (context) => ProductCategoriesSelectorListPage(
+        selectedCategories: selecteds,
       ),
-      icon: const Icon(Icons.add),
+      fullscreenDialog: true,
+    );
+
+    Navigator.of(context).push(page).then(
+      (selecteds) {
+        if (selecteds != null && selecteds.isNotEmpty) {
+          setState(() => this.selecteds = selecteds);
+          widget.onChanged(selecteds);
+        }
+      },
     );
   }
 }
