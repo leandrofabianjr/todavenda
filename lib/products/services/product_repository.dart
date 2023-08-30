@@ -2,6 +2,8 @@ import '../models/product.dart';
 import '../models/product_category.dart';
 
 abstract class ProductRepository {
+  Future<Product> loadProductByUuid(String uuid);
+
   Future<List<Product>> loadProducts();
 
   Future<List<ProductCategory>> loadProductCategories();

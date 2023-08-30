@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:todavenda/commons/commons.dart';
 
 import 'product_category.dart';
 
@@ -16,6 +17,8 @@ class Product extends Equatable {
     this.categories,
     required this.price,
   });
+
+  get formattedPrice => CurrencyFormatter().formatPtBr(price);
 
   @override
   List<Object?> get props => [uuid];

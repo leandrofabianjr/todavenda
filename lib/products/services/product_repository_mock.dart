@@ -41,12 +41,19 @@ class ProductRepositoryMock implements ProductRepository {
   final _productCategories = _dataProductCategories;
 
   @override
-  Future<List<Product>> loadProducts() =>
-      Future.delayed(_delay, () => _products);
+  Future<Product> loadProductByUuid(String uuid) async =>
+      _delayed(() => _products.firstWhere((p) => p.uuid == uuid));
+
+  Future<T> _delayed<T>(T Function() callback) {
+    return Future.delayed(_delay, callback);
+  }
+
+  @override
+  Future<List<Product>> loadProducts() => _delayed(() => _products);
 
   @override
   Future<List<ProductCategory>> loadProductCategories() =>
-      Future.delayed(_delay, () => _productCategories);
+      _delayed(() => _productCategories);
 
   @override
   Future<Product> createProduct({
@@ -60,13 +67,11 @@ class ProductRepositoryMock implements ProductRepository {
       price: price,
       categories: categories,
     );
-    await Future.delayed(_delay, () => _products.add(product));
+    await _delayed(() => _products.add(product));
     return product;
   }
 
   @override
-  Future<void> removeProduct(String uuid) async {
-    await Future.delayed(
-        _delay, () => _products.removeWhere((p) => p.uuid == uuid));
-  }
+  Future<void> removeProduct(String uuid) async =>
+      _delayed(() => _products.removeWhere((p) => p.uuid == uuid));
 }
