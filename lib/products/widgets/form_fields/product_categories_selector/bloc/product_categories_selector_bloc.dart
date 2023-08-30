@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -30,9 +29,12 @@ class ProductCategoriesSelectorBloc extends Bloc<ProductCategoriesSelectorEvent,
     try {
       final categories = await productRepository.loadProductCategories();
 
+      var selecteds = (state is ProductCategoriesSelectorLoaded)
+          ? (state as ProductCategoriesSelectorLoaded).selectedCategories
+          : event.initialSelectedCategories;
+
       final mappedCategories = {
-        for (var category in categories)
-          category: event.initialSelectedCategories.contains(category)
+        for (var category in categories) category: selecteds.contains(category)
       };
 
       emit(ProductCategoriesSelectorLoaded(mappedCategories));
@@ -46,15 +48,8 @@ class ProductCategoriesSelectorBloc extends Bloc<ProductCategoriesSelectorEvent,
     Emitter<ProductCategoriesSelectorState> emit,
   ) async {
     if (state is ProductCategoriesSelectorLoaded) {
-      final mappedCategories =
-          (state as ProductCategoriesSelectorLoaded).categories;
-      final selecteds = <ProductCategory>[];
-      for (final entry in mappedCategories.entries) {
-        if (entry.value) {
-          selecteds.add(entry.key);
-        }
-      }
-      emit(ProductCategoriesSelectorSubmitting(selecteds));
+      emit(ProductCategoriesSelectorSubmitting(
+          (state as ProductCategoriesSelectorLoaded).selectedCategories));
     }
   }
 
@@ -67,10 +62,7 @@ class ProductCategoriesSelectorBloc extends Bloc<ProductCategoriesSelectorEvent,
           (state as ProductCategoriesSelectorLoaded).categories;
       mappedCategories[event.selectedCategory] =
           !mappedCategories[event.selectedCategory]!;
-      final newState =
-          ProductCategoriesSelectorLoaded(Map.from(mappedCategories));
-      log((newState == state).toString());
-      emit(newState);
+      emit(ProductCategoriesSelectorLoaded(Map.from(mappedCategories)));
     }
   }
 }

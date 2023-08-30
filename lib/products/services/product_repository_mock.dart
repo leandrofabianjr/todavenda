@@ -74,4 +74,22 @@ class ProductRepositoryMock implements ProductRepository {
   @override
   Future<void> removeProduct(String uuid) async =>
       _delayed(() => _products.removeWhere((p) => p.uuid == uuid));
+
+  @override
+  Future<ProductCategory> createProductCategory({
+    required String name,
+    required String? description,
+  }) async {
+    final category = ProductCategory(
+      uuid: uuid.v4(),
+      name: name,
+      description: description,
+    );
+    await _delayed(() => _productCategories.add(category));
+    return category;
+  }
+
+  @override
+  Future<void> removeProductCategory(String uuid) =>
+      _delayed(() => _productCategories.removeWhere((p) => p.uuid == uuid));
 }

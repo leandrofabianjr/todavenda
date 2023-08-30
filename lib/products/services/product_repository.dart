@@ -15,4 +15,11 @@ abstract class ProductRepository {
   });
 
   Future<void> removeProduct(String uuid);
+
+  Future<ProductCategory> createProductCategory({
+    required String name,
+    required String? description,
+  });
+
+  Future<void> removeProductCategory(String uuid);
 }

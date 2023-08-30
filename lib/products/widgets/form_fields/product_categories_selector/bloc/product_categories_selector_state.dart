@@ -15,6 +15,16 @@ final class ProductCategoriesSelectorLoaded
 
   final Map<ProductCategory, bool> categories;
 
+  List<ProductCategory> get selectedCategories {
+    final selecteds = <ProductCategory>[];
+    for (final entry in categories.entries) {
+      if (entry.value) {
+        selecteds.add(entry.key);
+      }
+    }
+    return selecteds;
+  }
+
   @override
   List<Object> get props => [categories.hashCode];
 }

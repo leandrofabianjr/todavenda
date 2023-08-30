@@ -49,7 +49,11 @@ final _router = GoRouter(
       builder: (context, state) => const ProductListPage(),
       routes: [
         GoRoute(
-          path: 'novo',
+          path: 'categorias/cadastrar',
+          builder: (context, state) => const ProductCategoryFormPage(),
+        ),
+        GoRoute(
+          path: 'cadastrar',
           builder: (context, state) => const ProductFormPage(),
         ),
         GoRoute(

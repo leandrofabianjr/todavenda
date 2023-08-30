@@ -60,7 +60,9 @@ class ProductListView extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.go('/produtos/novo'),
+        onPressed: () => context.push('/produtos/cadastrar').then((value) {
+          context.read<ProductListBloc>().add(ProductListStarted());
+        }),
         child: const Icon(Icons.add),
       ),
     );
