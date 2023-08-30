@@ -10,26 +10,26 @@ var uuid = const Uuid();
 
 final _dataProductCategories = [
   ProductCategory(
-      id: uuid.v4(), name: 'Padaria', description: 'Um monte de glúten'),
+      uuid: uuid.v4(), name: 'Padaria', description: 'Um monte de glúten'),
   ProductCategory(
-      id: uuid.v4(), name: 'Bebidas', description: 'Líquidos pra beber'),
+      uuid: uuid.v4(), name: 'Bebidas', description: 'Líquidos pra beber'),
 ];
 
 final _dataProducts = [
   Product(
-    id: uuid.v4(),
+    uuid: uuid.v4(),
     description: 'Pão de forma',
     price: 5.99,
     categories: [_dataProductCategories[0]],
   ),
   Product(
-    id: uuid.v4(),
+    uuid: uuid.v4(),
     description: 'Café',
     price: 2.99,
     categories: [_dataProductCategories[1]],
   ),
   Product(
-    id: uuid.v4(),
+    uuid: uuid.v4(),
     description: 'Água',
     price: 2,
     categories: [_dataProductCategories[1]],
@@ -55,7 +55,7 @@ class ProductRepositoryMock implements ProductRepository {
     required double price,
   }) async {
     final product = Product(
-      id: uuid.v4(),
+      uuid: uuid.v4(),
       description: description,
       price: price,
       categories: categories,
@@ -67,6 +67,6 @@ class ProductRepositoryMock implements ProductRepository {
   @override
   Future<void> removeProduct(String uuid) async {
     await Future.delayed(
-        _delay, () => _products.removeWhere((p) => p.id == uuid));
+        _delay, () => _products.removeWhere((p) => p.uuid == uuid));
   }
 }

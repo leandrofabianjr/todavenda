@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
 class ProductPage extends StatelessWidget {
-  const ProductPage({super.key});
+  const ProductPage({super.key, required this.uuid});
+
+  final String uuid;
 
   @override
   Widget build(BuildContext context) {
-    return const CustomScrollView(
+    return CustomScrollView(
       slivers: [
         SliverAppBar(
-          title: Text('Nome do Produto'),
+          title: Text('Produto $uuid'),
         )
       ],
     );

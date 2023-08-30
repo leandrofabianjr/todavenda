@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/widgets/exception_widget.dart';
 import 'package:todavenda/commons/widgets/loading_widget.dart';
 
@@ -59,11 +60,7 @@ class ProductListView extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).pushNamed('/produtos/novo').then(
-          (value) {
-            context.read<ProductListBloc>().add(ProductListStarted());
-          },
-        ),
+        onPressed: () => context.go('/produtos/novo'),
         child: const Icon(Icons.add),
       ),
     );
@@ -92,7 +89,7 @@ class ProductListViewTile extends StatelessWidget {
     return ListTile(
       title: Text(product.description),
       subtitle: ProductCategoriesChipList(categories: product.categories),
-      onTap: () => Navigator.of(context).pushReplacementNamed('/produtos/:id'),
+      onTap: () => context.go('/produtos/${product.uuid}'),
     );
   }
 }

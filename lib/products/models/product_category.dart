@@ -3,18 +3,18 @@ import 'package:equatable/equatable.dart';
 import 'product.dart';
 
 class ProductCategory extends Equatable {
-  final String? id;
+  final String? uuid;
   final String name;
   final String? description;
   final List<Product>? products;
 
   const ProductCategory({
-    this.id,
+    this.uuid,
     required this.name,
     this.description,
     this.products,
   });
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [uuid];
 }

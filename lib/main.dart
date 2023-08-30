@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:todavenda/app_bloc_observer.dart';
 import 'package:todavenda/products/products.dart';
 
@@ -29,26 +30,35 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Toda Venda',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const ProductListPage(),
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case '/':
-          case '/produtos':
-            return MaterialPageRoute(builder: (_) => const ProductListPage());
-          case '/produtos/:id':
-            return MaterialPageRoute(builder: (_) => const ProductPage());
-          case '/produtos/novo':
-            return MaterialPageRoute(builder: (_) => const ProductFormPage());
-          default:
-            return null;
-        }
-      },
+      routerConfig: _router,
     );
   }
 }
+
+final _router = GoRouter(
+  routes: [
+    GoRoute(path: '/', redirect: (context, state) => '/produtos'),
+    GoRoute(
+      path: '/produtos',
+      builder: (context, state) => const ProductListPage(),
+      routes: [
+        GoRoute(
+          path: 'novo',
+          builder: (context, state) => const ProductFormPage(),
+        ),
+        GoRoute(
+          path: ':uuid',
+          builder: (context, state) => ProductPage(
+            uuid: state.pathParameters['uuid']!,
+          ),
+        ),
+      ],
+    ),
+  ],
+);

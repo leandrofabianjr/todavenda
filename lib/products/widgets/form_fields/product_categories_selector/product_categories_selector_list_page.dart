@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/widgets/exception_widget.dart';
 import 'package:todavenda/commons/widgets/loading_widget.dart';
 
@@ -39,21 +40,19 @@ class ProductCategoriesSelectorListView extends StatelessWidget {
         title: const Text('Categorias de Produtos'),
         actions: [
           IconButton(
-            onPressed: () => Navigator.of(context)
-                .restorablePushNamed('/produtos/categorias/novo'),
+            onPressed: () => context.go('/produtos/categorias/novo'),
             icon: const Icon(Icons.add),
           )
         ],
       ),
-      body: BlocBuilder<ProductCategoriesSelectorBloc,
+      body: BlocConsumer<ProductCategoriesSelectorBloc,
           ProductCategoriesSelectorState>(
-        builder: (context, state) {
+        listener: (context, state) {
           if (state is ProductCategoriesSelectorSubmitting) {
-            Future.delayed(
-              Duration.zero,
-              () => Navigator.of(context).pop(state.selectedCategories),
-            );
+            context.pop(state.selectedCategories);
           }
+        },
+        builder: (context, state) {
           if (state is ProductCategoriesSelectorLoading ||
               state is ProductCategoriesSelectorSubmitting) {
             return const LoadingWidget();
