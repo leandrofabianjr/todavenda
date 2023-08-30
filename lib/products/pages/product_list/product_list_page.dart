@@ -6,6 +6,7 @@ import 'package:todavenda/commons/widgets/loading_widget.dart';
 import './bloc/product_list_bloc.dart';
 import '../../models/product.dart';
 import '../../services/product_repository.dart';
+import '../../widgets/widgets.dart';
 
 class ProductListPage extends StatelessWidget {
   const ProductListPage({super.key});
@@ -90,6 +91,8 @@ class ProductListViewTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(product.description),
+      subtitle: ProductCategoriesChipList(categories: product.categories),
+      onTap: () => Navigator.of(context).pushReplacementNamed('/produtos/:id'),
     );
   }
 }

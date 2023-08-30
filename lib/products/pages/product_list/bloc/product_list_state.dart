@@ -19,7 +19,7 @@ final class ProductListLoaded extends ProductListState {
 }
 
 final class ProductListException extends ProductListState {
-  const ProductListException({this.ex});
+  const ProductListException(this.ex);
 
   final Object? ex;
 

@@ -41,6 +41,8 @@ class AppView extends StatelessWidget {
           case '/':
           case '/produtos':
             return MaterialPageRoute(builder: (_) => const ProductListPage());
+          case '/produtos/:id':
+            return MaterialPageRoute(builder: (_) => const ProductPage());
           case '/produtos/novo':
             return MaterialPageRoute(builder: (_) => const ProductFormPage());
           default:
