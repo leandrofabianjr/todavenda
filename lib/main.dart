@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/app_bloc_observer.dart';
 import 'package:todavenda/products/products.dart';
+import 'package:todavenda/sales/pages/cart_page/cart_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,9 +25,7 @@ class App extends StatelessWidget {
 }
 
 class AppView extends StatelessWidget {
-  const AppView({
-    super.key,
-  });
+  const AppView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +42,11 @@ class AppView extends StatelessWidget {
 
 final _router = GoRouter(
   routes: [
-    GoRoute(path: '/', redirect: (context, state) => '/produtos'),
+    GoRoute(path: '/', redirect: (context, state) => '/vender'),
+    GoRoute(
+      path: '/vender',
+      builder: (context, state) => const CartPage(),
+    ),
     GoRoute(
       path: '/produtos',
       builder: (context, state) => const ProductListPage(),
