@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:todavenda/products/widgets/form_fields/product_categories_selector/product_categories_selector_list_page.dart';
-import 'package:todavenda/products/widgets/product_categories_chip_list.dart';
 
-import '../../../models/product_category.dart';
+import '../../models/product_category.dart';
+import '../../pages/product_categories_selector/product_categories_selector_list_page.dart';
+import '../../widgets/product_categories_chip_list.dart';
 
 class ProductCategoriesSelector extends StatefulWidget {
   const ProductCategoriesSelector({

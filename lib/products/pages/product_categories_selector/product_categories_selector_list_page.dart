@@ -4,9 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/widgets/exception_widget.dart';
 import 'package:todavenda/commons/widgets/loading_widget.dart';
 
-import '../../../models/product_category.dart';
-import '../../../services/product_repository.dart';
-import '../../form_fields/product_categories_selector/bloc/product_categories_selector_bloc.dart';
+import '../../pages/product_categories_selector/bloc/product_categories_selector_bloc.dart';
+import '../../products.dart';
 
 class ProductCategoriesSelectorListPage extends StatelessWidget {
   const ProductCategoriesSelectorListPage({
