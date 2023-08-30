@@ -29,12 +29,6 @@ final class ProductCategoriesSelectorSelected
 
 final class ProductCategoriesSelectorSubmitted
     extends ProductCategoriesSelectorEvent {
-  const ProductCategoriesSelectorSubmitted({
-    required this.selectedCategories,
-  });
-
-  final List<ProductCategory> selectedCategories;
-
   @override
-  List<Object> get props => [selectedCategories];
+  List<Object> get props => [];
 }

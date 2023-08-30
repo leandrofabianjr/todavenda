@@ -24,18 +24,13 @@ class ProductCategoriesSelectorListPage extends StatelessWidget {
     return BlocProvider(
       create: (context) =>
           ProductCategoriesSelectorBloc(repository)..add(event),
-      child: ProductCategoriesSelectorListView(
-        selectedCategories: selectedCategories,
-      ),
+      child: const ProductCategoriesSelectorListView(),
     );
   }
 }
 
 class ProductCategoriesSelectorListView extends StatelessWidget {
-  const ProductCategoriesSelectorListView(
-      {super.key, required this.selectedCategories});
-
-  final List<ProductCategory> selectedCategories;
+  const ProductCategoriesSelectorListView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -98,9 +93,7 @@ class ProductCategoriesSelectorListView extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.read<ProductCategoriesSelectorBloc>().add(
-              ProductCategoriesSelectorSubmitted(
-                selectedCategories: selectedCategories,
-              ),
+              ProductCategoriesSelectorSubmitted(),
             ),
         child: const Icon(Icons.check),
       ),

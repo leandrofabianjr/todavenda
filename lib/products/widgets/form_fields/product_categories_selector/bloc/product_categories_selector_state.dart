@@ -16,7 +16,7 @@ final class ProductCategoriesSelectorLoaded
   final Map<ProductCategory, bool> categories;
 
   @override
-  List<Object> get props => [categories];
+  List<Object> get props => [categories.hashCode];
 }
 
 final class ProductCategoriesSelectorSubmitting

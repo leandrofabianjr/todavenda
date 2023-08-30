@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -44,7 +45,17 @@ class ProductCategoriesSelectorBloc extends Bloc<ProductCategoriesSelectorEvent,
     ProductCategoriesSelectorSubmitted event,
     Emitter<ProductCategoriesSelectorState> emit,
   ) async {
-    emit(ProductCategoriesSelectorSubmitting(event.selectedCategories));
+    if (state is ProductCategoriesSelectorLoaded) {
+      final mappedCategories =
+          (state as ProductCategoriesSelectorLoaded).categories;
+      final selecteds = <ProductCategory>[];
+      for (final entry in mappedCategories.entries) {
+        if (entry.value) {
+          selecteds.add(entry.key);
+        }
+      }
+      emit(ProductCategoriesSelectorSubmitting(selecteds));
+    }
   }
 
   _onSelected(
@@ -54,10 +65,12 @@ class ProductCategoriesSelectorBloc extends Bloc<ProductCategoriesSelectorEvent,
     if (state is ProductCategoriesSelectorLoaded) {
       final mappedCategories =
           (state as ProductCategoriesSelectorLoaded).categories;
-      emit(ProductCategoriesSelectorLoading());
       mappedCategories[event.selectedCategory] =
           !mappedCategories[event.selectedCategory]!;
-      emit(ProductCategoriesSelectorLoaded(mappedCategories));
+      final newState =
+          ProductCategoriesSelectorLoaded(Map.from(mappedCategories));
+      log((newState == state).toString());
+      emit(newState);
     }
   }
 }
