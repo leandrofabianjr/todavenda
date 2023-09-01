@@ -1,20 +1,25 @@
 part of 'cart_bloc.dart';
 
-sealed class CartState extends Equatable {
-  const CartState();
+enum CartStatus { initial, loading, failure, finalizing }
+
+extension CartStatusX on CartStatus {
+  bool get isLoading => this == CartStatus.initial;
 }
 
-final class CartLoading extends CartState {
-  const CartLoading();
-  @override
-  List<Object?> get props => [];
-}
+final class CartState extends Equatable {
+  const CartState({
+    this.status = CartStatus.initial,
+    this.items = const {},
+    this.exception,
+  });
 
-final class CartLoaded extends CartState {
-  const CartLoaded({required this.items});
-
+  final CartStatus status;
   final Map<Product, int> items;
-  int get totalQuantity => items.values.reduce((total, qtt) => total + qtt);
+
+  final Object? exception;
+
+  int get totalQuantity => items.values.fold(0, (total, qtt) => total + qtt);
+  bool get isNotEmpty => totalQuantity > 0;
   double get totalPrice => items.entries.fold(
         0,
         (total, item) {
@@ -24,41 +29,24 @@ final class CartLoaded extends CartState {
           return total + itemPrice;
         },
       );
-  get formattedTotalPrice => CurrencyFormatter().formatPtBr(totalPrice);
-  get formattedTotalQuantity {
+  String get formattedTotalPrice => CurrencyFormatter().formatPtBr(totalPrice);
+  String get formattedTotalQuantity {
     final qtt = totalQuantity;
     return "$qtt ite${qtt == 1 ? 'm' : 'ns'}";
   }
 
-  @override
-  List<Object> get props => [items.hashCode];
-}
-
-final class CartCheckout extends CartLoaded {
-  const CartCheckout({required super.items});
-}
-
-final class CartException extends CartState {
-  const CartException(this.ex);
-
-  final Object? ex;
-
-  @override
-  List<Object?> get props => [ex];
-}
-
-final class CartSaleCreation extends CartState {
-  const CartSaleCreation();
+  CartState copyWith({
+    CartStatus? status,
+    Map<Product, int>? items,
+    Object? exception,
+  }) {
+    return CartState(
+      status: status ?? this.status,
+      items: Map.from(items ?? this.items),
+      exception: exception ?? this.exception,
+    );
+  }
 
   @override
-  List<Object?> get props => [];
-}
-
-final class CartSaleConfirmation extends CartState {
-  const CartSaleConfirmation(this.sale);
-
-  final Sale sale;
-
-  @override
-  List<Object?> get props => [sale];
+  List<Object> get props => [status, items.hashCode];
 }

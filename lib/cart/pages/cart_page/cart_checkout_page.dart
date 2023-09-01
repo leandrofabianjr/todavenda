@@ -12,14 +12,22 @@ class CartCheckoutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: BlocProvider.of<CartBloc>(context),
+      value: BlocProvider.of<CartBloc>(context)..add(const CartCheckouted()),
       child: const CartCheckoutView(),
     );
   }
 }
 
-class CartCheckoutView extends StatelessWidget {
+class CartCheckoutView extends StatefulWidget {
   const CartCheckoutView({super.key});
+
+  @override
+  State<CartCheckoutView> createState() => _CartCheckoutViewState();
+}
+
+class _CartCheckoutViewState extends State<CartCheckoutView> {
+  String formattedTotalQuantity = '';
+  String formattedTotalPrice = '';
 
   @override
   Widget build(BuildContext context) {
@@ -27,46 +35,36 @@ class CartCheckoutView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Confirmação de venda'),
       ),
-      bottomNavigationBar: BlocBuilder<CartBloc, CartState>(
-        builder: (context, state) {
-          if (state is CartCheckout) {
-            return BottomAppBar(
-              height: 54,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    state.formattedTotalQuantity,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  Text(
-                    state.formattedTotalPrice,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ],
-              ),
-            );
-          }
-          return const SizedBox();
-        },
+      bottomNavigationBar: BottomAppBar(
+        height: 80,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              formattedTotalQuantity,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            Text(
+              formattedTotalPrice,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ],
+        ),
       ),
-      floatingActionButton: BlocBuilder<CartBloc, CartState>(
-        builder: (context, state) {
-          if (state is CartCheckout) {
-            return FloatingActionButton.extended(
-              onPressed: () =>
-                  context.read<CartBloc>().add(const CartConfirmed()),
-              label: const Text('Confirmar'),
-              icon: const Icon(Icons.check),
-            );
-          }
-          return const SizedBox();
-        },
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.read<CartBloc>().add(const CartConfirmed()),
+        label: const Text('Confirmar'),
+        icon: const Icon(Icons.check),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: BlocConsumer<CartBloc, CartState>(
         listener: (context, state) {
-          if (state is CartSaleConfirmation) {
+          setState(() {
+            formattedTotalQuantity = state.formattedTotalQuantity;
+            formattedTotalPrice = state.formattedTotalPrice;
+          });
+          if (state.status == CartStatus.finalizing) {
             context.pop();
             context.read<CartBloc>().add(const CartStarted());
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -76,33 +74,32 @@ class CartCheckoutView extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          if (state is CartLoading || state is CartSaleCreation) {
-            return const Scaffold(body: LoadingWidget());
+          switch (state.status) {
+            case CartStatus.loading:
+              return const LoadingWidget();
+            case CartStatus.failure:
+              return ExceptionWidget(exception: state.exception);
+            case CartStatus.initial:
+              return ListView(
+                children: state.items.entries
+                    .toList()
+                    .map(
+                      (item) => CartListTile(
+                        product: item.key,
+                        quantity: item.value,
+                        onAdded: () => context
+                            .read<CartBloc>()
+                            .add(CartItemAdded(product: item.key)),
+                        onRemoved: () => context
+                            .read<CartBloc>()
+                            .add(CartItemRemoved(product: item.key)),
+                      ),
+                    )
+                    .toList(),
+              );
+            default:
+              return const ExceptionWidget();
           }
-          if (state is CartCheckout || state is CartCheckout) {
-            return ListView(
-              children: state.items.entries
-                  .toList()
-                  .map(
-                    (item) => CartListTile(
-                      product: item.key,
-                      quantity: item.value,
-                      onAdded: () => context
-                          .read<CartBloc>()
-                          .add(CartItemAdded(product: item.key)),
-                      onRemoved: () => context
-                          .read<CartBloc>()
-                          .add(CartItemRemoved(product: item.key)),
-                    ),
-                  )
-                  .toList(),
-            );
-          }
-          return Scaffold(
-            body: ExceptionWidget(
-              exception: state is CartException ? state.ex : null,
-            ),
-          );
         },
       ),
     );

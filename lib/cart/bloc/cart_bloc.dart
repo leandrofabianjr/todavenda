@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/products/products.dart';
-import 'package:todavenda/sales/models/models.dart';
 import 'package:todavenda/sales/services/sales_repository.dart';
 
 part 'cart_event.dart';
@@ -10,7 +9,7 @@ part 'cart_state.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
   CartBloc({required this.productRepository, required this.salesRepository})
-      : super(const CartLoading()) {
+      : super(const CartState()) {
     on<CartStarted>(_onStarted);
     on<CartItemAdded>(_onItemAdded);
     on<CartItemRemoved>(_onItemRemoved);
@@ -26,26 +25,18 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     Emitter<CartState> emit,
   ) async {
     try {
-      var initialItems = <Product, int>{};
-      if (state is CartLoaded) {
-        initialItems = (state as CartLoaded).items;
-      }
-      if (state is CartCheckouted) {
-        initialItems = (state as CartCheckout).items;
-      }
-
-      emit(const CartLoading());
+      emit(state.copyWith(status: CartStatus.loading));
 
       final products = await productRepository.loadProducts();
-
+      final initialItems = state.items;
       final items = {
         for (var product in products)
           product:
               initialItems.containsKey(product) ? initialItems[product]! : 0
       };
-      emit(CartLoaded(items: items));
+      emit(state.copyWith(status: CartStatus.initial, items: items));
     } catch (ex) {
-      emit(CartException(ex));
+      emit(state.copyWith(status: CartStatus.failure, exception: ex));
     }
   }
 
@@ -53,46 +44,37 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     CartCheckouted event,
     Emitter<CartState> emit,
   ) async {
-    if (state is CartLoaded) {
-      final items = (state as CartLoaded).items;
-      items.removeWhere((key, value) => value < 1);
-      emit(CartCheckout(items: Map.from(items)));
-    }
+    final items = state.items;
+    items.removeWhere((key, value) => value < 1);
+    emit(state.copyWith(items: items));
   }
 
   void _onItemAdded(CartItemAdded event, Emitter<CartState> emit) {
-    if (state is CartLoaded) {
-      final items = (state as CartLoaded).items;
-      final itemQuantity = (items[event.product] ?? 0);
-      items[event.product] = itemQuantity + 1;
-      emit(CartLoaded(items: Map.from(items)));
-    }
+    final items = state.items;
+    final itemQuantity = (items[event.product] ?? 0);
+    items[event.product] = itemQuantity + 1;
+    emit(state.copyWith(items: items));
   }
 
   void _onItemRemoved(CartItemRemoved event, Emitter<CartState> emit) {
-    if (state is CartLoaded) {
-      final items = (state as CartLoaded).items;
-      final itemQuantity = (items[event.product] ?? 0);
-      if (itemQuantity > 0) {
-        items[event.product] = itemQuantity - 1;
-      }
-      emit(CartLoaded(items: Map.from(items)));
+    final items = state.items;
+    final itemQuantity = (items[event.product] ?? 0);
+    if (itemQuantity > 0) {
+      items[event.product] = itemQuantity - 1;
     }
+    emit(state.copyWith(items: items));
   }
 
   Future<void> _onConfirmed(
     CartConfirmed event,
     Emitter<CartState> emit,
   ) async {
-    if (state is CartCheckout) {
-      try {
-        final items = (state as CartCheckout).items;
-        emit(const CartSaleCreation());
-        final sale = await salesRepository.createSale(items: items);
-        emit(CartSaleConfirmation(sale));
-      } catch (ex) {
-        emit(CartException(ex));
-      }
+    try {
+      emit(state.copyWith(status: CartStatus.loading));
+      await salesRepository.createSale(items: state.items);
+      emit(state.copyWith(status: CartStatus.finalizing));
+    } catch (ex) {
+      emit(state.copyWith(status: CartStatus.failure, exception: ex));
     }
   }
 }
