@@ -12,7 +12,7 @@ class CartCheckoutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: BlocProvider.of<CartBloc>(context)..add(const CartCheckouted()),
+      value: BlocProvider.of<CartBloc>(context)..add(const CartResumed()),
       child: const CartCheckoutView(),
     );
   }
@@ -31,72 +31,76 @@ class _CartCheckoutViewState extends State<CartCheckoutView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Confirmação de venda'),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        height: 80,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              formattedTotalQuantity,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            Text(
-              formattedTotalPrice,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ],
+    return WillPopScope(
+      onWillPop: () async {
+        context.read<CartBloc>().add(const CartStarted());
+        context.go('/carrinho');
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Confirmação de venda'),
         ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.read<CartBloc>().add(const CartConfirmed()),
-        label: const Text('Confirmar'),
-        icon: const Icon(Icons.check),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      body: BlocConsumer<CartBloc, CartState>(
-        listener: (context, state) {
-          setState(() {
-            formattedTotalQuantity = state.formattedTotalQuantity;
-            formattedTotalPrice = state.formattedTotalPrice;
-          });
-          if (state.status == CartStatus.finalizing) {
-            context.go('/vendas/${state.sale!.uuid}/pagamento');
-            context.read<CartBloc>().add(const CartStarted());
-          }
-        },
-        builder: (context, state) {
-          switch (state.status) {
-            case CartStatus.loading:
-              return const LoadingWidget();
-            case CartStatus.failure:
-              return ExceptionWidget(exception: state.exception);
-            case CartStatus.initial:
-              return ListView(
-                children: state.items.entries
-                    .toList()
-                    .map(
-                      (item) => CartListTile(
-                        product: item.key,
-                        quantity: item.value,
-                        onAdded: () => context
-                            .read<CartBloc>()
-                            .add(CartItemAdded(product: item.key)),
-                        onRemoved: () => context
-                            .read<CartBloc>()
-                            .add(CartItemRemoved(product: item.key)),
-                      ),
-                    )
-                    .toList(),
-              );
-            default:
-              return const ExceptionWidget();
-          }
-        },
+        bottomNavigationBar: BottomAppBar(
+          height: 80,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                formattedTotalQuantity,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              Text(
+                formattedTotalPrice,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () => context.read<CartBloc>().add(const CartConfirmed()),
+          label: const Text('Confirmar'),
+          icon: const Icon(Icons.check),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        body: BlocConsumer<CartBloc, CartState>(
+          listener: (context, state) {
+            setState(() {
+              formattedTotalQuantity = state.formattedTotalQuantity;
+              formattedTotalPrice = state.formattedTotalPrice;
+            });
+            if (state.status == CartStatus.payment) {
+              context.go('/carrinho/pagamento');
+            }
+          },
+          builder: (context, state) {
+            switch (state.status) {
+              case CartStatus.loading:
+                return const LoadingWidget();
+              case CartStatus.failure:
+                return ExceptionWidget(exception: state.exception);
+              default:
+                return ListView(
+                  children: state.items.entries
+                      .toList()
+                      .map(
+                        (item) => CartListTile(
+                          product: item.key,
+                          quantity: item.value,
+                          onAdded: () => context
+                              .read<CartBloc>()
+                              .add(CartItemAdded(product: item.key)),
+                          onRemoved: () => context
+                              .read<CartBloc>()
+                              .add(CartItemRemoved(product: item.key)),
+                        ),
+                      )
+                      .toList(),
+                );
+            }
+          },
+        ),
       ),
     );
   }

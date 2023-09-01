@@ -67,12 +67,11 @@ final _router = GoRouter(
           path: 'confirmar',
           builder: (context, state) => const CartCheckoutPage(),
         ),
+        GoRoute(
+          path: 'pagamento',
+          builder: (context, state) => const CartPaymentPage(),
+        ),
       ],
-    ),
-    GoRoute(
-      path: '/vendas/:uuid/pagamento',
-      builder: (context, state) =>
-          SalePaymentPage(saleUuid: state.pathParameters['uuid']!),
     ),
     GoRoute(
       path: '/produtos',

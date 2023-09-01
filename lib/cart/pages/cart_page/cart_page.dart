@@ -13,7 +13,7 @@ class CartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: BlocProvider.of<CartBloc>(context),
+      value: BlocProvider.of<CartBloc>(context)..add(const CartResumed()),
       child: const CartView(),
     );
   }
@@ -37,9 +37,8 @@ class _CartViewState extends State<CartView> {
           ? Badge(
               label: Text(totalQuantity.toString()),
               child: FloatingActionButton(
-                onPressed: () => context.push('/carrinho/confirmar').then(
-                      (_) => context.read<CartBloc>().add(const CartStarted()),
-                    ),
+                onPressed: () =>
+                    context.read<CartBloc>().add(const CartCheckouted()),
                 child: const Icon(Icons.shopping_cart),
               ),
             )
@@ -51,12 +50,12 @@ class _CartViewState extends State<CartView> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(
-              totalQuantity > 0
-                  ? formattedTotalPrice
-                  : 'Selecione algum item acima',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+            totalQuantity > 0
+                ? Text(
+                    formattedTotalPrice,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  )
+                : const Text('Selecione algum item acima'),
           ],
         ),
       ),
@@ -66,6 +65,12 @@ class _CartViewState extends State<CartView> {
             totalQuantity = state.totalQuantity;
             formattedTotalPrice = state.formattedTotalPrice;
           });
+          if ([
+            CartStatus.checkout,
+            CartStatus.payment,
+          ].contains(state.status)) {
+            context.go('/carrinho/confirmar');
+          }
         },
         builder: (context, state) {
           switch (state.status) {
@@ -73,7 +78,7 @@ class _CartViewState extends State<CartView> {
               return const LoadingWidget();
             case CartStatus.failure:
               return ExceptionWidget(exception: state.exception);
-            case CartStatus.initial:
+            default:
               return CartSelectorView(
                 items: state.items,
                 onAdded: (product) => context
@@ -83,8 +88,6 @@ class _CartViewState extends State<CartView> {
                     .read<CartBloc>()
                     .add(CartItemRemoved(product: product)),
               );
-            default:
-              return const ExceptionWidget();
           }
         },
       ),

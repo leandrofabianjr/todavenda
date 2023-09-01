@@ -1,6 +1,12 @@
 part of 'cart_bloc.dart';
 
-enum CartStatus { initial, loading, failure, finalizing }
+enum CartStatus {
+  initial,
+  loading,
+  failure,
+  checkout,
+  payment,
+}
 
 extension CartStatusX on CartStatus {
   bool get isLoading => this == CartStatus.initial;

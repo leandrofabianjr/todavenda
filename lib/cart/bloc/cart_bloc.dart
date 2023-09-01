@@ -10,6 +10,7 @@ part 'cart_state.dart';
 class CartBloc extends Bloc<CartEvent, CartState> {
   CartBloc({required this.productRepository, required this.salesRepository})
       : super(const CartState()) {
+    on<CartResumed>(_onResumed);
     on<CartStarted>(_onStarted);
     on<CartItemAdded>(_onItemAdded);
     on<CartItemRemoved>(_onItemRemoved);
@@ -19,6 +20,13 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
   final ProductRepository productRepository;
   final SalesRepository salesRepository;
+
+  Future<void> _onResumed(
+    CartResumed event,
+    Emitter<CartState> emit,
+  ) async {
+    emit(state.copyWith());
+  }
 
   Future<void> _onStarted(
     CartStarted event,
@@ -46,7 +54,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   ) async {
     final items = state.items;
     items.removeWhere((key, value) => value < 1);
-    emit(state.copyWith(items: items));
+    emit(state.copyWith(status: CartStatus.checkout, items: items));
   }
 
   void _onItemAdded(CartItemAdded event, Emitter<CartState> emit) {
@@ -72,7 +80,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     try {
       emit(state.copyWith(status: CartStatus.loading));
       final sale = await salesRepository.createSale(items: state.items);
-      emit(state.copyWith(status: CartStatus.finalizing, sale: sale));
+      emit(state.copyWith(status: CartStatus.payment, sale: sale));
     } catch (ex) {
       emit(state.copyWith(status: CartStatus.failure, exception: ex));
     }
