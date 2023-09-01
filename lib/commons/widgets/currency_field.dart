@@ -44,7 +44,7 @@ class CurrencyPtBrInputFormatter extends TextInputFormatter {
       return newValue;
     }
 
-    double value = double.parse(newValue.text);
+    double value = CurrencyFormatter().strToDouble(newValue.text);
     String newText = CurrencyFormatter().formatPtBr(value);
 
     return newValue.copyWith(

@@ -12,7 +12,7 @@ class CurrencyFormatter {
   }
 
   String formatPtBr(double? value) {
-    final formatter = NumberFormat("#,##0.00", "pt_BR");
-    return "R\$ ${formatter.format((value ?? 0) / 100)}";
+    return NumberFormat.currency(locale: "pt_BR", symbol: 'R\$')
+        .format(value ?? 0);
   }
 }
