@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/products/products.dart';
 
-import 'bloc/cart_bloc.dart';
+import '../../cart.dart';
+import '../../widgets/cart_list_tile.dart';
 
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          CartBloc(context.read<ProductRepository>())..add(const CartStarted()),
+    return BlocProvider.value(
+      value: BlocProvider.of<CartBloc>(context),
       child: const CartView(),
     );
   }
@@ -23,7 +24,14 @@ class CartView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CartBloc, CartState>(
+    return BlocConsumer<CartBloc, CartState>(
+      listener: (context, state) {
+        if (state is CartConfirmation) {
+          context.push('/carrinho/confirmar').then((_) => context
+              .read<CartBloc>()
+              .add(CartStarted(initialItems: state.items)));
+        }
+      },
       builder: (context, state) {
         if (state is CartLoading) {
           return const Scaffold(body: LoadingWidget());
@@ -33,12 +41,10 @@ class CartView extends StatelessWidget {
             items: state.items,
             formattedTotalPrice: state.formattedTotalPrice,
             totalQuantity: state.totalQuantity,
-            onAdded: (product) => context.read<CartBloc>().add(
-                  CartItemAdded(product: product),
-                ),
-            onRemoved: (product) => context.read<CartBloc>().add(
-                  CartItemRemoved(product: product),
-                ),
+            onAdded: (product) =>
+                context.read<CartBloc>().add(CartItemAdded(product: product)),
+            onRemoved: (product) =>
+                context.read<CartBloc>().add(CartItemRemoved(product: product)),
           );
         }
 
@@ -73,10 +79,13 @@ class CartSelectorView extends StatelessWidget {
     return Scaffold(
       bottomNavigationBar: totalQuantity > 0
           ? BottomAppBar(
-              height: 40,
+              height: 54,
               child: Row(
                 children: [
-                  Text(formattedTotalPrice),
+                  Text(
+                    formattedTotalPrice,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                 ],
               ),
             )
@@ -85,7 +94,8 @@ class CartSelectorView extends StatelessWidget {
           ? Badge(
               label: Text(totalQuantity.toString()),
               child: FloatingActionButton(
-                onPressed: () {},
+                onPressed: () =>
+                    context.read<CartBloc>().add(const CartFinalized()),
                 child: const Icon(Icons.shopping_cart),
               ),
             )
@@ -96,10 +106,16 @@ class CartSelectorView extends StatelessWidget {
             context.read<CartBloc>().add(const CartStarted()),
         child: CustomScrollView(
           slivers: [
-            const SliverAppBar(
-              title: Text('Toda Venda'),
+            SliverAppBar(
+              title: const Text('Toda Venda'),
               pinned: false,
               centerTitle: true,
+              actions: [
+                IconButton(
+                  onPressed: () => context.push('/produtos'),
+                  icon: const Icon(Icons.list),
+                ),
+              ],
             ),
             SliverList(
               delegate: SliverChildListDelegate(
@@ -119,51 +135,6 @@ class CartSelectorView extends StatelessWidget {
             const SliverToBoxAdapter(child: SizedBox(height: 80)),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class CartListTile extends StatelessWidget {
-  const CartListTile({
-    super.key,
-    required this.product,
-    required this.quantity,
-    required this.onAdded,
-    required this.onRemoved,
-  });
-
-  final Product product;
-  final int quantity;
-  final void Function() onAdded;
-  final void Function() onRemoved;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: IconButton(
-        onPressed: quantity > 0 ? onRemoved : null,
-        icon: const Icon(Icons.remove),
-        color: Colors.red,
-      ),
-      trailing: IconButton(
-        onPressed: onAdded,
-        icon: const Icon(Icons.add),
-        color: Colors.green,
-      ),
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(child: Text(product.description)),
-          if (quantity > 0) ...[
-            const SizedBox(width: 8),
-            Text(quantity.toString())
-          ],
-        ],
-      ),
-      subtitle: Text(
-        product.formattedPrice,
-        style: Theme.of(context).textTheme.bodySmall,
       ),
     );
   }

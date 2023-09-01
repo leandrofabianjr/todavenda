@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/app_bloc_observer.dart';
+import 'package:todavenda/cart/cart.dart';
 import 'package:todavenda/products/products.dart';
-import 'package:todavenda/sales/pages/cart_page/cart_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +19,11 @@ class App extends StatelessWidget {
     return RepositoryProvider.value(
       // ignore: unnecessary_cast
       value: ProductRepositoryMock() as ProductRepository,
-      child: const AppView(),
+      child: BlocProvider(
+        create: (context) => CartBloc(context.read<ProductRepository>())
+          ..add(const CartStarted()),
+        child: const AppView(),
+      ),
     );
   }
 }
@@ -43,11 +47,16 @@ class AppView extends StatelessWidget {
 
 final _router = GoRouter(
   routes: [
-    GoRoute(path: '/', redirect: (context, state) => '/vender'),
+    GoRoute(path: '/', redirect: (context, state) => '/carrinho'),
     GoRoute(
-      path: '/vender',
-      builder: (context, state) => const CartPage(),
-    ),
+        path: '/carrinho',
+        builder: (context, state) => const CartPage(),
+        routes: [
+          GoRoute(
+            path: 'confirmar',
+            builder: (context, state) => const CartCheckoutPage(),
+          ),
+        ]),
     GoRoute(
       path: '/produtos',
       builder: (context, state) => const ProductListPage(),

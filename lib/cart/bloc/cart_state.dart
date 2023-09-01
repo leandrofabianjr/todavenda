@@ -25,9 +25,17 @@ final class CartLoaded extends CartState {
         },
       );
   get formattedTotalPrice => CurrencyFormatter().formatPtBr(totalPrice);
+  get formattedTotalQuantity {
+    final qtt = totalQuantity;
+    return "$qtt ite${qtt == 1 ? 'm' : 'ns'}";
+  }
 
   @override
   List<Object> get props => [items.hashCode];
+}
+
+final class CartConfirmation extends CartLoaded {
+  const CartConfirmation({required super.items});
 }
 
 final class CartException extends CartState {

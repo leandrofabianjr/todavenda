@@ -11,6 +11,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<CartStarted>(_onStarted);
     on<CartItemAdded>(_onItemAdded);
     on<CartItemRemoved>(_onItemRemoved);
+    on<CartFinalized>(_onFinalized);
   }
 
   final ProductRepository productRepository;
@@ -22,14 +23,29 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(const CartLoading());
     try {
       final products = await productRepository.loadProducts();
-      final items = {for (var category in products) category: 0};
+      final initialItems = event.initialItems ?? {};
+      final items = {
+        for (var product in products)
+          product:
+              initialItems.containsKey(product) ? initialItems[product]! : 0
+      };
       emit(CartLoaded(items: items));
     } catch (ex) {
       emit(CartException(ex));
     }
   }
 
-  _onItemAdded(CartItemAdded event, Emitter<CartState> emit) {
+  Future<void> _onFinalized(
+    CartFinalized event,
+    Emitter<CartState> emit,
+  ) async {
+    if (state is CartLoaded) {
+      final items = (state as CartLoaded).items;
+      emit(CartConfirmation(items: Map.from(items)));
+    }
+  }
+
+  void _onItemAdded(CartItemAdded event, Emitter<CartState> emit) {
     if (state is CartLoaded) {
       final items = (state as CartLoaded).items;
       final itemQuantity = (items[event.product] ?? 0);
@@ -38,7 +54,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     }
   }
 
-  _onItemRemoved(CartItemRemoved event, Emitter<CartState> emit) {
+  void _onItemRemoved(CartItemRemoved event, Emitter<CartState> emit) {
     if (state is CartLoaded) {
       final items = (state as CartLoaded).items;
       final itemQuantity = (items[event.product] ?? 0);

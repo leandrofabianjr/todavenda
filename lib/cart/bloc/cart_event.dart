@@ -5,10 +5,12 @@ sealed class CartEvent extends Equatable {
 }
 
 final class CartStarted extends CartEvent {
-  const CartStarted();
+  const CartStarted({this.initialItems});
+
+  final Map<Product, int>? initialItems;
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [initialItems?.hashCode];
 }
 
 final class CartItemAdded extends CartEvent {
@@ -24,6 +26,13 @@ final class CartItemRemoved extends CartEvent {
   const CartItemRemoved({required this.product});
 
   final Product product;
+
+  @override
+  List<Object> get props => [];
+}
+
+final class CartFinalized extends CartEvent {
+  const CartFinalized();
 
   @override
   List<Object> get props => [];
