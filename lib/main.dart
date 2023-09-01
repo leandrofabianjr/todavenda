@@ -4,8 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:todavenda/app_bloc_observer.dart';
 import 'package:todavenda/cart/cart.dart';
 import 'package:todavenda/products/products.dart';
-import 'package:todavenda/sales/services/sales_repository.dart';
-import 'package:todavenda/sales/services/sales_repository_mock.dart';
+import 'package:todavenda/sales/sales.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,14 +60,20 @@ final _router = GoRouter(
   routes: [
     GoRoute(path: '/', redirect: (context, state) => '/carrinho'),
     GoRoute(
-        path: '/carrinho',
-        builder: (context, state) => const CartPage(),
-        routes: [
-          GoRoute(
-            path: 'confirmar',
-            builder: (context, state) => const CartCheckoutPage(),
-          ),
-        ]),
+      path: '/carrinho',
+      builder: (context, state) => const CartPage(),
+      routes: [
+        GoRoute(
+          path: 'confirmar',
+          builder: (context, state) => const CartCheckoutPage(),
+        ),
+      ],
+    ),
+    GoRoute(
+      path: '/vendas/:uuid/pagamento',
+      builder: (context, state) =>
+          SalePaymentPage(saleUuid: state.pathParameters['uuid']!),
+    ),
     GoRoute(
       path: '/produtos',
       builder: (context, state) => const ProductListPage(),

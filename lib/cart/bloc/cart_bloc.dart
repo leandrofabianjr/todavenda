@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/products/products.dart';
-import 'package:todavenda/sales/services/sales_repository.dart';
+import 'package:todavenda/sales/sales.dart';
 
 part 'cart_event.dart';
 part 'cart_state.dart';
@@ -71,8 +71,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   ) async {
     try {
       emit(state.copyWith(status: CartStatus.loading));
-      await salesRepository.createSale(items: state.items);
-      emit(state.copyWith(status: CartStatus.finalizing));
+      final sale = await salesRepository.createSale(items: state.items);
+      emit(state.copyWith(status: CartStatus.finalizing, sale: sale));
     } catch (ex) {
       emit(state.copyWith(status: CartStatus.failure, exception: ex));
     }

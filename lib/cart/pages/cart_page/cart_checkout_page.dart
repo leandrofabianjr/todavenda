@@ -65,12 +65,8 @@ class _CartCheckoutViewState extends State<CartCheckoutView> {
             formattedTotalPrice = state.formattedTotalPrice;
           });
           if (state.status == CartStatus.finalizing) {
-            context.pop();
+            context.go('/vendas/${state.sale!.uuid}/pagamento');
             context.read<CartBloc>().add(const CartStarted());
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('Venda finalizada!'),
-              backgroundColor: Colors.green,
-            ));
           }
         },
         builder: (context, state) {

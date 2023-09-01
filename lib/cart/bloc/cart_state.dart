@@ -11,10 +11,12 @@ final class CartState extends Equatable {
     this.status = CartStatus.initial,
     this.items = const {},
     this.exception,
+    this.sale,
   });
 
   final CartStatus status;
   final Map<Product, int> items;
+  final Sale? sale;
 
   final Object? exception;
 
@@ -39,11 +41,13 @@ final class CartState extends Equatable {
     CartStatus? status,
     Map<Product, int>? items,
     Object? exception,
+    Sale? sale,
   }) {
     return CartState(
       status: status ?? this.status,
       items: Map.from(items ?? this.items),
       exception: exception ?? this.exception,
+      sale: sale ?? this.sale,
     );
   }
 
