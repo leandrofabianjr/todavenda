@@ -26,10 +26,8 @@ class CartView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<CartBloc, CartState>(
       listener: (context, state) {
-        if (state is CartConfirmation) {
-          context.push('/carrinho/confirmar').then((_) => context
-              .read<CartBloc>()
-              .add(CartStarted(initialItems: state.items)));
+        if (state is CartCheckout) {
+          context.push('/carrinho/confirmar');
         }
       },
       builder: (context, state) {
@@ -95,12 +93,13 @@ class CartSelectorView extends StatelessWidget {
               label: Text(totalQuantity.toString()),
               child: FloatingActionButton(
                 onPressed: () =>
-                    context.read<CartBloc>().add(const CartFinalized()),
+                    context.read<CartBloc>().add(const CartCheckouted()),
                 child: const Icon(Icons.shopping_cart),
               ),
             )
           : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterDocked,
       body: RefreshIndicator(
         onRefresh: () async =>
             context.read<CartBloc>().add(const CartStarted()),

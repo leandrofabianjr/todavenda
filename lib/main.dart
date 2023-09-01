@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:todavenda/app_bloc_observer.dart';
 import 'package:todavenda/cart/cart.dart';
 import 'package:todavenda/products/products.dart';
+import 'package:todavenda/sales/services/sales_repository.dart';
+import 'package:todavenda/sales/services/sales_repository_mock.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,12 +18,22 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      // ignore: unnecessary_cast
-      value: ProductRepositoryMock() as ProductRepository,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(
+          // ignore: unnecessary_cast
+          value: ProductRepositoryMock() as ProductRepository,
+        ),
+        RepositoryProvider.value(
+          // ignore: unnecessary_cast
+          value: SalesRepositoryMock() as SalesRepository,
+        ),
+      ],
       child: BlocProvider(
-        create: (context) => CartBloc(context.read<ProductRepository>())
-          ..add(const CartStarted()),
+        create: (context) => CartBloc(
+          productRepository: context.read<ProductRepository>(),
+          salesRepository: context.read<SalesRepository>(),
+        )..add(const CartStarted()),
         child: const AppView(),
       ),
     );

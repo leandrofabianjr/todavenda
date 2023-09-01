@@ -34,8 +34,8 @@ final class CartLoaded extends CartState {
   List<Object> get props => [items.hashCode];
 }
 
-final class CartConfirmation extends CartLoaded {
-  const CartConfirmation({required super.items});
+final class CartCheckout extends CartLoaded {
+  const CartCheckout({required super.items});
 }
 
 final class CartException extends CartState {
@@ -45,4 +45,20 @@ final class CartException extends CartState {
 
   @override
   List<Object?> get props => [ex];
+}
+
+final class CartSaleCreation extends CartState {
+  const CartSaleCreation();
+
+  @override
+  List<Object?> get props => [];
+}
+
+final class CartSaleConfirmation extends CartState {
+  const CartSaleConfirmation(this.sale);
+
+  final Sale sale;
+
+  @override
+  List<Object?> get props => [sale];
 }

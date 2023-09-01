@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:todavenda/products/models/models.dart';
 
-class CartItem extends Equatable {
-  const CartItem({
+class SaleItem extends Equatable {
+  const SaleItem({
     this.uuid,
     required this.product,
     required this.quantity,

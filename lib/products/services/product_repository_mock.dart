@@ -8,45 +8,45 @@ const _delay = Duration(milliseconds: 800);
 
 var uuid = const Uuid();
 
-final _dataProductCategories = [
+final mockProductCategories = [
   ProductCategory(
       uuid: uuid.v4(), name: 'Padaria', description: 'Um monte de glúten'),
   ProductCategory(
       uuid: uuid.v4(), name: 'Bebidas', description: 'Líquidos pra beber'),
 ];
 
-final _dataProducts = [
+final mockProducts = [
   Product(
     uuid: uuid.v4(),
     description: 'Pão de forma',
     price: 5.99,
-    categories: [_dataProductCategories[0]],
+    categories: [mockProductCategories[0]],
   ),
   Product(
     uuid: uuid.v4(),
     description: 'Café',
     price: 2.99,
-    categories: [_dataProductCategories[1]],
+    categories: [mockProductCategories[1]],
   ),
   Product(
     uuid: uuid.v4(),
     description: 'Água',
     price: 2,
-    categories: [_dataProductCategories[1]],
+    categories: [mockProductCategories[1]],
   ),
 ];
 
 class ProductRepositoryMock implements ProductRepository {
-  final _products = _dataProducts;
-  final _productCategories = _dataProductCategories;
-
-  @override
-  Future<Product> loadProductByUuid(String uuid) async =>
-      _delayed(() => _products.firstWhere((p) => p.uuid == uuid));
+  final _products = mockProducts;
+  final _productCategories = mockProductCategories;
 
   Future<T> _delayed<T>(T Function() callback) {
     return Future.delayed(_delay, callback);
   }
+
+  @override
+  Future<Product> loadProductByUuid(String uuid) async =>
+      _delayed(() => _products.firstWhere((p) => p.uuid == uuid));
 
   @override
   Future<List<Product>> loadProducts() => _delayed(() => _products);

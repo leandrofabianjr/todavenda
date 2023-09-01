@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
 
 import '../../cart.dart';
@@ -28,7 +29,7 @@ class CartCheckoutView extends StatelessWidget {
       ),
       bottomNavigationBar: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
-          if (state is CartConfirmation) {
+          if (state is CartCheckout) {
             return BottomAppBar(
               height: 54,
               child: Row(
@@ -51,9 +52,10 @@ class CartCheckoutView extends StatelessWidget {
       ),
       floatingActionButton: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
-          if (state is CartConfirmation) {
+          if (state is CartCheckout) {
             return FloatingActionButton.extended(
-              onPressed: () {},
+              onPressed: () =>
+                  context.read<CartBloc>().add(const CartConfirmed()),
               label: const Text('Confirmar'),
               icon: const Icon(Icons.check),
             );
@@ -62,12 +64,18 @@ class CartCheckoutView extends StatelessWidget {
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      body: BlocBuilder<CartBloc, CartState>(
+      body: BlocConsumer<CartBloc, CartState>(
+        listener: (context, state) {
+          if (state is CartSaleConfirmation) {
+            context.read<CartBloc>().add(const CartStarted());
+            context.pop();
+          }
+        },
         builder: (context, state) {
-          if (state is CartLoading) {
+          if (state is CartLoading || state is CartSaleCreation) {
             return const Scaffold(body: LoadingWidget());
           }
-          if (state is CartConfirmation || state is CartConfirmation) {
+          if (state is CartCheckout || state is CartCheckout) {
             return ListView(
               children: state.items.entries
                   .toList()

@@ -31,8 +31,15 @@ final class CartItemRemoved extends CartEvent {
   List<Object> get props => [];
 }
 
-final class CartFinalized extends CartEvent {
-  const CartFinalized();
+final class CartCheckouted extends CartEvent {
+  const CartCheckouted();
+
+  @override
+  List<Object> get props => [];
+}
+
+final class CartConfirmed extends CartEvent {
+  const CartConfirmed();
 
   @override
   List<Object> get props => [];
