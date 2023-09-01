@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/products/products.dart';
+import 'package:todavenda/sales/models/payment.dart';
 import 'package:todavenda/sales/sales.dart';
 
 part 'cart_event.dart';

@@ -43,6 +43,12 @@ final class CartState extends Equatable {
     return "$qtt ite${qtt == 1 ? 'm' : 'ns'}";
   }
 
+  double get payedValue => (sale?.payments ?? <Payment>[]).fold(
+        0,
+        (total, p) => total + p.value,
+      );
+  get missingPaymentValue => sale?.total ?? 0 - payedValue;
+
   CartState copyWith({
     CartStatus? status,
     Map<Product, int>? items,
