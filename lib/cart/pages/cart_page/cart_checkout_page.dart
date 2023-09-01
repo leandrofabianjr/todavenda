@@ -67,8 +67,12 @@ class CartCheckoutView extends StatelessWidget {
       body: BlocConsumer<CartBloc, CartState>(
         listener: (context, state) {
           if (state is CartSaleConfirmation) {
-            context.read<CartBloc>().add(const CartStarted());
             context.pop();
+            context.read<CartBloc>().add(const CartStarted());
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Venda finalizada!'),
+              backgroundColor: Colors.green,
+            ));
           }
         },
         builder: (context, state) {

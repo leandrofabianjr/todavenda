@@ -27,7 +27,9 @@ class CartView extends StatelessWidget {
     return BlocConsumer<CartBloc, CartState>(
       listener: (context, state) {
         if (state is CartCheckout) {
-          context.push('/carrinho/confirmar');
+          context
+              .push('/carrinho/confirmar')
+              .then((_) => context.read<CartBloc>().add(const CartStarted()));
         }
       },
       builder: (context, state) {

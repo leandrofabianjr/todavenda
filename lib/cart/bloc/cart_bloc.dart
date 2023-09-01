@@ -25,10 +25,19 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     CartStarted event,
     Emitter<CartState> emit,
   ) async {
-    emit(const CartLoading());
     try {
+      var initialItems = <Product, int>{};
+      if (state is CartLoaded) {
+        initialItems = (state as CartLoaded).items;
+      }
+      if (state is CartCheckouted) {
+        initialItems = (state as CartCheckout).items;
+      }
+
+      emit(const CartLoading());
+
       final products = await productRepository.loadProducts();
-      final initialItems = event.initialItems ?? {};
+
       final items = {
         for (var product in products)
           product:
@@ -46,6 +55,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   ) async {
     if (state is CartLoaded) {
       final items = (state as CartLoaded).items;
+      items.removeWhere((key, value) => value < 1);
       emit(CartCheckout(items: Map.from(items)));
     }
   }
