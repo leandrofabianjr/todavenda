@@ -114,15 +114,12 @@ class CartSelectorView extends StatelessWidget {
       child: CustomScrollView(
         slivers: [
           SliverAppBar(
-            title: const Text('Toda Venda'),
-            pinned: false,
+            title: Text(
+              'Selecione os items da venda',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
             centerTitle: true,
-            actions: [
-              IconButton(
-                onPressed: () => context.push('/produtos'),
-                icon: const Icon(Icons.list),
-              ),
-            ],
+            pinned: false,
           ),
           SliverList(
             delegate: SliverChildListDelegate(
