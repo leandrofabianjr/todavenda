@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class ExceptionWidget extends StatelessWidget {
@@ -8,16 +9,18 @@ class ExceptionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text('Erro'),
-          child ?? const SizedBox(),
-          exception != null
-              ? ExceptionDataWidget(exception!)
-              : const SizedBox(),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('Erro'),
+            child ?? const SizedBox(),
+            exception != null
+                ? ExceptionDataWidget(exception!)
+                : const SizedBox(),
+          ],
+        ),
       ),
     );
   }
@@ -30,10 +33,13 @@ class ExceptionDataWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [Text(ex.toString()), Text(StackTrace.current.toString())],
-      ),
+    return Column(
+      children: [
+        Text(ex.toString()),
+        ...StackFrame.fromStackTrace(StackTrace.current)
+            .map((e) => Text(e.toString()))
+            .toList(),
+      ],
     );
   }
 }
