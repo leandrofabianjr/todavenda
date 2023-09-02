@@ -2,6 +2,11 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+/// Para adicionar uma nova aba ao app, crie:
+/// 1. A tab em [AppMenuTab]
+/// 2. O build da [Tab] em [AppMenuTabX.buildTab]
+/// 3. A url da rota em [AppMenuTabX.route]
+
 enum AppMenuTab {
   cart,
   registers,
