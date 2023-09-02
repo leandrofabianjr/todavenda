@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/app_bloc_observer.dart';
 import 'package:todavenda/cart/cart.dart';
+import 'package:todavenda/cart/pages/cart_page/cart_finalizing_page.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/sales.dart';
 
@@ -64,12 +65,16 @@ final _router = GoRouter(
       builder: (context, state) => const CartPage(),
       routes: [
         GoRoute(
-          path: 'confirmar',
+          path: 'confirmacao',
           builder: (context, state) => const CartCheckoutPage(),
         ),
         GoRoute(
           path: 'pagamento',
           builder: (context, state) => const CartPaymentPage(),
+        ),
+        GoRoute(
+          path: 'finalizado',
+          builder: (context, state) => const CartFinalizingPage(),
         ),
       ],
     ),

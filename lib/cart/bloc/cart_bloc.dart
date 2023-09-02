@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/products/products.dart';
-import 'package:todavenda/sales/models/payment.dart';
 import 'package:todavenda/sales/sales.dart';
 
 part 'cart_event.dart';
@@ -17,6 +16,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<CartItemRemoved>(_onItemRemoved);
     on<CartCheckouted>(_onCheckouted);
     on<CartConfirmed>(_onConfirmed);
+    on<CartPaid>(_onPaid);
+    on<CartCleaned>(_onCleaned);
   }
 
   final ProductRepository productRepository;
@@ -53,8 +54,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     CartCheckouted event,
     Emitter<CartState> emit,
   ) async {
-    final items = state.items;
-    items.removeWhere((key, value) => value < 1);
+    final items = state.selectedItems;
     emit(state.copyWith(status: CartStatus.checkout, items: items));
   }
 
@@ -80,10 +80,38 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   ) async {
     try {
       emit(state.copyWith(status: CartStatus.loading));
-      final sale = await salesRepository.createSale(items: state.items);
+      final sale = await salesRepository.createSale(items: state.selectedItems);
       emit(state.copyWith(status: CartStatus.payment, sale: sale));
     } catch (ex) {
       emit(state.copyWith(status: CartStatus.failure, exception: ex));
     }
+  }
+
+  Future<void> _onPaid(
+    CartPaid event,
+    Emitter<CartState> emit,
+  ) async {
+    try {
+      emit(state.copyWith(status: CartStatus.loading));
+      final sale = await salesRepository.newPayment(
+        state.sale!.uuid!,
+        event.type,
+        event.value,
+      );
+      if (sale.isFullyPaid) {
+        emit(state.copyWith(status: CartStatus.finalizing, sale: sale));
+      } else {
+        emit(state.copyWith(status: CartStatus.payment, sale: sale));
+      }
+    } catch (ex) {
+      emit(state.copyWith(status: CartStatus.failure, exception: ex));
+    }
+  }
+
+  Future<void> _onCleaned(
+    CartCleaned event,
+    Emitter<CartState> emit,
+  ) async {
+    emit(const CartState());
   }
 }

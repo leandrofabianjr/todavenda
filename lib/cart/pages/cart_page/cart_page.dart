@@ -69,7 +69,7 @@ class _CartViewState extends State<CartView> {
             CartStatus.checkout,
             CartStatus.payment,
           ].contains(state.status)) {
-            context.go('/carrinho/confirmar');
+            context.go('/carrinho/confirmacao');
           }
         },
         builder: (context, state) {

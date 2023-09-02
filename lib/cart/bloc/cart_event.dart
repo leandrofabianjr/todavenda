@@ -56,3 +56,20 @@ final class CartConfirmed extends CartEvent {
   @override
   List<Object> get props => [];
 }
+
+final class CartPaid extends CartEvent {
+  const CartPaid({required this.type, required this.value});
+
+  final PaymentType type;
+  final double value;
+
+  @override
+  List<Object> get props => [type, value];
+}
+
+final class CartCleaned extends CartEvent {
+  const CartCleaned();
+
+  @override
+  List<Object?> get props => [];
+}

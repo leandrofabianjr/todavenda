@@ -20,4 +20,12 @@ class Payment extends Equatable {
 
   @override
   List<Object?> get props => [uuid];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'uuid': uuid,
+      'type': type.toString(),
+      'value': value,
+    };
+  }
 }

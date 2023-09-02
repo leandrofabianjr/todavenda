@@ -6,6 +6,7 @@ enum CartStatus {
   failure,
   checkout,
   payment,
+  finalizing,
 }
 
 extension CartStatusX on CartStatus {
@@ -43,11 +44,12 @@ final class CartState extends Equatable {
     return "$qtt ite${qtt == 1 ? 'm' : 'ns'}";
   }
 
-  double get payedValue => (sale?.payments ?? <Payment>[]).fold(
-        0,
-        (total, p) => total + p.value,
-      );
-  get missingPaymentValue => sale?.total ?? 0 - payedValue;
+  Map<Product, int> get selectedItems {
+    return {
+      for (final item in items.entries)
+        if (item.value > 0) item.key: item.value
+    };
+  }
 
   CartState copyWith({
     CartStatus? status,

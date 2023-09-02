@@ -11,4 +11,6 @@ abstract class SalesRepository {
   });
 
   Future<void> removeSale(String uuid);
+
+  Future<Sale> newPayment(String saleUuid, PaymentType type, double value);
 }

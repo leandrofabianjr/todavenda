@@ -4,7 +4,14 @@ import 'package:flutter/material.dart';
 class ExceptionWidget extends StatelessWidget {
   final Widget? child;
   final Object? exception;
-  const ExceptionWidget({super.key, this.child, this.exception});
+  final StackTrace? stackTrace;
+
+  const ExceptionWidget({
+    super.key,
+    this.child,
+    this.exception,
+    this.stackTrace,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +24,10 @@ class ExceptionWidget extends StatelessWidget {
             const Text('Erro'),
             child ?? const SizedBox(),
             exception != null
-                ? ExceptionDataWidget(exception!)
+                ? ExceptionDataWidget(
+                    exception: exception!,
+                    stackTrace: stackTrace ?? StackTrace.current,
+                  )
                 : const SizedBox(),
           ],
         ),
@@ -27,16 +37,21 @@ class ExceptionWidget extends StatelessWidget {
 }
 
 class ExceptionDataWidget extends StatelessWidget {
-  const ExceptionDataWidget(this.ex, {super.key});
+  const ExceptionDataWidget({
+    super.key,
+    required this.exception,
+    required this.stackTrace,
+  });
 
-  final Object ex;
+  final Object exception;
+  final StackTrace stackTrace;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(ex.toString()),
-        ...StackFrame.fromStackTrace(StackTrace.current)
+        Text(exception.toString()),
+        ...StackFrame.fromStackTrace(stackTrace)
             .map((e) => Text(e.toString()))
             .toList(),
       ],

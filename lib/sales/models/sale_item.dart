@@ -15,4 +15,13 @@ class SaleItem extends Equatable {
 
   @override
   List<Object?> get props => [uuid];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'uuid': uuid,
+      'product': product.toJson(),
+      'quantity': quantity,
+      'unitPrice': unitPrice,
+    };
+  }
 }

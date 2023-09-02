@@ -1,4 +1,5 @@
 import 'package:todavenda/products/products.dart';
+import 'package:todavenda/sales/models/payment.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/sale.dart';
@@ -8,6 +9,10 @@ import '../services/sales_repository.dart';
 const _delay = Duration(milliseconds: 800);
 
 var uuid = const Uuid();
+
+final mockPayments = [
+  Payment(uuid: uuid.v4(), type: PaymentType.cash, value: 17.95),
+];
 
 final mockSaleItems = [
   SaleItem(
@@ -37,6 +42,7 @@ final mockSales = [
     total: mockSaleItems
         .sublist(0, 1)
         .fold(0, (total, i) => total + i.unitPrice * i.quantity),
+    payments: mockPayments.sublist(0, 0),
   ),
   Sale(
     uuid: uuid.v4(),
@@ -49,6 +55,7 @@ final mockSales = [
 
 class SalesRepositoryMock implements SalesRepository {
   final _sales = mockSales;
+  final _payments = mockPayments;
 
   Future<T> _delayed<T>(T Function() callback) {
     return Future.delayed(_delay, callback);
@@ -91,4 +98,26 @@ class SalesRepositoryMock implements SalesRepository {
   @override
   Future<void> removeSale(String uuid) =>
       _delayed(() => _sales.removeWhere((s) => s.uuid == uuid));
+
+  @override
+  Future<Sale> newPayment(
+    String saleUuid,
+    PaymentType type,
+    double value,
+  ) async {
+    final payment = Payment(uuid: uuid.v4(), type: type, value: value);
+    _payments.add(payment);
+
+    final saleIndex = _sales.indexWhere((s) => s.uuid == saleUuid);
+    final sale = _sales[saleIndex];
+
+    final newSale = Sale(
+        uuid: sale.uuid,
+        items: sale.items,
+        total: sale.total,
+        payments: [...sale.payments, payment]);
+    _sales[saleIndex] = newSale;
+
+    return await _delayed(() => newSale);
+  }
 }
