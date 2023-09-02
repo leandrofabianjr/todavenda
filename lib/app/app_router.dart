@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/app/app_tab_bar.dart';
 import 'package:todavenda/cart/pages/pages.dart';
+import 'package:todavenda/clients/pages/pages.dart';
 import 'package:todavenda/products/pages/pages.dart';
 import 'package:todavenda/registers/pages/pages.dart';
 import 'package:todavenda/reports/pages/pages.dart';
 import 'package:todavenda/sales/pages/pages.dart';
-import 'package:todavenda/sales/pages/sale/sale_page.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _cartNavigatorKey = GlobalKey<NavigatorState>();
@@ -95,6 +95,22 @@ final appRouterConfig = GoRouter(
                     GoRoute(
                       path: ':uuid',
                       builder: (context, state) => ProductPage(
+                        uuid: state.pathParameters['uuid']!,
+                      ),
+                    ),
+                  ],
+                ),
+                GoRoute(
+                  path: 'clientes',
+                  builder: (context, state) => const ClientListPage(),
+                  routes: [
+                    GoRoute(
+                      path: 'cadastrar',
+                      builder: (context, state) => const ClientFormPage(),
+                    ),
+                    GoRoute(
+                      path: ':uuid',
+                      builder: (context, state) => ClientPage(
                         uuid: state.pathParameters['uuid']!,
                       ),
                     ),

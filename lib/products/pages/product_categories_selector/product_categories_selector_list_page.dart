@@ -39,8 +39,9 @@ class ProductCategoriesSelectorListView extends StatelessWidget {
         title: const Text('Categorias de Produtos'),
         actions: [
           IconButton(
-            onPressed: () =>
-                context.push('/produtos/categorias/cadastrar').then((value) {
+            onPressed: () => context
+                .push('/cadastros/produtos/categorias/cadastrar')
+                .then((value) {
               context
                   .read<ProductCategoriesSelectorBloc>()
                   .add(const ProductCategoriesSelectorStarted(

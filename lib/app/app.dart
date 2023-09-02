@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todavenda/app/app_router.dart';
 import 'package:todavenda/cart/cart.dart';
+import 'package:todavenda/clients/services/services.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/sales.dart';
 
@@ -21,6 +22,10 @@ class App extends StatelessWidget {
         RepositoryProvider.value(
           // ignore: unnecessary_cast
           value: SalesRepositoryMock() as SalesRepository,
+        ),
+        RepositoryProvider.value(
+          // ignore: unnecessary_cast
+          value: ClientsRepositoryMock() as ClientsRepository,
         ),
       ],
       child: BlocProvider(

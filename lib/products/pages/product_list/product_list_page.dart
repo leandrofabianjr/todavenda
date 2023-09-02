@@ -60,7 +60,8 @@ class ProductListView extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push('/produtos/cadastrar').then((value) {
+        onPressed: () =>
+            context.push('/cadastros/produtos/cadastrar').then((value) {
           context.read<ProductListBloc>().add(ProductListStarted());
         }),
         child: const Icon(Icons.add),
@@ -91,7 +92,7 @@ class ProductListViewTile extends StatelessWidget {
     return ListTile(
       title: Text(product.description),
       subtitle: ProductCategoriesChipList(categories: product.categories),
-      onTap: () => context.go('/produtos/${product.uuid}'),
+      onTap: () => context.go('/cadastros/produtos/${product.uuid}'),
     );
   }
 }

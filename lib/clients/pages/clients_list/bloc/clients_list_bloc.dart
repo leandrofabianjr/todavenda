@@ -1,0 +1,29 @@
+import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
+
+import '../../../models/client.dart';
+import '../../../services/client_repository.dart';
+
+part 'clients_list_event.dart';
+part 'clients_list_state.dart';
+
+class ClientListBloc extends Bloc<ClientListEvent, ClientListState> {
+  ClientListBloc(this.clientRepository) : super(ClientListLoading()) {
+    on<ClientListStarted>(_onStarted);
+  }
+
+  final ClientsRepository clientRepository;
+
+  Future<void> _onStarted(
+    ClientListStarted event,
+    Emitter<ClientListState> emit,
+  ) async {
+    emit(ClientListLoading());
+    try {
+      final clientList = await clientRepository.loadClients();
+      emit(ClientListLoaded(clientList));
+    } catch (ex) {
+      emit(ClientListException(ex));
+    }
+  }
+}
