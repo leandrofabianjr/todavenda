@@ -16,7 +16,7 @@ class AppTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTabController(
       initialIndex: navigationShell.currentIndex,
-      length: 2,
+      length: 3,
       child: Scaffold(
         body: navigationShell,
         appBar: AppBar(
@@ -36,8 +36,18 @@ class AppTabBar extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    const Icon(Icons.app_registration),
+                    const Icon(Icons.fact_check),
                     if (navigationShell.currentIndex == 1)
+                      const Text('Relatórios')
+                  ],
+                ),
+              ),
+              Tab(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    const Icon(Icons.app_registration),
+                    if (navigationShell.currentIndex == 2)
                       const Text('Cadastros')
                   ],
                 ),

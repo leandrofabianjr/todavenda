@@ -2,14 +2,16 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:todavenda/app/app_menu.dart';
-import 'package:todavenda/cart/cart.dart';
-import 'package:todavenda/cart/pages/cart_page/cart_finalizing_page.dart';
-import 'package:todavenda/products/products.dart';
-import 'package:todavenda/registers/registers.dart';
+import 'package:todavenda/app/app_tab_bar.dart';
+import 'package:todavenda/cart/pages/pages.dart';
+import 'package:todavenda/products/pages/pages.dart';
+import 'package:todavenda/registers/pages/pages.dart';
+import 'package:todavenda/reports/pages/pages.dart';
+import 'package:todavenda/sales/pages/pages.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _cartNavigatorKey = GlobalKey<NavigatorState>();
+final _reportsNavigatorKey = GlobalKey<NavigatorState>();
 final _registersNavigatorKey = GlobalKey<NavigatorState>();
 
 final appRouterConfig = GoRouter(
@@ -41,6 +43,21 @@ final appRouterConfig = GoRouter(
                 GoRoute(
                   path: 'finalizado',
                   builder: (context, state) => const CartFinalizingPage(),
+                ),
+              ],
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          navigatorKey: _reportsNavigatorKey,
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/relatorios',
+              builder: (context, state) => const ReportsMenuPage(),
+              routes: [
+                GoRoute(
+                  path: 'vendas',
+                  builder: (context, state) => const SalesListPage(),
                 ),
               ],
             ),
