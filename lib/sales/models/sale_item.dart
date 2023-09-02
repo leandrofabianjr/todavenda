@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/products/models/models.dart';
 
 class SaleItem extends Equatable {
@@ -15,6 +16,8 @@ class SaleItem extends Equatable {
 
   @override
   List<Object?> get props => [uuid];
+
+  String get formattedUnitPrice => CurrencyFormatter().formatPtBr(unitPrice);
 
   Map<String, dynamic> toJson() {
     return {

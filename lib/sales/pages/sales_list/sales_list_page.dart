@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/sales/pages/sales_list/bloc/sales_list_bloc.dart';
 import 'package:todavenda/sales/sales.dart';
@@ -39,9 +40,7 @@ class SalesListView extends StatelessWidget {
                 children: [
                   ...sales
                       .map(
-                        (s) => ExpansionTile(
-                          title: Text(s.items.length.toString()),
-                        ),
+                        (sale) => SaleListTile(sale: sale),
                       )
                       .toList(),
                 ],
@@ -52,6 +51,44 @@ class SalesListView extends StatelessWidget {
           return const ExceptionWidget();
         },
       ),
+    );
+  }
+}
+
+class SaleListTile extends StatelessWidget {
+  const SaleListTile({
+    super.key,
+    required this.sale,
+  });
+
+  final Sale sale;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return ListTile(
+      trailing: Text(
+        sale.formattedTotal,
+        style: theme.textTheme.titleSmall?.copyWith(
+          color: theme.colorScheme.secondary,
+        ),
+      ),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            sale.formattedCreatedAt,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          Text(
+            sale.summary,
+            style: theme.textTheme.bodyLarge,
+          ),
+        ],
+      ),
+      onTap: () => context.go('/relatorios/vendas/${sale.uuid}'),
     );
   }
 }

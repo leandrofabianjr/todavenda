@@ -8,6 +8,7 @@ import 'package:todavenda/products/pages/pages.dart';
 import 'package:todavenda/registers/pages/pages.dart';
 import 'package:todavenda/reports/pages/pages.dart';
 import 'package:todavenda/sales/pages/pages.dart';
+import 'package:todavenda/sales/pages/sale/sale_page.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _cartNavigatorKey = GlobalKey<NavigatorState>();
@@ -58,6 +59,14 @@ final appRouterConfig = GoRouter(
                 GoRoute(
                   path: 'vendas',
                   builder: (context, state) => const SalesListPage(),
+                  routes: [
+                    GoRoute(
+                      path: ':uuid',
+                      builder: (context, state) => SalePage(
+                        uuid: state.pathParameters['uuid']!,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

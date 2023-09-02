@@ -11,7 +11,12 @@ const _delay = Duration(milliseconds: 800);
 var uuid = const Uuid();
 
 final mockPayments = [
-  Payment(uuid: uuid.v4(), type: PaymentType.cash, value: 17.95),
+  Payment(
+    uuid: uuid.v4(),
+    type: PaymentType.cash,
+    value: 17.95,
+    createdAt: DateTime(2023, 8, 31, 14, 32, 23),
+  ),
 ];
 
 final mockSaleItems = [
@@ -43,6 +48,7 @@ final mockSales = [
         .sublist(0, 1)
         .fold(0, (total, i) => total + i.unitPrice * i.quantity),
     payments: mockPayments.sublist(0, 0),
+    createdAt: DateTime(2023, 8, 31, 14, 38, 23),
   ),
   Sale(
     uuid: uuid.v4(),
@@ -50,6 +56,7 @@ final mockSales = [
     total: mockSaleItems
         .sublist(2, 2)
         .fold(0, (total, i) => total + i.unitPrice * i.quantity),
+    createdAt: DateTime(2023, 9, 1, 11, 20, 05),
   ),
 ];
 
@@ -82,6 +89,7 @@ class SalesRepositoryMock implements SalesRepository {
       uuid: uuid.v4(),
       items: saleItems,
       total: saleItems.fold(0, (total, i) => total + i.unitPrice * i.quantity),
+      createdAt: DateTime.now(),
     );
     await _delayed(() => _sales.add(sale));
     return sale;
@@ -105,17 +113,24 @@ class SalesRepositoryMock implements SalesRepository {
     PaymentType type,
     double value,
   ) async {
-    final payment = Payment(uuid: uuid.v4(), type: type, value: value);
+    final payment = Payment(
+      uuid: uuid.v4(),
+      type: type,
+      value: value,
+      createdAt: DateTime.now(),
+    );
     _payments.add(payment);
 
     final saleIndex = _sales.indexWhere((s) => s.uuid == saleUuid);
     final sale = _sales[saleIndex];
 
     final newSale = Sale(
-        uuid: sale.uuid,
-        items: sale.items,
-        total: sale.total,
-        payments: [...sale.payments, payment]);
+      uuid: sale.uuid,
+      items: sale.items,
+      total: sale.total,
+      payments: [...sale.payments, payment],
+      createdAt: sale.createdAt,
+    );
     _sales[saleIndex] = newSale;
 
     return await _delayed(() => newSale);
