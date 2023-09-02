@@ -8,9 +8,15 @@ final class ClientFormEditing extends ClientFormState {
   const ClientFormEditing({
     this.name = '',
     this.nameError,
+    this.phone,
+    this.address,
+    this.observation,
   });
 
   final String name;
+  final String? phone;
+  final String? address;
+  final String? observation;
   final String? nameError;
 
   @override
@@ -18,10 +24,16 @@ final class ClientFormEditing extends ClientFormState {
 
   ClientFormEditing copyWith({
     String? name,
+    String? phone,
+    String? address,
+    String? observation,
     String? nameError,
   }) {
     return ClientFormEditing(
       name: name ?? this.name,
+      phone: phone ?? this.phone,
+      address: address ?? this.address,
+      observation: observation ?? this.observation,
       nameError: nameError ?? this.nameError,
     );
   }

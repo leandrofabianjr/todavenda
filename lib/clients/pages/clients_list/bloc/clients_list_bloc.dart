@@ -8,11 +8,11 @@ part 'clients_list_event.dart';
 part 'clients_list_state.dart';
 
 class ClientListBloc extends Bloc<ClientListEvent, ClientListState> {
-  ClientListBloc(this.clientRepository) : super(ClientListLoading()) {
+  ClientListBloc(this.clientsRepository) : super(ClientListLoading()) {
     on<ClientListStarted>(_onStarted);
   }
 
-  final ClientsRepository clientRepository;
+  final ClientsRepository clientsRepository;
 
   Future<void> _onStarted(
     ClientListStarted event,
@@ -20,7 +20,7 @@ class ClientListBloc extends Bloc<ClientListEvent, ClientListState> {
   ) async {
     emit(ClientListLoading());
     try {
-      final clientList = await clientRepository.loadClients();
+      final clientList = await clientsRepository.loadClients();
       emit(ClientListLoaded(clientList));
     } catch (ex) {
       emit(ClientListException(ex));

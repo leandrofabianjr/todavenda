@@ -91,6 +91,7 @@ class ClientListViewTile extends StatelessWidget {
     return ListTile(
       leading: const Icon(Icons.person),
       title: Text(client.name),
+      subtitle: client.phone != null ? Text(client.phone!) : null,
       onTap: () => context.go('/cadastros/clientes/${client.uuid}'),
     );
   }

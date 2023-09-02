@@ -40,6 +40,9 @@ class ClientFormView extends StatelessWidget {
 
           if (state is ClientFormEditing) {
             var name = state.name;
+            var phone = state.phone;
+            var address = state.address;
+            var observation = state.observation;
 
             return SingleChildScrollView(
               child: Padding(
@@ -49,16 +52,50 @@ class ClientFormView extends StatelessWidget {
                   children: [
                     TextField(
                       decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.person),
                         labelText: 'Nome',
                         errorText: state.nameError,
                       ),
                       controller: TextEditingController(text: name),
                       onChanged: (value) => name = value,
                     ),
+                    TextField(
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.phone),
+                        labelText: 'Telefone',
+                        errorText: state.nameError,
+                      ),
+                      controller: TextEditingController(text: phone),
+                      keyboardType: TextInputType.phone,
+                      onChanged: (value) => phone = value,
+                    ),
+                    TextField(
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.house),
+                        labelText: 'Endereço',
+                        errorText: state.nameError,
+                      ),
+                      controller: TextEditingController(text: address),
+                      onChanged: (value) => address = value,
+                    ),
+                    TextField(
+                      decoration: InputDecoration(
+                        labelText: 'Observação',
+                        errorText: state.nameError,
+                      ),
+                      controller: TextEditingController(text: observation),
+                      onChanged: (value) => observation = value,
+                      maxLines: 3,
+                    ),
                     const SizedBox(height: 16.0),
                     ElevatedButton(
                       onPressed: () {
-                        final event = ClientFormSubmitted(name: name);
+                        final event = ClientFormSubmitted(
+                          name: name,
+                          phone: phone,
+                          address: address,
+                          observation: observation,
+                        );
                         context.read<ClientFormBloc>().add(event);
                       },
                       child: const Text('Salvar'),

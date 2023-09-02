@@ -7,6 +7,9 @@ abstract class ClientsRepository {
 
   Future<Client> createClient({
     required String name,
+    String? phone,
+    String? address,
+    String? observation,
   });
 
   Future<void> removeClient(String uuid);

@@ -7,12 +7,12 @@ part 'client_event.dart';
 part 'client_state.dart';
 
 class ClientBloc extends Bloc<ClientEvent, ClientState> {
-  ClientBloc(this.clientRepository, {required this.uuid})
+  ClientBloc(this.clientsRepository, {required this.uuid})
       : super(ClientLoading()) {
     on<ClientStarted>(_onClientStarted);
   }
 
-  final ClientsRepository clientRepository;
+  final ClientsRepository clientsRepository;
   final String uuid;
 
   Future<void> _onClientStarted(
@@ -21,7 +21,7 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
   ) async {
     emit(ClientLoading());
     try {
-      final client = await clientRepository.loadClientByUuid(uuid);
+      final client = await clientsRepository.loadClientByUuid(uuid);
       emit(ClientLoaded(client: client));
     } catch (ex) {
       emit(ClientException(ex));

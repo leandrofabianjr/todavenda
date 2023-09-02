@@ -8,11 +8,11 @@ part 'client_form_event.dart';
 part 'client_form_state.dart';
 
 class ClientFormBloc extends Bloc<ClientFormEvent, ClientFormState> {
-  ClientFormBloc(this.clientRepository) : super(const ClientFormEditing()) {
+  ClientFormBloc(this.clientsRepository) : super(const ClientFormEditing()) {
     on<ClientFormSubmitted>(_onFormSubmitted);
   }
 
-  final ClientsRepository clientRepository;
+  final ClientsRepository clientsRepository;
 
   void _onFormSubmitted(
     ClientFormSubmitted event,
@@ -29,8 +29,11 @@ class ClientFormBloc extends Bloc<ClientFormEvent, ClientFormState> {
     emit(ClientFormSubmitting());
 
     try {
-      await clientRepository.createClient(
+      await clientsRepository.createClient(
         name: event.name,
+        phone: event.phone,
+        address: event.address,
+        observation: event.observation,
       );
       emit(ClientFormSuccessfullySubmitted());
     } catch (ex) {

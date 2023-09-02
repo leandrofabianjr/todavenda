@@ -59,9 +59,33 @@ class ClientView extends StatelessWidget {
                           name: const Text('Nome'),
                           detail: Text(
                             client.name,
-                            style: Theme.of(context).textTheme.headlineSmall,
+                            style: Theme.of(context).textTheme.titleMedium,
                           ),
                         ),
+                        if (client.phone != null)
+                          DescriptionDetail(
+                            name: const Text('Telefone'),
+                            detail: Text(
+                              client.phone!,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
+                        if (client.address != null)
+                          DescriptionDetail(
+                            name: const Text('Endereço'),
+                            detail: Text(
+                              client.address!,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
+                        if (client.observation != null)
+                          DescriptionDetail(
+                            name: const Text('Observação'),
+                            detail: Text(
+                              client.observation!,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
                       ],
                     ),
                   );

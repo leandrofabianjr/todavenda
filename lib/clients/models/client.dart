@@ -7,7 +7,14 @@ class Client extends Equatable {
   const Client({
     this.uuid,
     required this.name,
+    this.phone,
+    this.address,
+    this.observation,
   });
+
+  final String? phone;
+  final String? address;
+  final String? observation;
 
   @override
   List<Object?> get props => [uuid];
@@ -16,6 +23,9 @@ class Client extends Equatable {
     return {
       'uuid': uuid,
       'name': name,
+      'phone': phone,
+      'address': address,
+      'observation': observation,
     };
   }
 }
