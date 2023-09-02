@@ -1,27 +1,31 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/app/app_menu.dart';
 import 'package:todavenda/cart/cart.dart';
 import 'package:todavenda/cart/pages/cart_page/cart_finalizing_page.dart';
 import 'package:todavenda/products/products.dart';
+import 'package:todavenda/registers/registers.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _cartNavigatorKey = GlobalKey<NavigatorState>();
+final _registersNavigatorKey = GlobalKey<NavigatorState>();
 
-class AppRouter {
-  static get routerConfig {
-    return GoRouter(
-      navigatorKey: _rootNavigatorKey,
-      initialLocation: '/carrinho',
-      routes: [
-        ShellRoute(
-          builder: (context, state, child) {
-            return AppMenu(
-              key: state.pageKey,
-              currentRoute: state.uri.pathSegments.first,
-              child: AppMenuChild(child: child),
-            );
-          },
-          routes: [
+final appRouterConfig = GoRouter(
+  navigatorKey: _rootNavigatorKey,
+  initialLocation: '/',
+  observers: [AppRouterObserver()],
+  routes: [
+    GoRoute(path: '/', redirect: (context, state) => '/carrinho'),
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) {
+        return AppTabBar(navigationShell: navigationShell);
+      },
+      branches: [
+        StatefulShellBranch(
+          navigatorKey: _cartNavigatorKey,
+          routes: <RouteBase>[
             GoRoute(
               path: '/carrinho',
               builder: (context, state) => const CartPage(),
@@ -40,29 +44,63 @@ class AppRouter {
                 ),
               ],
             ),
+          ],
+        ),
+        StatefulShellBranch(
+          navigatorKey: _registersNavigatorKey,
+          routes: <RouteBase>[
             GoRoute(
-              path: '/produtos',
-              builder: (context, state) => const ProductListPage(),
+              path: '/cadastros',
+              builder: (context, state) => const RegistersMenuPage(),
               routes: [
                 GoRoute(
-                  path: 'categorias/cadastrar',
-                  builder: (context, state) => const ProductCategoryFormPage(),
-                ),
-                GoRoute(
-                  path: 'cadastrar',
-                  builder: (context, state) => const ProductFormPage(),
-                ),
-                GoRoute(
-                  path: ':uuid',
-                  builder: (context, state) => ProductPage(
-                    uuid: state.pathParameters['uuid']!,
-                  ),
+                  path: 'produtos',
+                  builder: (context, state) => const ProductListPage(),
+                  routes: [
+                    GoRoute(
+                      path: 'categorias/cadastrar',
+                      builder: (context, state) =>
+                          const ProductCategoryFormPage(),
+                    ),
+                    GoRoute(
+                      path: 'cadastrar',
+                      builder: (context, state) => const ProductFormPage(),
+                    ),
+                    GoRoute(
+                      path: ':uuid',
+                      builder: (context, state) => ProductPage(
+                        uuid: state.pathParameters['uuid']!,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ],
         ),
       ],
-    );
+    ),
+  ],
+);
+
+class AppRouterObserver extends NavigatorObserver {
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    log('push ${route.toString()}');
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    log('pop ${route.toString()}');
+  }
+
+  @override
+  void didReplace({Route? newRoute, Route? oldRoute}) {
+    log('replace: ${oldRoute.toString()} -> ${newRoute.toString()}');
+  }
+
+  @override
+  void didRemove(Route route, Route? previousRoute) {
+    log('remove ${route.toString()}');
   }
 }

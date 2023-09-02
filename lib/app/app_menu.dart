@@ -1,133 +1,55 @@
-import 'package:collection/collection.dart';
+/// Baseado em https://medium.com/@antonio.tioypedro1234/flutter-go-router-the-essential-guide-349ef39ec5b3
+///
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Para adicionar uma nova aba ao app, crie:
-/// 1. A tab em [AppMenuTab]
-/// 2. O build da [Tab] em [AppMenuTabX.buildTab]
-/// 3. A url da rota em [AppMenuTabX.route]
-
-enum AppMenuTab {
-  cart,
-  registers,
-}
-
-extension AppMenuTabX on AppMenuTab {
-  Tab buildTab(AppMenuTab currentTab) {
-    switch (this) {
-      case AppMenuTab.cart:
-        return Tab(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const Icon(Icons.point_of_sale),
-              if (this == currentTab) const Text('Vender')
-            ],
-          ),
-        );
-      case AppMenuTab.registers:
-        return Tab(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const Icon(Icons.app_registration),
-              if (this == currentTab) const Text('Cadastros')
-            ],
-          ),
-        );
-    }
-  }
-
-  String get route => switch (this) {
-        AppMenuTab.cart => '/carrinho',
-        AppMenuTab.registers => '/produtos',
-      };
-
-  int get tabIndex => AppMenuTab.values.indexOf(this);
-
-  static AppMenuTab fromIndex(int tabIndex) => AppMenuTab.values[tabIndex];
-
-  static String routeFromIndex(int tabIndex) => fromIndex(tabIndex).route;
-
-  static AppMenuTab? fromRoute(String route) =>
-      AppMenuTab.values.firstWhereOrNull((t) => t.route == "/$route");
-}
-
-class AppMenu extends StatefulWidget {
-  const AppMenu({
+class AppTabBar extends StatelessWidget {
+  const AppTabBar({
     super.key,
-    required this.child,
-    required this.currentRoute,
+    required this.navigationShell,
   });
 
-  final AppMenuChild child;
-  final String currentRoute;
-
-  @override
-  State<AppMenu> createState() => _AppMenuViewState();
-}
-
-class _AppMenuViewState extends State<AppMenu> with TickerProviderStateMixin {
-  late final TabController _controller;
-
-  AppMenuTab get currentTab =>
-      AppMenuTabX.fromRoute(widget.currentRoute) ?? AppMenuTab.cart;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TabController(
-      length: 2,
-      vsync: this,
-      initialIndex: currentTab.tabIndex,
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(AppMenu oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _controller.index = currentTab.tabIndex;
-  }
+  final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: widget.child,
-      appBar: AppBar(
-        toolbarHeight: 0,
-        bottom: TabBar(
-          controller: _controller,
-          tabs: AppMenuTab.values.map((e) => e.buildTab(currentTab)).toList(),
-          onTap: (index) => context.go(AppMenuTabX.routeFromIndex(index)),
+    return DefaultTabController(
+      initialIndex: navigationShell.currentIndex,
+      length: 2,
+      child: Scaffold(
+        body: navigationShell,
+        appBar: AppBar(
+          toolbarHeight: 0,
+          bottom: TabBar(
+            tabs: [
+              Tab(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    const Icon(Icons.point_of_sale),
+                    if (navigationShell.currentIndex == 0) const Text('Vender')
+                  ],
+                ),
+              ),
+              Tab(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    const Icon(Icons.app_registration),
+                    if (navigationShell.currentIndex == 1)
+                      const Text('Cadastros')
+                  ],
+                ),
+              )
+            ],
+            onTap: (index) => navigationShell.goBranch(
+              index,
+              initialLocation: index == navigationShell.currentIndex,
+            ),
+          ),
         ),
       ),
     );
   }
-}
-
-class AppMenuChild extends StatefulWidget {
-  const AppMenuChild({super.key, required this.child});
-
-  final Widget child;
-
-  @override
-  State<AppMenuChild> createState() => _AppMenuChildState();
-}
-
-class _AppMenuChildState extends State<AppMenuChild>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return widget.child;
-  }
-
-  @override
-  bool get wantKeepAlive => true;
 }
