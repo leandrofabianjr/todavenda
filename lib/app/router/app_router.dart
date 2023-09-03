@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:todavenda/app/router/guards/auth_guard.dart';
+import 'package:todavenda/auth/pages/login/login_page.dart';
 import 'package:todavenda/cart/pages/pages.dart';
 import 'package:todavenda/clients/pages/pages.dart';
 import 'package:todavenda/products/pages/pages.dart';
@@ -7,8 +9,8 @@ import 'package:todavenda/registers/pages/pages.dart';
 import 'package:todavenda/reports/pages/pages.dart';
 import 'package:todavenda/sales/pages/pages.dart';
 
+import '../app_tab_bar.dart';
 import 'app_router_observer.dart';
-import 'app_tab_bar.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _cartNavigatorKey = GlobalKey<NavigatorState>();
@@ -19,8 +21,13 @@ final appRouterConfig = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/',
   observers: [AppRouterObserver()],
+  redirect: (context, state) => authGuard(context),
   routes: [
     GoRoute(path: '/', redirect: (context, state) => '/carrinho'),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginPage(),
+    ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
         return AppTabBar(navigationShell: navigationShell);

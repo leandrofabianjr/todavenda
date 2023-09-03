@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todavenda/app/app_bloc_observer.dart';
+import 'package:todavenda/auth/bloc/auth_bloc.dart';
+import 'package:todavenda/auth/services/auth_service.dart';
 import 'package:todavenda/cart/bloc/cart_bloc.dart';
 import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/products/products.dart';
@@ -8,6 +10,7 @@ import 'package:todavenda/sales/sales.dart';
 
 injectRepositories() {
   return [
+    RepositoryProvider.value(value: AuthService()),
     RepositoryProvider.value(
       // ignore: unnecessary_cast
       value: ProductRepositoryMock() as ProductRepository,
@@ -25,6 +28,9 @@ injectRepositories() {
 
 injectBlocProviders() {
   return [
+    BlocProvider(
+      create: (context) => AuthBloc(context.read<AuthService>()),
+    ),
     BlocProvider(
       create: (context) => CartBloc(
         productRepository: context.read<ProductRepository>(),
