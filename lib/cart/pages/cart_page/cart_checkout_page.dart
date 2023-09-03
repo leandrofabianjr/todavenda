@@ -61,12 +61,13 @@ class _CartCheckoutViewState extends State<CartCheckoutView> {
           title: const Text('Confirmação de venda'),
         ),
         bottomNavigationBar: BottomAppBar(
+          height: 100,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(
-                width: 120,
+                width: 160,
                 child: ClientSelector(
                   clientsRepository: context.read<ClientsRepository>(),
                   initial: selectedClient,
