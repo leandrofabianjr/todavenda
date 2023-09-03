@@ -59,6 +59,14 @@ class SaleView extends StatelessWidget {
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                         ),
+                        if (sale.client != null)
+                          DescriptionDetail(
+                            description: const Text('Cliente'),
+                            detail: Text(
+                              sale.client!.name,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
                         const SizedBox(height: 30),
                         sale.quantity > 0
                             ? DataTable(

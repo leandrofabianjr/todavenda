@@ -36,6 +36,15 @@ final class CartItemRemoved extends CartEvent {
   List<Object> get props => [];
 }
 
+final class CartClientAdded extends CartEvent {
+  const CartClientAdded({required this.client});
+
+  final Client client;
+
+  @override
+  List<Object> get props => [];
+}
+
 final class CartCheckClicked extends CartEvent {
   const CartCheckClicked();
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
+import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/sales/models/payment.dart';
 
@@ -12,6 +13,7 @@ class Sale extends Equatable {
     required this.items,
     required this.total,
     this.payments = const [],
+    this.client,
     this.createdAt,
   });
 
@@ -19,6 +21,7 @@ class Sale extends Equatable {
   final List<SaleItem> items;
   final double total;
   final List<Payment> payments;
+  final Client? client;
   final DateTime? createdAt;
 
   String get formattedCreatedAt => DateTimeFormatter.shortDateTime(createdAt);
@@ -49,6 +52,7 @@ class Sale extends Equatable {
       'items': items.map((e) => e.toJson()).toList(),
       'total': total,
       'payments': payments.map((e) => e.toJson()).toList(),
+      'client': client?.toJson(),
       'createdAt': createdAt.toString(),
     };
   }

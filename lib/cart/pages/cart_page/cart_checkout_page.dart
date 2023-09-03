@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:todavenda/clients/clients.dart';
+import 'package:todavenda/clients/widgets/client_selector.dart';
 import 'package:todavenda/commons/commons.dart';
 
 import '../../cart.dart';
@@ -44,6 +46,7 @@ class CartCheckoutView extends StatefulWidget {
 class _CartCheckoutViewState extends State<CartCheckoutView> {
   String formattedTotalQuantity = '';
   String formattedTotalPrice = '';
+  Client? selectedClient;
 
   @override
   Widget build(BuildContext context) {
@@ -58,18 +61,32 @@ class _CartCheckoutViewState extends State<CartCheckoutView> {
           title: const Text('Confirmação de venda'),
         ),
         bottomNavigationBar: BottomAppBar(
-          height: 80,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                formattedTotalQuantity,
-                style: Theme.of(context).textTheme.titleMedium,
+              SizedBox(
+                width: 120,
+                child: ClientSelector(
+                  clientsRepository: context.read<ClientsRepository>(),
+                  initial: selectedClient,
+                  onChanged: (client) => context
+                      .read<CartBloc>()
+                      .add(CartClientAdded(client: client)),
+                ),
               ),
-              Text(
-                formattedTotalPrice,
-                style: Theme.of(context).textTheme.titleMedium,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    formattedTotalQuantity,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  Text(
+                    formattedTotalPrice,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
               ),
             ],
           ),
@@ -85,6 +102,7 @@ class _CartCheckoutViewState extends State<CartCheckoutView> {
             setState(() {
               formattedTotalQuantity = state.formattedTotalQuantity;
               formattedTotalPrice = state.formattedTotalPrice;
+              selectedClient = state.client;
             });
           },
           builder: (context, state) {

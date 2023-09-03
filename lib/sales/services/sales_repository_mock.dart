@@ -1,3 +1,4 @@
+import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/models/payment.dart';
 import 'package:uuid/uuid.dart';
@@ -69,7 +70,8 @@ class SalesRepositoryMock implements SalesRepository {
   }
 
   @override
-  Future<Sale> createSale({required Map<Product, int> items}) async {
+  Future<Sale> createSale(
+      {required Map<Product, int> items, Client? client}) async {
     final saleItems = items.entries.fold<List<SaleItem>>(
       [],
       (saleItems, entry) {
@@ -89,6 +91,7 @@ class SalesRepositoryMock implements SalesRepository {
       uuid: uuid.v4(),
       items: saleItems,
       total: saleItems.fold(0, (total, i) => total + i.unitPrice * i.quantity),
+      client: client,
       createdAt: DateTime.now(),
     );
     await _delayed(() => _sales.add(sale));
@@ -130,6 +133,7 @@ class SalesRepositoryMock implements SalesRepository {
       total: sale.total,
       payments: [...sale.payments, payment],
       createdAt: sale.createdAt,
+      client: sale.client,
     );
     _sales[saleIndex] = newSale;
 

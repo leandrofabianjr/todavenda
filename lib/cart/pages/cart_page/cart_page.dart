@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:todavenda/clients/clients.dart';
+import 'package:todavenda/clients/widgets/client_selector.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/products/products.dart';
 
@@ -45,6 +47,7 @@ class CartView extends StatefulWidget {
 class _CartViewState extends State<CartView> {
   int totalQuantity = 0;
   String formattedTotalPrice = '';
+  Client? selectedClient;
 
   @override
   void initState() {
@@ -65,19 +68,30 @@ class _CartViewState extends State<CartView> {
               ),
             )
           : null,
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.miniCenterDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       bottomNavigationBar: BottomAppBar(
-        height: 54,
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            totalQuantity > 0
-                ? Text(
-                    formattedTotalPrice,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  )
-                : const Text('Selecione algum item acima'),
+            SizedBox(
+              width: 160,
+              child: ClientSelector(
+                clientsRepository: context.read<ClientsRepository>(),
+                initial: selectedClient,
+                onChanged: (client) => context
+                    .read<CartBloc>()
+                    .add(CartClientAdded(client: client)),
+              ),
+            ),
+            if (totalQuantity > 0)
+              Padding(
+                padding: const EdgeInsets.only(right: 64),
+                child: Text(
+                  formattedTotalPrice,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
           ],
         ),
       ),
@@ -86,6 +100,7 @@ class _CartViewState extends State<CartView> {
           setState(() {
             totalQuantity = state.totalQuantity;
             formattedTotalPrice = state.formattedTotalPrice;
+            selectedClient = state.client;
           });
         },
         builder: (context, state) {

@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/sales.dart';
@@ -14,6 +15,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<CartStarted>(_onStarted);
     on<CartItemAdded>(_onItemAdded);
     on<CartItemRemoved>(_onItemRemoved);
+    on<CartClientAdded>(_onClientAdded);
     on<CartCheckouted>(_onCheckouted);
     on<CartConfirmed>(_onConfirmed);
     on<CartPaid>(_onPaid);
@@ -74,13 +76,18 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(state.copyWith(items: items));
   }
 
+  void _onClientAdded(CartClientAdded event, Emitter<CartState> emit) {
+    emit(state.copyWith(client: event.client));
+  }
+
   Future<void> _onConfirmed(
     CartConfirmed event,
     Emitter<CartState> emit,
   ) async {
     try {
       emit(state.copyWith(status: CartStatus.loading));
-      final sale = await salesRepository.createSale(items: state.selectedItems);
+      final sale = await salesRepository.createSale(
+          items: state.selectedItems, client: state.client);
       emit(state.copyWith(status: CartStatus.payment, sale: sale));
     } catch (ex) {
       emit(state.copyWith(status: CartStatus.failure, exception: ex));
