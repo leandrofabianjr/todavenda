@@ -9,8 +9,22 @@ class CartFinalizingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: BlocProvider.of<CartBloc>(context)..add(const CartResumed()),
-      child: const CartFinalizingView(),
+      value: BlocProvider.of<CartBloc>(context)..add(const CartCleaned()),
+      child: BlocConsumer<CartBloc, CartState>(
+        listener: (context, state) {
+          switch (state.status) {
+            case CartStatus.checkout:
+              return context.go('/carrinho/confirmacao');
+            case CartStatus.payment:
+              return context.go('/carrinho/pagamento');
+            default:
+              null;
+          }
+        },
+        builder: (context, state) {
+          return const CartFinalizingView();
+        },
+      ),
     );
   }
 }
@@ -25,14 +39,6 @@ class CartFinalizingView extends StatelessWidget {
             child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        BlocConsumer<CartBloc, CartState>(
-          listener: (context, state) {
-            if (state.status != CartStatus.finalizing) {
-              context.go('/carrinho');
-            }
-          },
-          builder: (context, state) => const SizedBox(),
-        ),
         const Icon(
           Icons.check,
           size: 80,
@@ -44,8 +50,11 @@ class CartFinalizingView extends StatelessWidget {
         ),
         const SizedBox(height: 40),
         ElevatedButton(
-          onPressed: () => context.read<CartBloc>().add(const CartCleaned()),
-          child: const Text('Voltar'),
+          onPressed: () {
+            context.read<CartBloc>().add(const CartStarted());
+            context.go('/carrinho');
+          },
+          child: const Text('Iniciar nova venda'),
         ),
       ],
     )));

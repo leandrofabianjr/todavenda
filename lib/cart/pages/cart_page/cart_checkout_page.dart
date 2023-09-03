@@ -13,7 +13,23 @@ class CartCheckoutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: BlocProvider.of<CartBloc>(context)..add(const CartResumed()),
-      child: const CartCheckoutView(),
+      child: BlocConsumer<CartBloc, CartState>(
+        listener: (context, state) {
+          switch (state.status) {
+            case CartStatus.initial:
+              return context.go('/carrinho');
+            case CartStatus.payment:
+              return context.go('/carrinho/pagamento');
+            case CartStatus.finalizing:
+              return context.go('/carrinho/finalizado');
+            default:
+              null;
+          }
+        },
+        builder: (context, state) {
+          return const CartCheckoutView();
+        },
+      ),
     );
   }
 }
@@ -70,9 +86,6 @@ class _CartCheckoutViewState extends State<CartCheckoutView> {
               formattedTotalQuantity = state.formattedTotalQuantity;
               formattedTotalPrice = state.formattedTotalPrice;
             });
-            if (state.status == CartStatus.payment) {
-              context.go('/carrinho/pagamento');
-            }
           },
           builder: (context, state) {
             switch (state.status) {

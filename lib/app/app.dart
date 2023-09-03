@@ -32,7 +32,7 @@ class App extends StatelessWidget {
         create: (context) => CartBloc(
           productRepository: context.read<ProductRepository>(),
           salesRepository: context.read<SalesRepository>(),
-        )..add(const CartStarted()),
+        ),
         child: const AppView(),
       ),
     );

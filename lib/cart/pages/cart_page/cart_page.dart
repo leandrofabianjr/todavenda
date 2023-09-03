@@ -13,8 +13,24 @@ class CartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: BlocProvider.of<CartBloc>(context)..add(const CartResumed()),
-      child: const CartView(),
+      value: BlocProvider.of<CartBloc>(context),
+      child: BlocConsumer<CartBloc, CartState>(
+        listener: (context, state) {
+          switch (state.status) {
+            case CartStatus.checkout:
+              return context.go('/carrinho/confirmacao');
+            case CartStatus.payment:
+              return context.go('/carrinho/pagamento');
+            case CartStatus.finalizing:
+              return context.go('/carrinho/finalizado');
+            default:
+              null;
+          }
+        },
+        builder: (context, state) {
+          return const CartView();
+        },
+      ),
     );
   }
 }
@@ -29,6 +45,12 @@ class CartView extends StatefulWidget {
 class _CartViewState extends State<CartView> {
   int totalQuantity = 0;
   String formattedTotalPrice = '';
+
+  @override
+  void initState() {
+    context.read<CartBloc>().add(const CartStarted());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,12 +87,6 @@ class _CartViewState extends State<CartView> {
             totalQuantity = state.totalQuantity;
             formattedTotalPrice = state.formattedTotalPrice;
           });
-          if ([
-            CartStatus.checkout,
-            CartStatus.payment,
-          ].contains(state.status)) {
-            context.go('/carrinho/confirmacao');
-          }
         },
         builder: (context, state) {
           switch (state.status) {
