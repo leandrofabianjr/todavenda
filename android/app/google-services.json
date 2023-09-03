@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "31100701763",
+    "project_id": "todavenda-prod",
+    "storage_bucket": "todavenda-prod.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:31100701763:android:83a347e0ad7dddde5d58f6",
+        "android_client_info": {
+          "package_name": "com.leandrofabianjr.todavenda"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "31100701763-6oikhij7m05cvbmo727dd12u44s45kd7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBk76HDnJsvATD4ttE0N8ceylUwz_l1CaA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "31100701763-6oikhij7m05cvbmo727dd12u44s45kd7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
