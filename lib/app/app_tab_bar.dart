@@ -16,7 +16,7 @@ class AppTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTabController(
       initialIndex: navigationShell.currentIndex,
-      length: 3,
+      length: 4,
       child: Scaffold(
         body: navigationShell,
         appBar: AppBar(
@@ -24,33 +24,20 @@ class AppTabBar extends StatelessWidget {
           bottom: TabBar(
             tabs: [
               Tab(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    const Icon(Icons.point_of_sale),
-                    if (navigationShell.currentIndex == 0) const Text('Vender')
-                  ],
-                ),
+                icon: const Icon(Icons.point_of_sale),
+                text: navigationShell.currentIndex == 0 ? 'Vender' : null,
               ),
               Tab(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    const Icon(Icons.fact_check),
-                    if (navigationShell.currentIndex == 1)
-                      const Text('Relatórios')
-                  ],
-                ),
+                icon: const Icon(Icons.history),
+                text: navigationShell.currentIndex == 1 ? 'Relatórios' : null,
               ),
               Tab(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    const Icon(Icons.app_registration),
-                    if (navigationShell.currentIndex == 2)
-                      const Text('Cadastros')
-                  ],
-                ),
+                icon: const Icon(Icons.app_registration),
+                text: navigationShell.currentIndex == 2 ? 'Cadastros' : null,
+              ),
+              Tab(
+                icon: const Icon(Icons.account_circle),
+                text: navigationShell.currentIndex == 3 ? 'Meus dados' : null,
               )
             ],
             onTap: (index) => navigationShell.goBranch(

@@ -10,6 +10,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(this.authService) : super(AuthInitial()) {
     on<AuthStarted>(_onStarted);
     on<AuthLogged>(_onLogged);
+    on<AuthLoggedOut>(_onLoggedOut);
   }
 
   final AuthService authService;
@@ -25,5 +26,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   _onLogged(AuthLogged event, Emitter<AuthState> emit) {
     emit(AuthSuccess(user: event.user));
+  }
+
+  _onLoggedOut(AuthLoggedOut event, Emitter<AuthState> emit) async {
+    await authService.logout();
+    emit(AuthFailure());
   }
 }

@@ -9,6 +9,7 @@ extension on User {
       googleUid: uid,
       email: email ?? '',
       name: displayName ?? '',
+      picture: photoURL,
     );
   }
 }
@@ -29,5 +30,9 @@ class AuthService {
   Future<AuthUser?> loginWithGoogle() async {
     final UserCredential userCredential = await googleSignIn();
     return userCredential.user?.authUser;
+  }
+
+  Future<void> logout() {
+    return FirebaseAuth.instance.signOut();
   }
 }

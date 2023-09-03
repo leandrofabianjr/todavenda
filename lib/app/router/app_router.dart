@@ -4,6 +4,7 @@ import 'package:todavenda/app/router/guards/auth_guard.dart';
 import 'package:todavenda/auth/pages/login/login_page.dart';
 import 'package:todavenda/cart/pages/pages.dart';
 import 'package:todavenda/clients/pages/pages.dart';
+import 'package:todavenda/me/pages/me_page.dart';
 import 'package:todavenda/products/pages/pages.dart';
 import 'package:todavenda/registers/pages/pages.dart';
 import 'package:todavenda/reports/pages/pages.dart';
@@ -16,6 +17,7 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _cartNavigatorKey = GlobalKey<NavigatorState>();
 final _reportsNavigatorKey = GlobalKey<NavigatorState>();
 final _registersNavigatorKey = GlobalKey<NavigatorState>();
+final _meNavigatorKey = GlobalKey<NavigatorState>();
 
 final appRouterConfig = GoRouter(
   navigatorKey: _rootNavigatorKey,
@@ -124,6 +126,15 @@ final appRouterConfig = GoRouter(
                   ],
                 ),
               ],
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          navigatorKey: _meNavigatorKey,
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/eu',
+              builder: (context, state) => const MePage(),
             ),
           ],
         ),

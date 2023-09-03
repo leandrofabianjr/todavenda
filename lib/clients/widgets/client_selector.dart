@@ -19,8 +19,7 @@ class ClientSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton.icon(
-      style: TextButton.styleFrom(
-          padding: EdgeInsets.zero, backgroundColor: Colors.red),
+      style: TextButton.styleFrom(padding: EdgeInsets.zero),
       onPressed: () {
         showDialog<Client>(
           context: context,
