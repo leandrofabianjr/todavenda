@@ -1,15 +1,12 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todavenda/app/app_bloc_observer.dart';
 import 'package:todavenda/cart/bloc/cart_bloc.dart';
 import 'package:todavenda/clients/clients.dart';
-import 'package:todavenda/firebase_options.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/sales.dart';
 
-import 'app_bloc_observer.dart';
-import 'app_view.dart';
-
-List<RepositoryProvider> injectRepositories() {
+injectRepositories() {
   return [
     RepositoryProvider.value(
       // ignore: unnecessary_cast
@@ -26,7 +23,7 @@ List<RepositoryProvider> injectRepositories() {
   ];
 }
 
-List<BlocProvider> injectBlocProviders() {
+injectBlocProviders() {
   return [
     BlocProvider(
       create: (context) => CartBloc(
@@ -37,20 +34,14 @@ List<BlocProvider> injectBlocProviders() {
   ];
 }
 
-Future injectDependencies(AppView app) async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
+Widget injectDependencies({required Widget child}) {
   Bloc.observer = const AppBlocObserver();
 
   return MultiRepositoryProvider(
     providers: injectRepositories(),
     child: MultiBlocProvider(
       providers: injectBlocProviders(),
-      child: app,
+      child: child,
     ),
   );
-}
-
-Future<void> appBootstrap() async {
-  await injectDependencies(const AppView());
 }
