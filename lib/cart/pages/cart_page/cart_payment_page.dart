@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
-import 'package:todavenda/commons/widgets/currency_field.dart';
 import 'package:todavenda/sales/models/models.dart';
 
 import '../../cart.dart';
