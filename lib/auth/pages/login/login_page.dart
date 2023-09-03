@@ -40,7 +40,7 @@ class LoginView extends StatelessWidget {
               listener: (context, state) {
                 if (state is LoginSuccess) {
                   context.read<AuthBloc>().add(AuthLogged(user: state.user));
-                  context.go('/');
+                  context.pushReplacement('/');
                 }
               },
               builder: (context, state) {

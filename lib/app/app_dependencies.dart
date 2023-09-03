@@ -29,7 +29,8 @@ injectRepositories() {
 injectBlocProviders() {
   return [
     BlocProvider(
-      create: (context) => AuthBloc(context.read<AuthService>()),
+      create: (context) =>
+          AuthBloc(context.read<AuthService>())..add(const AuthStarted()),
     ),
     BlocProvider(
       create: (context) => CartBloc(

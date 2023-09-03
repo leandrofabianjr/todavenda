@@ -1,7 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:todavenda/auth/models/user.dart';
-import 'package:todavenda/auth/services/auth_service.dart';
+
+import '../../../models/user.dart';
+import '../../../services/auth_service.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
@@ -18,6 +19,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     Emitter<LoginState> emit,
   ) async {
     try {
+      emit(LoginLoading());
       final user = await authService.loginWithGoogle();
       if (user != null) {
         emit(LoginSuccess(user: user));

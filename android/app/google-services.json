@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "31100701763-e58usf29gbkv5055k0a5icbhpt3v9cnl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.leandrofabianjr.todavenda",
+            "certificate_hash": "319bbada93d753aa219df1117a99666b8a6228b9"
+          }
+        },
+        {
           "client_id": "31100701763-6oikhij7m05cvbmo727dd12u44s45kd7.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,13 @@
             {
               "client_id": "31100701763-6oikhij7m05cvbmo727dd12u44s45kd7.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "31100701763-ic5vi9qb8fa0dqqi8e7mffr4iakt9cl7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.leandrofabianjr.todavenda"
+              }
             }
           ]
         }
