@@ -56,7 +56,7 @@ class ClientView extends StatelessWidget {
                     delegate: SliverChildListDelegate(
                       [
                         DescriptionDetail(
-                          name: const Text('Nome'),
+                          description: const Text('Nome'),
                           detail: Text(
                             client.name,
                             style: Theme.of(context).textTheme.titleMedium,
@@ -64,7 +64,7 @@ class ClientView extends StatelessWidget {
                         ),
                         if (client.phone != null)
                           DescriptionDetail(
-                            name: const Text('Telefone'),
+                            description: const Text('Telefone'),
                             detail: Text(
                               client.phone!,
                               style: Theme.of(context).textTheme.titleMedium,
@@ -72,7 +72,7 @@ class ClientView extends StatelessWidget {
                           ),
                         if (client.address != null)
                           DescriptionDetail(
-                            name: const Text('Endereço'),
+                            description: const Text('Endereço'),
                             detail: Text(
                               client.address!,
                               style: Theme.of(context).textTheme.titleMedium,
@@ -80,7 +80,7 @@ class ClientView extends StatelessWidget {
                           ),
                         if (client.observation != null)
                           DescriptionDetail(
-                            name: const Text('Observação'),
+                            description: const Text('Observação'),
                             detail: Text(
                               client.observation!,
                               style: Theme.of(context).textTheme.titleMedium,
@@ -101,32 +101,6 @@ class ClientView extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class DescriptionDetail extends StatelessWidget {
-  const DescriptionDetail({
-    super.key,
-    required this.name,
-    required this.detail,
-  });
-
-  final Widget name;
-  final Widget detail;
-
-  @override
-  Widget build(BuildContext context) {
-    return Flex(
-      direction: Axis.horizontal,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        name,
-        Flexible(
-          flex: 1,
-          child: detail,
-        ),
-      ],
     );
   }
 }

@@ -45,6 +45,7 @@ class Sale extends Equatable {
   }
 
   String get formattedTotal => CurrencyFormatter().formatPtBr(total);
+  String get formattedAmountPaid => CurrencyFormatter().formatPtBr(amountPaid);
 
   Map<String, dynamic> toJson() {
     return {

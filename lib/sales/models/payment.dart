@@ -1,10 +1,20 @@
 import 'package:equatable/equatable.dart';
+import 'package:todavenda/commons/commons.dart';
 
 enum PaymentType {
   cash,
   pix,
   credit,
   debit,
+}
+
+extension PaymentYpeX on PaymentType {
+  String get label => switch (this) {
+        PaymentType.cash => 'Dinheiro',
+        PaymentType.pix => 'PIX',
+        PaymentType.credit => 'Crédito',
+        PaymentType.debit => 'Débito',
+      };
 }
 
 class Payment extends Equatable {
@@ -22,6 +32,8 @@ class Payment extends Equatable {
 
   @override
   List<Object?> get props => [uuid];
+
+  String get formattedValue => CurrencyFormatter().formatPtBr(value);
 
   Map<String, dynamic> toJson() {
     return {

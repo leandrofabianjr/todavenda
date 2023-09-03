@@ -16,7 +16,19 @@ final mockPayments = [
     uuid: uuid.v4(),
     type: PaymentType.cash,
     value: 17.95,
-    createdAt: DateTime(2023, 8, 31, 14, 32, 23),
+    createdAt: DateTime(2023, 8, 31, 14, 39, 23),
+  ),
+  Payment(
+    uuid: uuid.v4(),
+    type: PaymentType.cash,
+    value: 1.75,
+    createdAt: DateTime(2023, 9, 1, 11, 20, 14),
+  ),
+  Payment(
+    uuid: uuid.v4(),
+    type: PaymentType.pix,
+    value: 2.25,
+    createdAt: DateTime(2023, 9, 1, 11, 20, 16),
   ),
 ];
 
@@ -44,20 +56,22 @@ final mockSaleItems = [
 final mockSales = [
   Sale(
     uuid: uuid.v4(),
-    items: mockSaleItems.sublist(0, 1),
+    items: mockSaleItems.sublist(0, 2),
     total: mockSaleItems
-        .sublist(0, 1)
+        .sublist(0, 2)
         .fold(0, (total, i) => total + i.unitPrice * i.quantity),
-    payments: mockPayments.sublist(0, 0),
+    payments: mockPayments.sublist(0, 1),
+    client: mockClients[0],
     createdAt: DateTime(2023, 8, 31, 14, 38, 23),
   ),
   Sale(
     uuid: uuid.v4(),
-    items: mockSaleItems.sublist(2, 2),
+    items: mockSaleItems.sublist(1, 2),
     total: mockSaleItems
-        .sublist(2, 2)
+        .sublist(1, 2)
         .fold(0, (total, i) => total + i.unitPrice * i.quantity),
     createdAt: DateTime(2023, 9, 1, 11, 20, 05),
+    payments: mockPayments.sublist(1, 2),
   ),
 ];
 
