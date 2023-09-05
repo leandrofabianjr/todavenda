@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:todavenda/commons/validators.dart';
 
-import '../../../services/client_repository.dart';
+import '../../../services/clients_repository.dart';
 
 part 'client_form_event.dart';
 part 'client_form_state.dart';

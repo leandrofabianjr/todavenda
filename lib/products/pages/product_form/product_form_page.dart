@@ -6,7 +6,7 @@ import 'package:todavenda/commons/widgets/exception_widget.dart';
 import 'package:todavenda/commons/widgets/loading_widget.dart';
 
 import './bloc/product_form_bloc.dart';
-import '../../services/product_repository.dart';
+import '../../services/products_repository.dart';
 import '../../widgets/form_fields/form_fields.dart';
 
 class ProductFormPage extends StatelessWidget {
@@ -15,7 +15,7 @@ class ProductFormPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ProductFormBloc(context.read<ProductRepository>()),
+      create: (context) => ProductFormBloc(context.read<ProductsRepository>()),
       child: const ProductFormView(),
     );
   }

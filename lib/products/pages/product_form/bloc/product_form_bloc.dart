@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:todavenda/commons/validators.dart';
 
 import '../../../models/product_category.dart';
-import '../../../services/product_repository.dart';
+import '../../../services/products_repository.dart';
 
 part 'product_form_event.dart';
 part 'product_form_state.dart';
@@ -13,7 +13,7 @@ class ProductFormBloc extends Bloc<ProductFormEvent, ProductFormState> {
     on<ProductFormSubmitted>(_onFormSubmitted);
   }
 
-  final ProductRepository productRepository;
+  final ProductsRepository productRepository;
 
   void _onFormSubmitted(
     ProductFormSubmitted event,

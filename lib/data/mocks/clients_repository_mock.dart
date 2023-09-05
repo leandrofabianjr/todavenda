@@ -1,27 +1,27 @@
 import 'package:uuid/uuid.dart';
 
-import '../models/client.dart';
-import 'client_repository.dart';
+import '../../clients/models/client.dart';
+import '../../clients/services/clients_repository.dart';
 
 const _delay = Duration(milliseconds: 800);
 
-var uuid = const Uuid();
+const _uuid = Uuid();
 
 final mockClients = [
   Client(
-      uuid: uuid.v4(),
+      uuid: _uuid.v4(),
       name: 'João',
       address: 'Rua dos Bobos, nº 0',
       phone: '41999999999',
       observation: 'É um cara legal'),
   Client(
-    uuid: uuid.v4(),
+    uuid: _uuid.v4(),
     name: 'Maria',
     address: 'Rua Santo Amaro, nº 23',
     observation: 'Não tem telefone? 🤨',
   ),
   Client(
-    uuid: uuid.v4(),
+    uuid: _uuid.v4(),
     name: 'José',
     phone: '5488888888',
   ),
@@ -49,7 +49,7 @@ class ClientsRepositoryMock implements ClientsRepository {
     String? observation,
   }) async {
     final client = Client(
-      uuid: uuid.v4(),
+      uuid: _uuid.v4(),
       name: name,
       phone: phone,
       address: address,

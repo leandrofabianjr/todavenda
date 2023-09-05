@@ -15,7 +15,7 @@ class ProductPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ProductBloc(
-        context.read<ProductRepository>(),
+        context.read<ProductsRepository>(),
         uuid: uuid,
       )..add(const ProductStarted()),
       child: const ProductView(),

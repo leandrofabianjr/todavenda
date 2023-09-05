@@ -22,7 +22,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<CartCleaned>(_onCleaned);
   }
 
-  final ProductRepository productRepository;
+  final ProductsRepository productRepository;
   final SalesRepository salesRepository;
 
   Future<void> _onResumed(

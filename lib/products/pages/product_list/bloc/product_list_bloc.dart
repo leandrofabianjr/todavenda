@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../models/product.dart';
-import '../../../services/product_repository.dart';
+import '../../../services/products_repository.dart';
 
 part 'product_list_event.dart';
 part 'product_list_state.dart';
@@ -12,7 +12,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
     on<ProductListStarted>(_onStarted);
   }
 
-  final ProductRepository productRepository;
+  final ProductsRepository productRepository;
 
   Future<void> _onStarted(
     ProductListStarted event,

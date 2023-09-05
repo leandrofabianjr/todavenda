@@ -14,7 +14,7 @@ class ProductCategoryFormBloc
     on<ProductCategoryFormSubmitted>(_onFormSubmitted);
   }
 
-  final ProductRepository productRepository;
+  final ProductsRepository productRepository;
 
   void _onFormSubmitted(
     ProductCategoryFormSubmitted event,

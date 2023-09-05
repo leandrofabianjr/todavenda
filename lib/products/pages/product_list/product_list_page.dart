@@ -6,7 +6,7 @@ import 'package:todavenda/commons/widgets/loading_widget.dart';
 
 import './bloc/product_list_bloc.dart';
 import '../../models/product.dart';
-import '../../services/product_repository.dart';
+import '../../services/products_repository.dart';
 import '../../widgets/widgets.dart';
 
 class ProductListPage extends StatelessWidget {
@@ -15,7 +15,7 @@ class ProductListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ProductListBloc(context.read<ProductRepository>())
+      create: (context) => ProductListBloc(context.read<ProductsRepository>())
         ..add(ProductListStarted()),
       child: const ProductListView(),
     );

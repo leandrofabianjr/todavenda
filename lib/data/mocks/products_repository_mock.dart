@@ -1,42 +1,39 @@
+import 'package:todavenda/products/products.dart';
 import 'package:uuid/uuid.dart';
-
-import '../models/product.dart';
-import '../models/product_category.dart';
-import '../services/product_repository.dart';
 
 const _delay = Duration(milliseconds: 800);
 
-var uuid = const Uuid();
+const _uuid = Uuid();
 
 final mockProductCategories = [
   ProductCategory(
-      uuid: uuid.v4(), name: 'Padaria', description: 'Um monte de glúten'),
+      uuid: _uuid.v4(), name: 'Padaria', description: 'Um monte de glúten'),
   ProductCategory(
-      uuid: uuid.v4(), name: 'Bebidas', description: 'Líquidos pra beber'),
+      uuid: _uuid.v4(), name: 'Bebidas', description: 'Líquidos pra beber'),
 ];
 
 final mockProducts = [
   Product(
-    uuid: uuid.v4(),
+    uuid: _uuid.v4(),
     description: 'Pão de forma',
     price: 5.99,
     categories: [mockProductCategories[0]],
   ),
   Product(
-    uuid: uuid.v4(),
+    uuid: _uuid.v4(),
     description: 'Café',
     price: 2.99,
     categories: [mockProductCategories[1]],
   ),
   Product(
-    uuid: uuid.v4(),
+    uuid: _uuid.v4(),
     description: 'Água',
     price: 2,
     categories: [mockProductCategories[1]],
   ),
 ];
 
-class ProductRepositoryMock implements ProductRepository {
+class ProductsRepositoryMock implements ProductsRepository {
   final _products = mockProducts;
   final _productCategories = mockProductCategories;
 
@@ -62,7 +59,7 @@ class ProductRepositoryMock implements ProductRepository {
     required double price,
   }) async {
     final product = Product(
-      uuid: uuid.v4(),
+      uuid: _uuid.v4(),
       description: description,
       price: price,
       categories: categories,
@@ -81,7 +78,7 @@ class ProductRepositoryMock implements ProductRepository {
     required String? description,
   }) async {
     final category = ProductCategory(
-      uuid: uuid.v4(),
+      uuid: _uuid.v4(),
       name: name,
       description: description,
     );

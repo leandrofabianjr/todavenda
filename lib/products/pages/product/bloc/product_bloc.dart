@@ -12,7 +12,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<ProductStarted>(_onProductStarted);
   }
 
-  final ProductRepository productRepository;
+  final ProductsRepository productRepository;
   final String uuid;
 
   Future<void> _onProductStarted(

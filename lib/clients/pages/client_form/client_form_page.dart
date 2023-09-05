@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/widgets/exception_widget.dart';
 import 'package:todavenda/commons/widgets/loading_widget.dart';
 
-import '../../services/client_repository.dart';
+import '../../services/clients_repository.dart';
 import 'bloc/client_form_bloc.dart';
 
 class ClientFormPage extends StatelessWidget {

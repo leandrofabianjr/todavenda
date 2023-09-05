@@ -1,31 +1,30 @@
 import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/products/products.dart';
-import 'package:todavenda/sales/models/payment.dart';
+import 'package:todavenda/sales/sales.dart';
 import 'package:uuid/uuid.dart';
 
-import '../models/sale.dart';
-import '../models/sale_item.dart';
-import '../services/sales_repository.dart';
+import 'clients_repository_mock.dart';
+import 'products_repository_mock.dart';
 
 const _delay = Duration(milliseconds: 800);
 
-var uuid = const Uuid();
+const _uuid = Uuid();
 
 final mockPayments = [
   Payment(
-    uuid: uuid.v4(),
+    uuid: _uuid.v4(),
     type: PaymentType.cash,
     value: 17.95,
     createdAt: DateTime(2023, 8, 31, 14, 39, 23),
   ),
   Payment(
-    uuid: uuid.v4(),
+    uuid: _uuid.v4(),
     type: PaymentType.cash,
     value: 1.75,
     createdAt: DateTime(2023, 9, 1, 11, 20, 14),
   ),
   Payment(
-    uuid: uuid.v4(),
+    uuid: _uuid.v4(),
     type: PaymentType.pix,
     value: 2.25,
     createdAt: DateTime(2023, 9, 1, 11, 20, 16),
@@ -34,19 +33,19 @@ final mockPayments = [
 
 final mockSaleItems = [
   SaleItem(
-    uuid: uuid.v4(),
+    uuid: _uuid.v4(),
     product: mockProducts[0],
     quantity: 1,
     unitPrice: mockProducts[0].price,
   ),
   SaleItem(
-    uuid: uuid.v4(),
+    uuid: _uuid.v4(),
     product: mockProducts[1],
     quantity: 4,
     unitPrice: mockProducts[1].price,
   ),
   SaleItem(
-    uuid: uuid.v4(),
+    uuid: _uuid.v4(),
     product: mockProducts[2],
     quantity: 2,
     unitPrice: mockProducts[2].price,
@@ -55,7 +54,7 @@ final mockSaleItems = [
 
 final mockSales = [
   Sale(
-    uuid: uuid.v4(),
+    uuid: _uuid.v4(),
     items: mockSaleItems.sublist(0, 2),
     total: mockSaleItems
         .sublist(0, 2)
@@ -65,7 +64,7 @@ final mockSales = [
     createdAt: DateTime(2023, 8, 31, 14, 38, 23),
   ),
   Sale(
-    uuid: uuid.v4(),
+    uuid: _uuid.v4(),
     items: mockSaleItems.sublist(1, 2),
     total: mockSaleItems
         .sublist(1, 2)
@@ -92,7 +91,7 @@ class SalesRepositoryMock implements SalesRepository {
         final product = entry.key;
         final quantity = entry.value;
         final saleItem = SaleItem(
-          uuid: uuid.v4(),
+          uuid: _uuid.v4(),
           product: product,
           quantity: quantity,
           unitPrice: product.price,
@@ -102,7 +101,7 @@ class SalesRepositoryMock implements SalesRepository {
       },
     );
     final sale = Sale(
-      uuid: uuid.v4(),
+      uuid: _uuid.v4(),
       items: saleItems,
       total: saleItems.fold(0, (total, i) => total + i.unitPrice * i.quantity),
       client: client,
@@ -131,7 +130,7 @@ class SalesRepositoryMock implements SalesRepository {
     double value,
   ) async {
     final payment = Payment(
-      uuid: uuid.v4(),
+      uuid: _uuid.v4(),
       type: type,
       value: value,
       createdAt: DateTime.now(),

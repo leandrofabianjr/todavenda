@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../models/client.dart';
-import '../../../services/client_repository.dart';
+import '../../../services/clients_repository.dart';
 
 part 'clients_list_event.dart';
 part 'clients_list_state.dart';

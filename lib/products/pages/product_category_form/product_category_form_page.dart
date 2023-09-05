@@ -13,7 +13,7 @@ class ProductCategoryFormPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ProductCategoryFormBloc(
-        context.read<ProductRepository>(),
+        context.read<ProductsRepository>(),
       ),
       child: const ProductCategoryFormView(),
     );

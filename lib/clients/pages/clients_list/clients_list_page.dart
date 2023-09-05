@@ -5,7 +5,7 @@ import 'package:todavenda/commons/widgets/exception_widget.dart';
 import 'package:todavenda/commons/widgets/loading_widget.dart';
 
 import '../../models/client.dart';
-import '../../services/client_repository.dart';
+import '../../services/clients_repository.dart';
 import 'bloc/clients_list_bloc.dart';
 
 class ClientListPage extends StatelessWidget {

@@ -18,7 +18,7 @@ class ProductCategoriesSelectorBloc extends Bloc<ProductCategoriesSelectorEvent,
     on<ProductCategoriesSelectorSelected>(_onSelected);
   }
 
-  final ProductRepository productRepository;
+  final ProductsRepository productRepository;
 
   Future<void> _onStarted(
     ProductCategoriesSelectorStarted event,

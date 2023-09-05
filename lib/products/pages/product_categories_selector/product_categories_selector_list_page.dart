@@ -17,7 +17,7 @@ class ProductCategoriesSelectorListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final repository = context.read<ProductRepository>();
+    final repository = context.read<ProductsRepository>();
     final event = ProductCategoriesSelectorStarted(
       initialSelectedCategories: selectedCategories,
     );
