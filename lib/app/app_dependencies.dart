@@ -5,13 +5,17 @@ import 'package:todavenda/auth/bloc/auth_bloc.dart';
 import 'package:todavenda/auth/services/auth_service.dart';
 import 'package:todavenda/cart/bloc/cart_bloc.dart';
 import 'package:todavenda/clients/clients.dart';
+import 'package:todavenda/data/firebase/firebase.dart';
 import 'package:todavenda/data/mocks/mocks.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/sales.dart';
 
 injectRepositories() {
   return [
-    RepositoryProvider.value(value: AuthService()),
+    RepositoryProvider.value(
+      // ignore: unnecessary_cast
+      value: AuthServiceFirebase() as AuthService,
+    ),
     RepositoryProvider.value(
       // ignore: unnecessary_cast
       value: ProductsRepositoryMock() as ProductsRepository,
