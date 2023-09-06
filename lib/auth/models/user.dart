@@ -7,7 +7,7 @@ class AuthUser extends Equatable {
     required this.name,
     this.picture,
     this.googleUserData,
-    this.companies,
+    this.active,
   });
 
   final String? uuid;
@@ -15,7 +15,7 @@ class AuthUser extends Equatable {
   final String name;
   final String? picture;
   final String? googleUserData;
-  final List<dynamic>? companies;
+  final bool? active;
 
   @override
   List<Object?> get props => [uuid];
@@ -27,6 +27,7 @@ class AuthUser extends Equatable {
       'name': name,
       'picture': picture,
       'googleUserData': googleUserData,
+      'active': active,
     };
   }
 
@@ -38,7 +39,7 @@ class AuthUser extends Equatable {
       name: json['name'],
       picture: json['picture'],
       googleUserData: json['googleUserData'],
-      companies: json['companies'],
+      active: json['active'],
     );
   }
 
@@ -57,7 +58,6 @@ class AuthUser extends Equatable {
       name: name ?? this.name,
       picture: picture ?? this.picture,
       googleUserData: googleUserData ?? this.googleUserData,
-      companies: companies ?? this.companies,
     );
   }
 }

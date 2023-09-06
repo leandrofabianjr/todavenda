@@ -5,5 +5,5 @@ abstract class UsersRepository {
 
   Future<AuthUser?> getByEmail(String uuid);
 
-  Future<AuthUser?> login();
+  Future<AuthUser> login();
 }

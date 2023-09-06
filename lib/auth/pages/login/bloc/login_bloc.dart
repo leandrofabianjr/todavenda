@@ -21,13 +21,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       emit(LoginLoading());
       final user = await usersRepository.login();
-      if (user != null &&
-          user.companies != null &&
-          user.companies!.isNotEmpty) {
-        emit(LoginSuccess(user: user));
-      } else {
-        emit(const LoginException());
-      }
+      emit(LoginSuccess(user: user));
     } catch (ex) {
       emit(LoginException(ex: ex));
     }

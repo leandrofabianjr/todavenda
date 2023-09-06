@@ -31,10 +31,12 @@ class UsersRepositoryFirestore implements UsersRepository {
   @override
   Future<AuthUser> login() async {
     final googleUser = await authService.loginWithGoogle();
-    final user = await getByEmail(googleUser.email);
-    if (user != null) {
-      return user;
+    var user = await getByEmail(googleUser.email);
+    user ??= await createUser(googleUser);
+    if (user.active != true) {
+      await authService.logout();
+      throw Exception('Usuário não autorizado');
     }
-    return await createUser(googleUser);
+    return user;
   }
 }
