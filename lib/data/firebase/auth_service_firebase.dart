@@ -1,6 +1,8 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:todavenda/auth/services/auth_service.dart';
 import 'package:todavenda/auth/services/google_sign_in.dart';
+import 'package:todavenda/auth/services/services.dart';
 
 import '../../auth/models/user.dart';
 
@@ -11,6 +13,33 @@ extension on User {
       email: email ?? '',
       name: displayName ?? '',
       picture: photoURL,
+      googleUserData: jsonEncode({
+        'uid': uid,
+        'displayName': displayName,
+        'email': email,
+        'isEmailVerified': emailVerified,
+        'isAnonymous': isAnonymous,
+        'metadata': {
+          'creationTime': metadata.creationTime?.toString(),
+          'lastSignInTime': metadata.lastSignInTime?.toString(),
+        },
+        'phoneNumber': phoneNumber,
+        'photoURL': photoURL,
+        // 'providerData': providerData
+        //     .map(
+        //       (e) => {
+        //         'displayName': e.displayName,
+        //         'email': e.email,
+        //         'phoneNumber': e.phoneNumber,
+        //         'photoURL': e.photoURL,
+        //         'providerId': e.providerId,
+        //         'uid': e.uid,
+        //       },
+        //     )
+        //     .toList(),
+        'refreshToken': refreshToken,
+        'tenantId': tenantId,
+      }),
     );
   }
 }
@@ -31,9 +60,9 @@ class AuthServiceFirebase implements AuthService {
   }
 
   @override
-  Future<AuthUser?> loginWithGoogle() async {
+  Future<AuthUser> loginWithGoogle() async {
     final UserCredential userCredential = await googleSignIn();
-    return userCredential.user?.authUser;
+    return userCredential.user!.authUser;
   }
 
   @override

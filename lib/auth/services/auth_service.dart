@@ -5,7 +5,7 @@ abstract class AuthService {
 
   Stream<AuthUser?> currentUser();
 
-  Future<AuthUser?> loginWithGoogle();
+  Future<AuthUser> loginWithGoogle();
 
   Future<void> logout();
 }

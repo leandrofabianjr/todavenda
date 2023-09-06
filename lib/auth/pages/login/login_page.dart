@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/auth/bloc/auth_bloc.dart';
 import 'package:todavenda/auth/pages/login/bloc/login_bloc.dart';
-import 'package:todavenda/auth/services/auth_service.dart';
+import 'package:todavenda/auth/services/services.dart';
 import 'package:todavenda/commons/commons.dart';
 
 class LoginPage extends StatelessWidget {
@@ -12,7 +12,10 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginBloc(authService: context.read<AuthService>()),
+      create: (context) => LoginBloc(
+        authService: context.read<AuthService>(),
+        usersRepository: context.read<UsersRepository>(),
+      ),
       child: const LoginView(),
     );
   }
