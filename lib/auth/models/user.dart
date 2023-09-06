@@ -3,27 +3,26 @@ import 'package:equatable/equatable.dart';
 class AuthUser extends Equatable {
   const AuthUser({
     this.uuid,
-    this.googleUid,
     required this.email,
     required this.name,
     this.picture,
     this.googleUserData,
+    this.companies,
   });
 
   final String? uuid;
   final String email;
   final String name;
   final String? picture;
-  final String? googleUid;
   final String? googleUserData;
+  final List<dynamic>? companies;
 
   @override
-  List<Object?> get props => [uuid, googleUid, email, name, picture];
+  List<Object?> get props => [uuid];
 
   Map<String, dynamic> toJson() {
     return {
       'uuid': uuid,
-      'googleUid': googleUid,
       'email': email,
       'name': name,
       'picture': picture,
@@ -37,9 +36,9 @@ class AuthUser extends Equatable {
       uuid: json['uuid'],
       email: json['email'],
       name: json['name'],
-      googleUid: json['googleUid'],
       picture: json['picture'],
       googleUserData: json['googleUserData'],
+      companies: json['companies'],
     );
   }
 
@@ -50,14 +49,15 @@ class AuthUser extends Equatable {
     String? picture,
     String? googleUid,
     String? googleUserData,
+    List<dynamic>? companies,
   }) {
     return AuthUser(
       uuid: uuid ?? this.uuid,
       email: email ?? this.email,
       name: name ?? this.name,
-      googleUid: googleUid ?? this.googleUid,
       picture: picture ?? this.picture,
       googleUserData: googleUserData ?? this.googleUserData,
+      companies: companies ?? this.companies,
     );
   }
 }

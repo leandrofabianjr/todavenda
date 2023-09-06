@@ -9,7 +9,7 @@ import '../../auth/models/user.dart';
 extension on User {
   AuthUser get authUser {
     return AuthUser(
-      googleUid: uid,
+      uuid: uid,
       email: email ?? '',
       name: displayName ?? '',
       picture: photoURL,

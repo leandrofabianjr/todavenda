@@ -8,14 +8,10 @@ part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc({
-    required this.authService,
-    required this.usersRepository,
-  }) : super(LoginInitial()) {
+  LoginBloc({required this.usersRepository}) : super(LoginInitial()) {
     on<LoginWithGoogleRequested>(_onLoginWithGoogleRequested);
   }
 
-  final AuthService authService;
   final UsersRepository usersRepository;
 
   _onLoginWithGoogleRequested(
@@ -24,9 +20,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   ) async {
     try {
       emit(LoginLoading());
-      final googleUser = await authService.loginWithGoogle();
-      final user = await usersRepository.createOrUpdateByEmail(googleUser);
-      if (user != null) {
+      final user = await usersRepository.login();
+      if (user != null &&
+          user.companies != null &&
+          user.companies!.isNotEmpty) {
         emit(LoginSuccess(user: user));
       } else {
         emit(const LoginException());

@@ -10,14 +10,13 @@ import 'package:todavenda/sales/sales.dart';
 import 'app_bloc_observer.dart';
 
 injectRepositories() {
+  // ignore: unnecessary_cast
+  final authService = AuthServiceFirebase() as AuthService;
   return [
+    RepositoryProvider.value(value: authService),
     RepositoryProvider.value(
       // ignore: unnecessary_cast
-      value: AuthServiceFirebase() as AuthService,
-    ),
-    RepositoryProvider.value(
-      // ignore: unnecessary_cast
-      value: UsersRepositoryFirestore() as UsersRepository,
+      value: UsersRepositoryFirestore(authService) as UsersRepository,
     ),
     RepositoryProvider.value(
       // ignore: unnecessary_cast

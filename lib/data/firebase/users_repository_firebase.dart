@@ -1,27 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todavenda/auth/models/user.dart';
 import 'package:todavenda/auth/services/services.dart';
-import 'package:uuid/uuid.dart';
-
-const _uuid = Uuid();
 
 class UsersRepositoryFirestore implements UsersRepository {
+  UsersRepositoryFirestore(this.authService);
+
+  final AuthService authService;
+
   static const userCollectionPath = 'users';
 
   CollectionReference<AuthUser?> get userCollection =>
       FirebaseFirestore.instance.collection(userCollectionPath).withConverter(
-            fromFirestore: (snapshot, options) =>
-                AuthUser.fromJson(snapshot.data()),
-            toFirestore: (value, options) => value?.toJson() ?? {},
+            fromFirestore: (snapshot, _) => AuthUser.fromJson(snapshot.data()),
+            toFirestore: (value, _) => value?.toJson() ?? {},
           );
 
   @override
-  Future<AuthUser> createOrUpdate(AuthUser user) async {
-    final newUser = user.uuid == null ? user.copyWith(uuid: _uuid.v4()) : user;
-
-    await userCollection.doc(newUser.uuid).set(newUser);
-
-    return newUser;
+  Future<AuthUser> createUser(AuthUser user) async {
+    await userCollection.doc(user.uuid).set(user);
+    return user;
   }
 
   @override
@@ -32,9 +29,12 @@ class UsersRepositoryFirestore implements UsersRepository {
   }
 
   @override
-  Future<AuthUser?> createOrUpdateByEmail(AuthUser user) async {
-    final foundUser = await getByEmail(user.email);
-    final newUser = user.copyWith(uuid: foundUser?.uuid);
-    return createOrUpdate(newUser);
+  Future<AuthUser> login() async {
+    final googleUser = await authService.loginWithGoogle();
+    final user = await getByEmail(googleUser.email);
+    if (user != null) {
+      return user;
+    }
+    return await createUser(googleUser);
   }
 }
