@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/widgets/exception_widget.dart';
 import 'package:todavenda/commons/widgets/loading_widget.dart';
+import 'package:todavenda/companies/companies.dart';
 
 import '../../models/client.dart';
 import '../../services/clients_repository.dart';
@@ -13,9 +14,10 @@ class ClientListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final companyUuid = CompanySelectorBloc.getCompanyUuid(context);
     return BlocProvider(
       create: (context) => ClientListBloc(context.read<ClientsRepository>())
-        ..add(ClientListStarted()),
+        ..add(ClientListStarted(companyUuid: companyUuid)),
       child: const ClientListView(),
     );
   }
@@ -26,6 +28,7 @@ class ClientListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final companyUuid = CompanySelectorBloc.getCompanyUuid(context);
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -37,14 +40,20 @@ class ClientListView extends StatelessWidget {
               }
 
               if (state is ClientListLoaded) {
-                state.clients.map((p) => ClientListViewTile(p)).toList();
+                final clients = state.clients;
+
+                if (clients.isEmpty) {
+                  return const SliverFillRemaining(
+                    child: Center(child: Text('Não há clientes cadastrados')),
+                  );
+                }
 
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) => ClientListViewTile(
-                      state.clients[index],
+                      clients[index],
                     ),
-                    childCount: state.clients.length,
+                    childCount: clients.length,
                   ),
                 );
               }
@@ -59,10 +68,13 @@ class ClientListView extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () =>
-            context.push('/cadastros/clientes/cadastrar').then((value) {
-          context.read<ClientListBloc>().add(ClientListStarted());
-        }),
+        onPressed: () => context.push('/cadastros/clientes/cadastrar').then(
+          (value) {
+            context
+                .read<ClientListBloc>()
+                .add(ClientListStarted(companyUuid: companyUuid));
+          },
+        ),
         child: const Icon(Icons.add),
       ),
     );

@@ -15,7 +15,14 @@ class LoginPage extends StatelessWidget {
       create: (context) => LoginBloc(
         usersRepository: context.read<UsersRepository>(),
       ),
-      child: const LoginView(),
+      child: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthSuccess) {
+            context.go('/');
+          }
+        },
+        child: const LoginView(),
+      ),
     );
   }
 }
@@ -42,7 +49,6 @@ class LoginView extends StatelessWidget {
               listener: (context, state) {
                 if (state is LoginSuccess) {
                   context.read<AuthBloc>().add(AuthLogged(user: state.user));
-                  context.go('/');
                 }
               },
               builder: (context, state) {

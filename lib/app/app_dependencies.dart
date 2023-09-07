@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todavenda/auth/auth.dart';
 import 'package:todavenda/cart/bloc/cart_bloc.dart';
 import 'package:todavenda/clients/clients.dart';
+import 'package:todavenda/companies/companies.dart';
 import 'package:todavenda/data/data.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/sales.dart';
@@ -20,6 +21,10 @@ injectRepositories() {
     ),
     RepositoryProvider.value(
       // ignore: unnecessary_cast
+      value: CompaniesRepositoryFirestore() as CompaniesRepository,
+    ),
+    RepositoryProvider.value(
+      // ignore: unnecessary_cast
       value: ProductsRepositoryMock() as ProductsRepository,
     ),
     RepositoryProvider.value(
@@ -28,7 +33,7 @@ injectRepositories() {
     ),
     RepositoryProvider.value(
       // ignore: unnecessary_cast
-      value: ClientsRepositoryMock() as ClientsRepository,
+      value: ClientsRepositoryFirestore() as ClientsRepository,
     ),
   ];
 }
@@ -38,6 +43,11 @@ injectBlocProviders() {
     BlocProvider(
       create: (context) =>
           AuthBloc(context.read<AuthService>())..add(const AuthStarted()),
+    ),
+    BlocProvider(
+      create: (context) => CompanySelectorBloc(
+        context.read<CompaniesRepository>(),
+      ),
     ),
     BlocProvider(
       create: (context) => CartBloc(

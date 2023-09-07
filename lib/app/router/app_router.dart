@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/app/router/guards/auth_guard.dart';
-import 'package:todavenda/auth/pages/login/login_page.dart';
+import 'package:todavenda/auth/auth.dart';
 import 'package:todavenda/cart/pages/pages.dart';
 import 'package:todavenda/clients/pages/pages.dart';
 import 'package:todavenda/me/pages/me_page.dart';

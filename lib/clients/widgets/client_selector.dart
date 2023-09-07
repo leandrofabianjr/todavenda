@@ -28,7 +28,7 @@ class ClientSelector extends StatelessWidget {
               title: const Text('Selecione o cliente'),
               children: [
                 FutureBuilder(
-                  future: clientsRepository.loadClients(),
+                  future: clientsRepository.loadClients(companyUuid: ''),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       return ErrorWidget(snapshot.error!);

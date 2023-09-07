@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:todavenda/companies/widgets/company_selector_bar.dart';
 
 class AppTabBar extends StatelessWidget {
   const AppTabBar({
@@ -20,7 +21,8 @@ class AppTabBar extends StatelessWidget {
       child: Scaffold(
         body: navigationShell,
         appBar: AppBar(
-          toolbarHeight: 0,
+          toolbarHeight: 24,
+          title: const CompanySelectorBar(),
           bottom: TabBar(
             tabs: [
               Tab(

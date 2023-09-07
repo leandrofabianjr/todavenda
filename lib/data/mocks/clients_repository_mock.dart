@@ -9,18 +9,21 @@ const _uuid = Uuid();
 
 final mockClients = [
   Client(
+      companyUuid: '',
       uuid: _uuid.v4(),
       name: 'João',
       address: 'Rua dos Bobos, nº 0',
       phone: '41999999999',
       observation: 'É um cara legal'),
   Client(
+    companyUuid: '',
     uuid: _uuid.v4(),
     name: 'Maria',
     address: 'Rua Santo Amaro, nº 23',
     observation: 'Não tem telefone? 🤨',
   ),
   Client(
+    companyUuid: '',
     uuid: _uuid.v4(),
     name: 'José',
     phone: '5488888888',
@@ -39,16 +42,19 @@ class ClientsRepositoryMock implements ClientsRepository {
       _delayed(() => _clients.firstWhere((p) => p.uuid == uuid));
 
   @override
-  Future<List<Client>> loadClients() => _delayed(() => _clients);
+  Future<List<Client>> loadClients({required String companyUuid}) =>
+      _delayed(() => _clients);
 
   @override
   Future<Client> createClient({
+    required String companyUuid,
     required String name,
     String? phone,
     String? address,
     String? observation,
   }) async {
     final client = Client(
+      companyUuid: companyUuid,
       uuid: _uuid.v4(),
       name: name,
       phone: phone,
