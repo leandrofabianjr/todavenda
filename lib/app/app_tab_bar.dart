@@ -26,18 +26,26 @@ class AppTabBar extends StatelessWidget {
           bottom: TabBar(
             tabs: [
               Tab(
+                height: 48,
+                iconMargin: EdgeInsets.zero,
                 icon: const Icon(Icons.point_of_sale),
                 text: navigationShell.currentIndex == 0 ? 'Vender' : null,
               ),
               Tab(
+                height: 48,
+                iconMargin: EdgeInsets.zero,
                 icon: const Icon(Icons.history),
                 text: navigationShell.currentIndex == 1 ? 'Relatórios' : null,
               ),
               Tab(
+                height: 48,
+                iconMargin: EdgeInsets.zero,
                 icon: const Icon(Icons.app_registration),
                 text: navigationShell.currentIndex == 2 ? 'Cadastros' : null,
               ),
               Tab(
+                height: 48,
+                iconMargin: EdgeInsets.zero,
                 icon: const Icon(Icons.account_circle),
                 text: navigationShell.currentIndex == 3 ? 'Meus dados' : null,
               )
