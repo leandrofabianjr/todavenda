@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:todavenda/clients/clients.dart';
 import 'package:uuid/uuid.dart';
 
@@ -6,6 +7,8 @@ const _uuid = Uuid();
 
 class ClientsRepositoryFirestore implements ClientsRepository {
   static const clientCollectionPath = 'clients';
+
+  var _clients = <Client>[];
 
   CollectionReference<Client?> get clientCollection =>
       FirebaseFirestore.instance.collection(clientCollectionPath).withConverter(
@@ -30,6 +33,8 @@ class ClientsRepositoryFirestore implements ClientsRepository {
       observation: observation,
     );
     await clientCollection.doc(client.uuid).set(client);
+    _clients.add(client);
+    _clients.sortBy((e) => e.name);
     return client;
   }
 
@@ -41,14 +46,19 @@ class ClientsRepositoryFirestore implements ClientsRepository {
 
   @override
   Future<List<Client>> loadClients({required String companyUuid}) async {
-    final snapshot = await clientCollection
-        .where('companyUuid', isEqualTo: companyUuid)
-        .get();
-    return snapshot.docs.map((e) => e.data()!).toList();
+    if (_clients.isEmpty) {
+      final snapshot = await clientCollection
+          .where('companyUuid', isEqualTo: companyUuid)
+          .get();
+      _clients = snapshot.docs.map((e) => e.data()!).toList();
+      _clients.sortBy((e) => e.name);
+    }
+    return _clients;
   }
 
   @override
   Future<void> removeClient(String uuid) async {
     await clientCollection.doc(uuid).delete();
+    _clients.removeWhere((e) => e.uuid == uuid);
   }
 }
