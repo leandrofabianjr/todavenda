@@ -9,6 +9,7 @@ class SaleItem extends Equatable {
     required this.quantity,
     required this.unitPrice,
   });
+
   final String? uuid;
   final Product product;
   final int quantity;
@@ -21,10 +22,17 @@ class SaleItem extends Equatable {
 
   Map<String, dynamic> toJson() {
     return {
-      'uuid': uuid,
-      'product': product.toJson(),
+      'productUuid': product.uuid,
       'quantity': quantity,
       'unitPrice': unitPrice,
     };
+  }
+
+  static SaleItem fromJson(Map<String, dynamic> json, List<Product> products) {
+    return SaleItem(
+      product: products.firstWhere((c) => c.uuid == json['productUuid']),
+      quantity: json['quantity'],
+      unitPrice: json['unitPrice'],
+    );
   }
 }

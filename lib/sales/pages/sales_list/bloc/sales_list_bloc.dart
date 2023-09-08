@@ -18,7 +18,9 @@ class SalesListBloc extends Bloc<SalesListEvent, SalesListState> {
   ) async {
     emit(const SalesListLoading());
     try {
-      final sales = await salesRepository.loadSales();
+      final sales = await salesRepository.loadSales(
+        companyUuid: event.companyUuid,
+      );
       emit(SalesListLoaded(sales: sales));
     } catch (ex) {
       emit(SalesListException(ex));

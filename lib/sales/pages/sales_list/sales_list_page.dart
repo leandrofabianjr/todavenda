@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
+import 'package:todavenda/companies/companies.dart';
 import 'package:todavenda/sales/pages/sales_list/bloc/sales_list_bloc.dart';
 import 'package:todavenda/sales/sales.dart';
 
@@ -10,9 +11,10 @@ class SalesListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final companyUuid = CompanySelectorBloc.getCompanyUuid(context);
     return BlocProvider(
       create: (context) => SalesListBloc(context.read<SalesRepository>())
-        ..add(const SalesListRefreshed()),
+        ..add(SalesListRefreshed(companyUuid: companyUuid)),
       child: const SalesListView(),
     );
   }
@@ -23,6 +25,7 @@ class SalesListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final companyUuid = CompanySelectorBloc.getCompanyUuid(context);
     return Scaffold(
       appBar: AppBar(title: const Text('Vendas')),
       body: BlocBuilder<SalesListBloc, SalesListState>(
@@ -30,25 +33,26 @@ class SalesListView extends StatelessWidget {
           if (state is SalesListLoading) {
             return const LoadingWidget();
           }
+
           if (state is SalesListLoaded) {
             final sales = state.sales;
             return RefreshIndicator(
-              onRefresh: () async => context.read<SalesListBloc>().add(
-                    const SalesListRefreshed(),
-                  ),
-              child: ListView(
-                children: [
-                  ...sales
-                      .map(
-                        (sale) => SaleListTile(sale: sale),
-                      )
-                      .toList(),
-                ],
-              ),
+              onRefresh: () async => context
+                  .read<SalesListBloc>()
+                  .add(SalesListRefreshed(companyUuid: companyUuid)),
+              child: sales.isEmpty
+                  ? const Center(child: Text('Nenhuma venda realizada'))
+                  : ListView(
+                      children: sales
+                          .map((sale) => SaleListTile(sale: sale))
+                          .toList(),
+                    ),
             );
           }
 
-          return const ExceptionWidget();
+          return ExceptionWidget(
+            exception: state is SalesListException ? state.ex : null,
+          );
         },
       ),
     );

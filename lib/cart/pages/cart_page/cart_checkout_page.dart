@@ -95,7 +95,9 @@ class _CartCheckoutViewState extends State<CartCheckoutView> {
           ),
         ),
         floatingActionButton: FloatingActionButton.extended(
-          onPressed: () => context.read<CartBloc>().add(const CartConfirmed()),
+          onPressed: () => context
+              .read<CartBloc>()
+              .add(CartConfirmed(companyUuid: companyUuid)),
           label: const Text('Confirmar'),
           icon: const Icon(Icons.check),
         ),

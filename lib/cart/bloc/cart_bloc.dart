@@ -87,8 +87,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   ) async {
     try {
       emit(state.copyWith(status: CartStatus.loading));
+
       final sale = await salesRepository.createSale(
-          items: state.selectedItems, client: state.client);
+        companyUuid: event.companyUuid,
+        items: state.selectedItems,
+        client: state.client,
+      );
       emit(state.copyWith(status: CartStatus.payment, sale: sale));
     } catch (ex) {
       emit(state.copyWith(status: CartStatus.failure, exception: ex));
@@ -102,9 +106,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     try {
       emit(state.copyWith(status: CartStatus.loading));
       final sale = await salesRepository.newPayment(
-        state.sale!.uuid!,
-        event.type,
-        event.value,
+        companyUuid: event.companyUuid,
+        sale: state.sale!,
+        type: event.type,
+        value: event.value,
       );
       if (sale.isFullyPaid) {
         emit(state.copyWith(status: CartStatus.finalizing, sale: sale));

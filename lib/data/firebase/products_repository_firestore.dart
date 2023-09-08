@@ -113,6 +113,5 @@ class ProductsRepositoryFirestore implements ProductsRepository {
   Future<void> removeProductCategory(String uuid) async {
     await productCategoriesCollection.doc(uuid).delete();
     _productCategories.removeWhere((e) => e.uuid == uuid);
-    _productCategories.sortBy((e) => e.name);
   }
 }

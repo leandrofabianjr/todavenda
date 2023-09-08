@@ -1,33 +1,35 @@
-import 'dart:convert';
-
 import 'package:equatable/equatable.dart';
 import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/commons/commons.dart';
+import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/models/payment.dart';
 
 import 'sale_item.dart';
 
 class Sale extends Equatable {
   const Sale({
+    required this.companyUuid,
     this.uuid,
     required this.items,
     required this.total,
     this.payments = const [],
     this.client,
     this.createdAt,
+    this.amountPaid = 0,
   });
 
+  final String companyUuid;
   final String? uuid;
   final List<SaleItem> items;
   final double total;
   final List<Payment> payments;
   final Client? client;
   final DateTime? createdAt;
+  final double amountPaid;
 
   String get formattedCreatedAt => DateTimeFormatter.shortDateTime(createdAt);
 
   int get quantity => items.fold(0, (total, i) => total + i.quantity);
-  double get amountPaid => payments.fold(0.0, (total, p) => total + p.value);
   double get missingAmountPaid => total - amountPaid;
   bool get isFullyPaid => missingAmountPaid <= 0;
 
@@ -47,19 +49,61 @@ class Sale extends Equatable {
   String get formattedTotal => CurrencyFormatter().formatPtBr(total);
   String get formattedAmountPaid => CurrencyFormatter().formatPtBr(amountPaid);
 
+  double calculateAmountPaid() =>
+      payments.fold(0.0, (total, p) => total + p.value);
+
   Map<String, dynamic> toJson() {
     return {
+      'companyUuid': companyUuid,
       'uuid': uuid,
       'items': items.map((e) => e.toJson()).toList(),
       'total': total,
-      'payments': payments.map((e) => e.toJson()).toList(),
-      'client': client?.toJson(),
+      'paymentsUuids': payments.map((e) => e.uuid).toList(),
+      'clientUuid': client?.uuid,
       'createdAt': createdAt.toString(),
+      'amountPaid': calculateAmountPaid(),
     };
   }
 
-  @override
-  String toString() {
-    return jsonEncode(toJson());
+  static Sale? fromJson(
+    Map<String, dynamic>? json,
+    List<Product> products,
+    List<Client> clients,
+    List<Payment> payments,
+  ) {
+    if (json == null) return null;
+
+    return Sale(
+      companyUuid: json['companyUuid'],
+      uuid: json['uuid'],
+      items: (json['items'] as List)
+          .map((e) => SaleItem.fromJson(e, products))
+          .toList(),
+      payments: ((json['paymentsUuids'] ?? []) as List)
+          .map((e) => payments.firstWhere((c) => c.uuid == e))
+          .toList(),
+      total: json['total'],
+      client: json['clientUuid'] == null
+          ? null
+          : clients.firstWhere((c) => c.uuid == json['clientUuid']),
+      createdAt: DateTime.tryParse(json['createdAt']),
+      amountPaid: json['amountPaid'] ?? 0,
+    );
+  }
+
+  Sale copyWith({
+    List<Payment>? payments,
+    double? amountPaid,
+  }) {
+    return Sale(
+      companyUuid: companyUuid,
+      uuid: uuid,
+      items: items,
+      total: total,
+      payments: payments ?? this.payments,
+      client: client,
+      createdAt: createdAt,
+      amountPaid: amountPaid ?? this.amountPaid,
+    );
   }
 }

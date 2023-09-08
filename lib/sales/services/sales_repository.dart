@@ -5,11 +5,20 @@ import 'package:todavenda/sales/models/models.dart';
 abstract class SalesRepository {
   Future<Sale> loadSaleByUuid(String uuid);
 
-  Future<List<Sale>> loadSales();
+  Future<List<Sale>> loadSales({required String companyUuid});
 
-  Future<Sale> createSale({required Map<Product, int> items, Client? client});
+  Future<Sale> createSale({
+    required String companyUuid,
+    required Map<Product, int> items,
+    Client? client,
+  });
 
   Future<void> removeSale(String uuid);
 
-  Future<Sale> newPayment(String saleUuid, PaymentType type, double value);
+  Future<Sale> newPayment({
+    required String companyUuid,
+    required Sale sale,
+    required PaymentType type,
+    required double value,
+  });
 }

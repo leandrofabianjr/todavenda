@@ -32,7 +32,7 @@ class Product extends Equatable {
       'description': description,
       'price': price,
       if (categories != null && categories!.isNotEmpty)
-        'categories': (categories ?? []).map((e) => e.uuid).toList(),
+        'categoriesUuids': (categories ?? []).map((e) => e.uuid).toList(),
       'active': active,
     };
   }
@@ -45,9 +45,9 @@ class Product extends Equatable {
       uuid: json['uuid'],
       description: json['description'],
       price: json['price'],
-      categories: json['categories'] == null
+      categories: json['categoriesUuids'] == null
           ? null
-          : (json['categories'] as List)
+          : (json['categoriesUuids'] as List)
               .map((e) => categories.firstWhere((c) => c.uuid == e))
               .toList(),
       active: json['active'],

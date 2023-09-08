@@ -62,15 +62,22 @@ final class CartCheckouted extends CartEvent {
 }
 
 final class CartConfirmed extends CartEvent {
-  const CartConfirmed();
+  const CartConfirmed({required this.companyUuid});
+
+  final String companyUuid;
 
   @override
   List<Object> get props => [];
 }
 
 final class CartPaid extends CartEvent {
-  const CartPaid({required this.type, required this.value});
+  const CartPaid({
+    required this.companyUuid,
+    required this.type,
+    required this.value,
+  });
 
+  final String companyUuid;
   final PaymentType type;
   final double value;
 

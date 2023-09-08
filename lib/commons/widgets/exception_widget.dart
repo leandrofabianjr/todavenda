@@ -43,17 +43,20 @@ class ExceptionDataWidget extends StatelessWidget {
     required this.stackTrace,
   });
 
-  final Object exception;
+  final dynamic exception;
   final StackTrace stackTrace;
 
   @override
   Widget build(BuildContext context) {
+    var stackFrames = [];
+    try {
+      stackFrames = StackFrame.fromStackTrace(exception.stackTrace);
+    } catch (_) {}
+
     return Column(
       children: [
         Text(exception.toString()),
-        ...StackFrame.fromStackTrace(stackTrace)
-            .map((e) => Text(e.toString()))
-            .toList(),
+        ...stackFrames.map((e) => Text(e.toString())).toList(),
       ],
     );
   }
