@@ -33,6 +33,7 @@ class ProductFormBloc extends Bloc<ProductFormEvent, ProductFormState> {
 
     try {
       await productRepository.createProduct(
+        companyUuid: event.companyUuid,
         description: event.description,
         price: event.price,
         categories: event.categories,

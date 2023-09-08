@@ -6,13 +6,15 @@ sealed class ProductCategoryFormEvent extends Equatable {
 
 final class ProductCategoryFormSubmitted extends ProductCategoryFormEvent {
   const ProductCategoryFormSubmitted({
+    required this.companyUuid,
     required this.name,
     required this.description,
   });
 
+  final String companyUuid;
   final String name;
   final String? description;
 
   @override
-  List<Object?> get props => [name, description];
+  List<Object?> get props => [companyUuid, name, description];
 }

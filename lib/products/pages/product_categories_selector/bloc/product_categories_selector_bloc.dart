@@ -26,7 +26,8 @@ class ProductCategoriesSelectorBloc extends Bloc<ProductCategoriesSelectorEvent,
   ) async {
     emit(ProductCategoriesSelectorLoading());
     try {
-      final categories = await productRepository.loadProductCategories();
+      final categories = await productRepository.loadProductCategories(
+          companyUuid: event.companyUuid);
 
       var selecteds = (state is ProductCategoriesSelectorLoaded)
           ? (state as ProductCategoriesSelectorLoaded).selectedCategories

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/widgets/currency_field.dart';
 import 'package:todavenda/commons/widgets/exception_widget.dart';
 import 'package:todavenda/commons/widgets/loading_widget.dart';
+import 'package:todavenda/companies/companies.dart';
 
 import './bloc/product_form_bloc.dart';
 import '../../services/products_repository.dart';
@@ -45,6 +46,8 @@ class ProductFormView extends StatelessWidget {
             var price = state.price;
             var categories = state.categories;
 
+            final companyUuid = CompanySelectorBloc.getCompanyUuid(context);
+
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -74,6 +77,7 @@ class ProductFormView extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () {
                         final event = ProductFormSubmitted(
+                          companyUuid: companyUuid,
                           description: description,
                           price: price,
                           categories: categories,

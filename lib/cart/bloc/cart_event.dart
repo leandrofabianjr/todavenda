@@ -5,7 +5,9 @@ sealed class CartEvent extends Equatable {
 }
 
 final class CartStarted extends CartEvent {
-  const CartStarted();
+  const CartStarted({required this.companyUuid});
+
+  final String companyUuid;
 
   @override
   List<Object?> get props => [];

@@ -49,6 +49,6 @@ class ClientsRepositoryFirestore implements ClientsRepository {
 
   @override
   Future<void> removeClient(String uuid) async {
-    await clientCollection.doc().delete();
+    await clientCollection.doc(uuid).delete();
   }
 }

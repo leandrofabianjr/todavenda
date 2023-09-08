@@ -39,7 +39,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     try {
       emit(state.copyWith(status: CartStatus.loading));
 
-      final products = await productRepository.loadProducts();
+      final products =
+          await productRepository.loadProducts(companyUuid: event.companyUuid);
       final initialItems = state.items;
       final items = {
         for (var product in products)

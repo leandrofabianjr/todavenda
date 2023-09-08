@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/cart/cart.dart';
+import 'package:todavenda/companies/companies.dart';
 
 class CartFinalizingPage extends StatelessWidget {
   const CartFinalizingPage({super.key});
@@ -34,6 +35,7 @@ class CartFinalizingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final companyUuid = CompanySelectorBloc.getCompanyUuid(context);
     return Scaffold(
         body: Center(
             child: Column(
@@ -51,7 +53,7 @@ class CartFinalizingView extends StatelessWidget {
         const SizedBox(height: 40),
         ElevatedButton(
           onPressed: () {
-            context.read<CartBloc>().add(const CartStarted());
+            context.read<CartBloc>().add(CartStarted(companyUuid: companyUuid));
             context.go('/carrinho');
           },
           child: const Text('Iniciar nova venda'),

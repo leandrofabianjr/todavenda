@@ -5,6 +5,10 @@ sealed class ProductListEvent extends Equatable {
 }
 
 class ProductListStarted extends ProductListEvent {
+  const ProductListStarted({required this.companyUuid});
+
+  final String companyUuid;
+
   @override
   List<Object> get props => [];
 }

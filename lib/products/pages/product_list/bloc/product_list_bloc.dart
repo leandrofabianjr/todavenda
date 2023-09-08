@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../models/product.dart';
@@ -20,7 +21,8 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
   ) async {
     emit(ProductListLoading());
     try {
-      final productList = await productRepository.loadProducts();
+      final productList =
+          await productRepository.loadProducts(companyUuid: event.companyUuid);
       emit(ProductListLoaded(productList));
     } catch (ex) {
       emit(ProductListException(ex));

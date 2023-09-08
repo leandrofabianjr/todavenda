@@ -7,25 +7,36 @@ const _uuid = Uuid();
 
 final mockProductCategories = [
   ProductCategory(
-      uuid: _uuid.v4(), name: 'Padaria', description: 'Um monte de glúten'),
+    companyUuid: '',
+    uuid: _uuid.v4(),
+    name: 'Padaria',
+    description: 'Um monte de glúten',
+  ),
   ProductCategory(
-      uuid: _uuid.v4(), name: 'Bebidas', description: 'Líquidos pra beber'),
+    companyUuid: '',
+    uuid: _uuid.v4(),
+    name: 'Bebidas',
+    description: 'Líquidos pra beber',
+  ),
 ];
 
 final mockProducts = [
   Product(
+    companyUuid: '',
     uuid: _uuid.v4(),
     description: 'Pão de forma',
     price: 5.99,
     categories: [mockProductCategories[0]],
   ),
   Product(
+    companyUuid: '',
     uuid: _uuid.v4(),
     description: 'Café',
     price: 2.99,
     categories: [mockProductCategories[1]],
   ),
   Product(
+    companyUuid: '',
     uuid: _uuid.v4(),
     description: 'Água',
     price: 2,
@@ -46,19 +57,23 @@ class ProductsRepositoryMock implements ProductsRepository {
       _delayed(() => _products.firstWhere((p) => p.uuid == uuid));
 
   @override
-  Future<List<Product>> loadProducts() => _delayed(() => _products);
+  Future<List<Product>> loadProducts({required String companyUuid}) =>
+      _delayed(() => _products);
 
   @override
-  Future<List<ProductCategory>> loadProductCategories() =>
+  Future<List<ProductCategory>> loadProductCategories(
+          {required String companyUuid}) =>
       _delayed(() => _productCategories);
 
   @override
   Future<Product> createProduct({
+    required String companyUuid,
     required String description,
     required List<ProductCategory> categories,
     required double price,
   }) async {
     final product = Product(
+      companyUuid: companyUuid,
       uuid: _uuid.v4(),
       description: description,
       price: price,
@@ -74,10 +89,12 @@ class ProductsRepositoryMock implements ProductsRepository {
 
   @override
   Future<ProductCategory> createProductCategory({
+    required String companyUuid,
     required String name,
-    required String? description,
+    String? description,
   }) async {
     final category = ProductCategory(
+      companyUuid: companyUuid,
       uuid: _uuid.v4(),
       name: name,
       description: description,

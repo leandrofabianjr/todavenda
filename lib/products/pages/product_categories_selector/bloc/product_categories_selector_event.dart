@@ -7,10 +7,13 @@ sealed class ProductCategoriesSelectorEvent extends Equatable {
 final class ProductCategoriesSelectorStarted
     extends ProductCategoriesSelectorEvent {
   const ProductCategoriesSelectorStarted({
+    required this.companyUuid,
     required this.initialSelectedCategories,
   });
 
+  final String companyUuid;
   final List<ProductCategory> initialSelectedCategories;
+
   @override
   List<Object> get props => [];
 }

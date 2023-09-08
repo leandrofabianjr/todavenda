@@ -5,6 +5,7 @@ import 'package:todavenda/cart/bloc/cart_bloc.dart';
 import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/companies/companies.dart';
 import 'package:todavenda/data/data.dart';
+import 'package:todavenda/data/firebase/products_repository_firestore.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/sales.dart';
 
@@ -25,7 +26,7 @@ injectRepositories() {
     ),
     RepositoryProvider.value(
       // ignore: unnecessary_cast
-      value: ProductsRepositoryMock() as ProductsRepository,
+      value: ProductsRepositoryFirestore() as ProductsRepository,
     ),
     RepositoryProvider.value(
       // ignore: unnecessary_cast

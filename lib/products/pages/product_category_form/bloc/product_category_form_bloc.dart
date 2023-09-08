@@ -34,6 +34,7 @@ class ProductCategoryFormBloc
 
     try {
       await productRepository.createProductCategory(
+        companyUuid: event.companyUuid,
         name: event.name,
         description: event.description,
       );
