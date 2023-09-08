@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:collection/collection.dart';
 import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/sales.dart';
@@ -81,7 +80,6 @@ class SalesRepositoryFirestore implements SalesRepository {
     );
     await salesCollection.doc(sale.uuid).set(sale);
     _sales.add(sale);
-    _sales.sortBy((element) => element.createdAt!);
     return sale;
   }
 
@@ -129,5 +127,6 @@ class SalesRepositoryFirestore implements SalesRepository {
   @override
   Future<void> removeSale(String uuid) async {
     await salesCollection.doc(uuid).delete();
+    _sales.removeWhere((element) => element.uuid == uuid);
   }
 }

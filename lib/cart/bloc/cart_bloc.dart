@@ -20,6 +20,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<CartConfirmed>(_onConfirmed);
     on<CartPaid>(_onPaid);
     on<CartCleaned>(_onCleaned);
+    on<CartSaleRemoved>(_onSaleRemoved);
   }
 
   final ProductsRepository productRepository;
@@ -126,5 +127,25 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     Emitter<CartState> emit,
   ) async {
     emit(const CartState());
+  }
+
+  Future<void> _onSaleRemoved(
+    CartSaleRemoved event,
+    Emitter<CartState> emit,
+  ) async {
+    try {
+      emit(state.copyWith(status: CartStatus.loading));
+      if (state.sale!.calculateAmountPaid() > 0) {
+        emit(state.copyWith(
+          status: CartStatus.payment,
+          errorMessage: 'A venda já recebeu pagamentos e não pode ser excluída',
+        ));
+      } else {
+        await salesRepository.removeSale(state.sale!.uuid!);
+        emit(state.copyWith(status: CartStatus.checkout));
+      }
+    } catch (ex) {
+      emit(state.copyWith(status: CartStatus.failure, exception: ex));
+    }
   }
 }

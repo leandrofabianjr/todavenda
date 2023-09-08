@@ -137,7 +137,7 @@ class SalePaymentsReport extends StatelessWidget {
   Widget buildReport(ThemeData theme) {
     if (sale.payments.isEmpty) {
       return Text(
-        'Não há itens na venda',
+        'Não há pagamentos na venda',
         style: theme.textTheme.bodyLarge,
         textAlign: TextAlign.center,
       );

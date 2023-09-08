@@ -44,9 +44,11 @@ class SalesListView extends StatelessWidget {
                   ? const Center(child: Text('Nenhuma venda realizada'))
                   : ListView(
                       children: sales
-                          .map((sale) => SaleListTile(sale: sale))
-                          .toList(),
-                    ),
+                          .expand((sale) => [
+                                SaleListTile(sale: sale),
+                                const Divider(),
+                              ])
+                          .toList()),
             );
           }
 
@@ -71,11 +73,23 @@ class SaleListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return ListTile(
-      trailing: Text(
-        sale.formattedTotal,
-        style: theme.textTheme.titleSmall?.copyWith(
-          color: theme.colorScheme.secondary,
-        ),
+      trailing: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            sale.formattedTotal,
+            style: theme.textTheme.titleSmall?.copyWith(
+              color: theme.colorScheme.secondary,
+            ),
+          ),
+          if (sale.isNotFullyPaid)
+            Text(
+              "- ${sale.formattedTotal}",
+              style: theme.textTheme.titleSmall?.copyWith(
+                color: theme.colorScheme.error,
+              ),
+            ),
+        ],
       ),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -92,6 +106,9 @@ class SaleListTile extends StatelessWidget {
           ),
         ],
       ),
+      subtitle: sale.client == null
+          ? null
+          : Text(sale.client!.name, style: theme.textTheme.titleMedium),
       onTap: () => context.go('/relatorios/vendas/${sale.uuid}'),
     );
   }

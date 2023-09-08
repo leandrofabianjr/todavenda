@@ -20,13 +20,14 @@ final class CartState extends Equatable {
     this.exception,
     this.sale,
     this.client,
+    this.errorMessage,
   });
 
   final CartStatus status;
   final Map<Product, int> items;
   final Sale? sale;
   final Client? client;
-
+  final String? errorMessage;
   final Object? exception;
 
   int get totalQuantity => items.values.fold(0, (total, qtt) => total + qtt);
@@ -59,6 +60,7 @@ final class CartState extends Equatable {
     Object? exception,
     Sale? sale,
     Client? client,
+    String? errorMessage,
   }) {
     return CartState(
       status: status ?? this.status,
@@ -66,9 +68,17 @@ final class CartState extends Equatable {
       exception: exception ?? this.exception,
       sale: sale ?? this.sale,
       client: client ?? this.client,
+      errorMessage: errorMessage,
     );
   }
 
   @override
-  List<Object> get props => [status, items.hashCode];
+  List<Object?> get props => [
+        status,
+        items.hashCode,
+        sale,
+        client,
+        errorMessage,
+        exception,
+      ];
 }

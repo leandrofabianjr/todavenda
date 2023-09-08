@@ -112,11 +112,9 @@ class _CartCheckoutViewState extends State<CartCheckoutView> {
           },
           builder: (context, state) {
             switch (state.status) {
-              case CartStatus.loading:
-                return const LoadingWidget();
               case CartStatus.failure:
                 return ExceptionWidget(exception: state.exception);
-              default:
+              case CartStatus.checkout:
                 return ListView(
                   children: state.items.entries
                       .toList()
@@ -134,6 +132,8 @@ class _CartCheckoutViewState extends State<CartCheckoutView> {
                       )
                       .toList(),
                 );
+              default:
+                return const LoadingWidget();
             }
           },
         ),

@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:todavenda/sales/sales.dart';
 
@@ -20,6 +21,10 @@ class SalesListBloc extends Bloc<SalesListEvent, SalesListState> {
     try {
       final sales = await salesRepository.loadSales(
         companyUuid: event.companyUuid,
+      );
+      sales.sortByCompare(
+        (element) => element.createdAt!,
+        (a, b) => b.microsecondsSinceEpoch - a.microsecondsSinceEpoch,
       );
       emit(SalesListLoaded(sales: sales));
     } catch (ex) {

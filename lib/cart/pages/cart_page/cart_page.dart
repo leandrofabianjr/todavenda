@@ -107,11 +107,9 @@ class _CartViewState extends State<CartView> {
         },
         builder: (context, state) {
           switch (state.status) {
-            case CartStatus.loading:
-              return const LoadingWidget();
             case CartStatus.failure:
               return ExceptionWidget(exception: state.exception);
-            default:
+            case CartStatus.initial:
               return CartSelectorView(
                 items: state.items,
                 onAdded: (product) => context
@@ -121,6 +119,8 @@ class _CartViewState extends State<CartView> {
                     .read<CartBloc>()
                     .add(CartItemRemoved(product: product)),
               );
+            default:
+              return const LoadingWidget();
           }
         },
       ),

@@ -30,8 +30,9 @@ class Sale extends Equatable {
   String get formattedCreatedAt => DateTimeFormatter.shortDateTime(createdAt);
 
   int get quantity => items.fold(0, (total, i) => total + i.quantity);
-  double get missingAmountPaid => total - amountPaid;
+  double get missingAmountPaid => total - calculateAmountPaid();
   bool get isFullyPaid => missingAmountPaid <= 0;
+  bool get isNotFullyPaid => !isFullyPaid;
 
   @override
   List<Object?> get props => [uuid];
@@ -47,7 +48,10 @@ class Sale extends Equatable {
   }
 
   String get formattedTotal => CurrencyFormatter().formatPtBr(total);
-  String get formattedAmountPaid => CurrencyFormatter().formatPtBr(amountPaid);
+  String get formattedAmountPaid =>
+      CurrencyFormatter().formatPtBr(calculateAmountPaid());
+  String get formattedMissingAmountPaid =>
+      CurrencyFormatter().formatPtBr(missingAmountPaid);
 
   double calculateAmountPaid() =>
       payments.fold(0.0, (total, p) => total + p.value);

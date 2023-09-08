@@ -33,8 +33,7 @@ class _CartPaymentViewState extends State<CartPaymentView> {
     final companyUuid = CompanySelectorBloc.getCompanyUuid(context);
     return WillPopScope(
       onWillPop: () async {
-        context.read<CartBloc>().add(const CartCheckouted());
-        context.go('/carrinho/confirmacao');
+        context.read<CartBloc>().add(const CartSaleRemoved());
         return false;
       },
       child: Scaffold(
@@ -46,12 +45,21 @@ class _CartPaymentViewState extends State<CartPaymentView> {
             if (state.status == CartStatus.finalizing) {
               context.go('/carrinho/finalizado');
             }
+            if (state.status == CartStatus.checkout) {
+              context.go('/carrinho/confirmacao');
+            }
+            if (state.errorMessage != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.errorMessage!),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
           },
           builder: (context, state) {
             amountPaid = state.sale?.missingAmountPaid ?? 0;
             switch (state.status) {
-              case CartStatus.loading:
-                return const LoadingWidget();
               case CartStatus.failure:
                 return ExceptionWidget(exception: state.exception);
               case CartStatus.payment:
@@ -61,13 +69,32 @@ class _CartPaymentViewState extends State<CartPaymentView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        Row(
+                          children: [
+                            const Text('Faltam'),
+                            const SizedBox(width: 8),
+                            Text(
+                              state.sale!.formattedMissingAmountPaid.toString(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(color: Colors.red),
+                            ),
+                            const SizedBox(width: 8),
+                            const Text('de'),
+                            const SizedBox(width: 8),
+                            Text(state.sale!.formattedTotal.toString(),
+                                style: Theme.of(context).textTheme.titleMedium),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
                         CurrencyField(
                           decoration:
-                              const InputDecoration(labelText: 'Valor pago'),
+                              const InputDecoration(labelText: 'Valor a pagar'),
                           initialValue: amountPaid,
                           onChanged: (value) => amountPaid = value,
                         ),
-                        const SizedBox(height: 80),
+                        const SizedBox(height: 64),
                         ElevatedButton.icon(
                           onPressed: () => context.read<CartBloc>().add(
                                 CartPaid(
@@ -117,7 +144,7 @@ class _CartPaymentViewState extends State<CartPaymentView> {
                   ),
                 );
               default:
-                return const ExceptionWidget();
+                return const LoadingWidget();
             }
           },
         ),
