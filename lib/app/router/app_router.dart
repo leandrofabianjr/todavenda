@@ -33,7 +33,7 @@ final appRouterConfig = GoRouter(
     ),
     GoRoute(
       path: '/caixa',
-      builder: (context, state) => const FlowResumePage(),
+      builder: (context, state) => const FlowSummaryPage(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
