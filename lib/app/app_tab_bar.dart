@@ -28,7 +28,7 @@ class AppTabBar extends StatelessWidget {
               Tab(
                 height: 48,
                 iconMargin: EdgeInsets.zero,
-                icon: const Icon(Icons.point_of_sale),
+                icon: const Icon(Icons.shopping_cart_outlined),
                 text: navigationShell.currentIndex == 0 ? 'Vender' : null,
               ),
               Tab(

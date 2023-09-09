@@ -4,6 +4,7 @@ import 'package:todavenda/app/router/guards/auth_guard.dart';
 import 'package:todavenda/auth/auth.dart';
 import 'package:todavenda/cart/pages/pages.dart';
 import 'package:todavenda/clients/pages/pages.dart';
+import 'package:todavenda/flow/pages/pages.dart';
 import 'package:todavenda/me/pages/me_page.dart';
 import 'package:todavenda/products/pages/pages.dart';
 import 'package:todavenda/registers/pages/pages.dart';
@@ -29,6 +30,10 @@ final appRouterConfig = GoRouter(
     GoRoute(
       path: '/login',
       builder: (context, state) => const LoginPage(),
+    ),
+    GoRoute(
+      path: '/caixa',
+      builder: (context, state) => const FlowResumePage(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {

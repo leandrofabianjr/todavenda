@@ -155,6 +155,13 @@ class CartSelectorView extends StatelessWidget {
             ),
             centerTitle: true,
             pinned: false,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.point_of_sale),
+                color: Theme.of(context).colorScheme.primary,
+                onPressed: () => context.go('/caixa'),
+              ),
+            ],
           ),
           SliverList(
             delegate: SliverChildListDelegate(
