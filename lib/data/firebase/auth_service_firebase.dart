@@ -69,4 +69,25 @@ class AuthServiceFirebase implements AuthService {
   Future<void> logout() {
     return FirebaseAuth.instance.signOut();
   }
+
+  @override
+  Future<AuthUser> loginWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return credential.user!.authUser;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
+        throw const AuthServiceException('E-mail ou senha inválidos');
+      }
+      rethrow;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

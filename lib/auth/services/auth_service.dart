@@ -8,4 +8,15 @@ abstract class AuthService {
   Future<AuthUser> loginWithGoogle();
 
   Future<void> logout();
+
+  Future<AuthUser> loginWithEmail({
+    required String email,
+    required String password,
+  });
+}
+
+class AuthServiceException {
+  const AuthServiceException(this.message);
+
+  final String message;
 }

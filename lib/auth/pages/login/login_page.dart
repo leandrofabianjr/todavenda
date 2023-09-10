@@ -13,6 +13,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => LoginBloc(
+        authService: context.read<AuthService>(),
         usersRepository: context.read<UsersRepository>(),
       ),
       child: BlocListener<AuthBloc, AuthState>(
@@ -29,48 +30,90 @@ class LoginPage extends StatelessWidget {
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
-
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Toda Venda',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 80),
-            BlocConsumer<LoginBloc, LoginState>(
-              listener: (context, state) {
-                if (state is LoginSuccess) {
-                  context.read<AuthBloc>().add(AuthLogged(user: state.user));
-                }
-              },
-              builder: (context, state) {
-                if (state is LoginLoading) {
-                  return const LoadingWidget();
-                }
-                return Column(
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: () => context
-                          .read<LoginBloc>()
-                          .add(const LoginWithGoogleRequested()),
-                      icon: const Icon(Icons.g_mobiledata),
-                      label: const Text('Login com conta Google'),
-                    ),
-                    if (state is LoginException)
-                      const Text('Não foi possível fazer o login'),
-                  ],
-                );
-              },
-            )
-          ],
+      backgroundColor: colorScheme.primary,
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Toda Venda',
+                textAlign: TextAlign.center,
+                style: textTheme.displaySmall
+                    ?.copyWith(color: colorScheme.onPrimary),
+              ),
+              const SizedBox(height: 32.0),
+              Card(
+                color: colorScheme.onPrimary,
+                margin: const EdgeInsets.all(16.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: BlocConsumer<LoginBloc, LoginState>(
+                    listener: (context, state) {
+                      if (state.status == LoginStatus.success) {
+                        context
+                            .read<AuthBloc>()
+                            .add(AuthLogged(user: state.user!));
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state.status == LoginStatus.loading) {
+                        return const LoadingWidget();
+                      }
+
+                      var email = state.email;
+                      var password = state.password;
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          TextField(
+                            controller: TextEditingController(text: email),
+                            decoration: const InputDecoration(
+                              label: Text('E-mail'),
+                            ),
+                            onChanged: (value) => email = value,
+                          ),
+                          TextField(
+                            controller: TextEditingController(text: password),
+                            decoration: const InputDecoration(
+                              label: Text('Senha'),
+                            ),
+                            onChanged: (value) => password = value,
+                          ),
+                          const SizedBox(height: 16.0),
+                          if (state.status == LoginStatus.failure)
+                            Text(
+                              state.errorMessage!,
+                              textAlign: TextAlign.center,
+                              style: textTheme.bodyLarge?.copyWith(
+                                color: colorScheme.error,
+                              ),
+                            ),
+                          const SizedBox(height: 8.0),
+                          TextButton(
+                            onPressed: () => context.read<LoginBloc>().add(
+                                  LoginWithEmail(
+                                    email: email,
+                                    password: password,
+                                  ),
+                                ),
+                            child: const Text('Entrar'),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
