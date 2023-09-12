@@ -1,38 +1,38 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:todavenda/clients/clients.dart';
+import 'package:todavenda/data/firebase/firestore_repository.dart';
 import 'package:uuid/uuid.dart';
 
 const _uuid = Uuid();
 
-class ClientsRepositoryFirestore implements ClientsRepository {
-  static const clientCollectionPath = 'clients';
+class ClientsRepositoryFirestore extends FirestoreRepository<Client>
+    implements ClientsRepository {
+  ClientsRepositoryFirestore(String companyUuid)
+      : super(companyUuid: companyUuid, resourcePath: 'clients');
 
-  var _clients = <Client>[];
+  List<Client> _clients = [];
 
-  CollectionReference<Client?> get clientCollection =>
-      FirebaseFirestore.instance.collection(clientCollectionPath).withConverter(
-            fromFirestore: (snapshot, _) => Client.fromJson(snapshot.data()),
-            toFirestore: (value, _) => value?.toJson() ?? {},
-          );
+  @override
+  Client fromJson(Map<String, dynamic> json) => Client.fromJson(json);
+
+  @override
+  Map<String, dynamic> toJson(Client value) => value.toJson();
 
   @override
   Future<Client> createClient({
-    required String companyUuid,
     required String name,
     String? phone,
     String? address,
     String? observation,
   }) async {
     final client = Client(
-      companyUuid: companyUuid,
       uuid: _uuid.v4(),
       name: name,
       phone: phone,
       address: address,
       observation: observation,
     );
-    await clientCollection.doc(client.uuid).set(client);
+    await collection.doc(client.uuid).set(client);
     _clients.add(client);
     _clients.sortBy((e) => e.name);
     return client;
@@ -40,17 +40,15 @@ class ClientsRepositoryFirestore implements ClientsRepository {
 
   @override
   Future<Client> loadClientByUuid(String uuid) async {
-    final client = await clientCollection.doc(uuid).get();
+    final client = await collection.doc(uuid).get();
     return client.data()!;
   }
 
   @override
-  Future<List<Client>> loadClients({required String companyUuid}) async {
+  Future<List<Client>> loadClients() async {
     if (_clients.isEmpty) {
-      final snapshot = await clientCollection
-          .where('companyUuid', isEqualTo: companyUuid)
-          .get();
-      _clients = snapshot.docs.map((e) => e.data()!).toList();
+      final snapshot = await collection.get();
+      _clients = snapshot.docs.map((e) => e.data()).toList();
       _clients.sortBy((e) => e.name);
     }
     return _clients;
@@ -58,7 +56,12 @@ class ClientsRepositoryFirestore implements ClientsRepository {
 
   @override
   Future<void> removeClient(String uuid) async {
-    await clientCollection.doc(uuid).delete();
+    await collection.doc(uuid).delete();
     _clients.removeWhere((e) => e.uuid == uuid);
   }
+
+  @override
+  Future<List<Client>> searchClients({required String term}) async => _clients
+      .where((p) => p.name.contains(RegExp(term, caseSensitive: false)))
+      .toList();
 }

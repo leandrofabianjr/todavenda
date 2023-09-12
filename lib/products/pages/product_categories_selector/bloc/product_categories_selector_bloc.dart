@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../products.dart';
+import '../../../models/product_category.dart';
+import '../../../services/product_categories_repository.dart';
 
 part 'product_categories_selector_event.dart';
 part 'product_categories_selector_state.dart';
@@ -11,14 +12,14 @@ part 'product_categories_selector_state.dart';
 class ProductCategoriesSelectorBloc extends Bloc<ProductCategoriesSelectorEvent,
     ProductCategoriesSelectorState> {
   ProductCategoriesSelectorBloc(
-    this.productRepository,
+    this.productCategoriesRepository,
   ) : super(ProductCategoriesSelectorLoading()) {
     on<ProductCategoriesSelectorStarted>(_onStarted);
     on<ProductCategoriesSelectorSubmitted>(_onSubmitted);
     on<ProductCategoriesSelectorSelected>(_onSelected);
   }
 
-  final ProductsRepository productRepository;
+  final ProductCategoriesRepository productCategoriesRepository;
 
   Future<void> _onStarted(
     ProductCategoriesSelectorStarted event,
@@ -26,8 +27,7 @@ class ProductCategoriesSelectorBloc extends Bloc<ProductCategoriesSelectorEvent,
   ) async {
     emit(ProductCategoriesSelectorLoading());
     try {
-      final categories = await productRepository.loadProductCategories(
-          companyUuid: event.companyUuid);
+      final categories = await productCategoriesRepository.load();
 
       var selecteds = (state is ProductCategoriesSelectorLoaded)
           ? (state as ProductCategoriesSelectorLoaded).selectedCategories

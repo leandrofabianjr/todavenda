@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/clients/widgets/client_selector.dart';
 import 'package:todavenda/commons/commons.dart';
-import 'package:todavenda/companies/companies.dart';
 
 import '../../cart.dart';
 import '../../widgets/cart_list_tile.dart';
@@ -51,10 +50,9 @@ class _CartCheckoutViewState extends State<CartCheckoutView> {
 
   @override
   Widget build(BuildContext context) {
-    final companyUuid = CompanySelectorBloc.getCompanyUuid(context);
     return WillPopScope(
       onWillPop: () async {
-        context.read<CartBloc>().add(CartStarted(companyUuid: companyUuid));
+        context.read<CartBloc>().add(const CartStarted());
         context.go('/carrinho');
         return false;
       },
@@ -95,9 +93,7 @@ class _CartCheckoutViewState extends State<CartCheckoutView> {
           ),
         ),
         floatingActionButton: FloatingActionButton.extended(
-          onPressed: () => context
-              .read<CartBloc>()
-              .add(CartConfirmed(companyUuid: companyUuid)),
+          onPressed: () => context.read<CartBloc>().add(const CartConfirmed()),
           label: const Text('Confirmar'),
           icon: const Icon(Icons.check),
         ),

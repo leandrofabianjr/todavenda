@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/clients/widgets/client_selector.dart';
 import 'package:todavenda/commons/commons.dart';
-import 'package:todavenda/companies/companies.dart';
 import 'package:todavenda/products/products.dart';
 
 import '../../cart.dart';
@@ -52,8 +51,7 @@ class _CartViewState extends State<CartView> {
 
   @override
   void initState() {
-    final companyUuid = CompanySelectorBloc.getCompanyUuid(context);
-    context.read<CartBloc>().add(CartStarted(companyUuid: companyUuid));
+    context.read<CartBloc>().add(const CartStarted());
     super.initState();
   }
 
@@ -142,10 +140,8 @@ class CartSelectorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final companyUuid = CompanySelectorBloc.getCompanyUuid(context);
     return RefreshIndicator(
-      onRefresh: () async =>
-          context.read<CartBloc>().add(CartStarted(companyUuid: companyUuid)),
+      onRefresh: () async => context.read<CartBloc>().add(const CartStarted()),
       child: CustomScrollView(
         slivers: [
           SliverAppBar(

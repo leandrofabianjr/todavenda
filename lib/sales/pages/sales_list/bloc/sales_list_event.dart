@@ -5,9 +5,7 @@ sealed class SalesListEvent extends Equatable {
 }
 
 class SalesListRefreshed extends SalesListEvent {
-  const SalesListRefreshed({required this.companyUuid});
-
-  final String companyUuid;
+  const SalesListRefreshed();
 
   @override
   List<Object?> get props => [];

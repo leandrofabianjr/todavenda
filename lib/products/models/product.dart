@@ -5,7 +5,6 @@ import 'product_category.dart';
 
 class Product extends Equatable {
   const Product({
-    required this.companyUuid,
     this.uuid,
     required this.description,
     required this.price,
@@ -13,7 +12,6 @@ class Product extends Equatable {
     this.active = true,
   });
 
-  final String companyUuid;
   final String? uuid;
   final String description;
   final double price;
@@ -27,7 +25,6 @@ class Product extends Equatable {
 
   Map<String, dynamic> toJson() {
     return {
-      'companyUuid': companyUuid,
       if (uuid != null) 'uuid': uuid,
       'description': description,
       'price': price,
@@ -37,11 +34,9 @@ class Product extends Equatable {
     };
   }
 
-  static Product? fromJson(
-      Map<String, dynamic>? json, List<ProductCategory> categories) {
-    if (json == null) return null;
+  static Product fromJson(
+      Map<String, dynamic> json, List<ProductCategory> categories) {
     return Product(
-      companyUuid: json['companyUuid'],
       uuid: json['uuid'],
       description: json['description'],
       price: json['price'],

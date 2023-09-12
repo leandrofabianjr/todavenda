@@ -30,7 +30,6 @@ class ClientFormBloc extends Bloc<ClientFormEvent, ClientFormState> {
 
     try {
       await clientsRepository.createClient(
-        companyUuid: event.companyUuid,
         name: event.name,
         phone: event.phone,
         address: event.address,

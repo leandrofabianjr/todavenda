@@ -5,6 +5,7 @@ import 'package:todavenda/auth/bloc/auth_bloc.dart';
 import 'package:todavenda/auth/pages/login/bloc/login_bloc.dart';
 import 'package:todavenda/auth/services/services.dart';
 import 'package:todavenda/commons/commons.dart';
+import 'package:todavenda/commons/widgets/password_text_field.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -14,7 +15,6 @@ class LoginPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => LoginBloc(
         authService: context.read<AuthService>(),
-        usersRepository: context.read<UsersRepository>(),
       ),
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -80,11 +80,8 @@ class LoginView extends StatelessWidget {
                             ),
                             onChanged: (value) => email = value,
                           ),
-                          TextField(
-                            controller: TextEditingController(text: password),
-                            decoration: const InputDecoration(
-                              label: Text('Senha'),
-                            ),
+                          PasswordTextField(
+                            initialValue: password,
                             onChanged: (value) => password = value,
                           ),
                           const SizedBox(height: 16.0),
@@ -99,7 +96,7 @@ class LoginView extends StatelessWidget {
                           const SizedBox(height: 8.0),
                           TextButton(
                             onPressed: () => context.read<LoginBloc>().add(
-                                  LoginWithEmail(
+                                  LoginSubmitted(
                                     email: email,
                                     password: password,
                                   ),

@@ -8,7 +8,6 @@ import 'sale_item.dart';
 
 class Sale extends Equatable {
   const Sale({
-    required this.companyUuid,
     this.uuid,
     required this.items,
     required this.total,
@@ -18,7 +17,6 @@ class Sale extends Equatable {
     this.amountPaid = 0,
   });
 
-  final String companyUuid;
   final String? uuid;
   final List<SaleItem> items;
   final double total;
@@ -58,7 +56,6 @@ class Sale extends Equatable {
 
   Map<String, dynamic> toJson() {
     return {
-      'companyUuid': companyUuid,
       'uuid': uuid,
       'items': items.map((e) => e.toJson()).toList(),
       'total': total,
@@ -69,16 +66,13 @@ class Sale extends Equatable {
     };
   }
 
-  static Sale? fromJson(
-    Map<String, dynamic>? json,
+  static Sale fromJson(
+    Map<String, dynamic> json,
     List<Product> products,
     List<Client> clients,
     List<Payment> payments,
   ) {
-    if (json == null) return null;
-
     return Sale(
-      companyUuid: json['companyUuid'],
       uuid: json['uuid'],
       items: (json['items'] as List)
           .map((e) => SaleItem.fromJson(e, products))
@@ -100,7 +94,6 @@ class Sale extends Equatable {
     double? amountPaid,
   }) {
     return Sale(
-      companyUuid: companyUuid,
       uuid: uuid,
       items: items,
       total: total,

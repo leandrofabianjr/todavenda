@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/widgets/exception_widget.dart';
 import 'package:todavenda/commons/widgets/loading_widget.dart';
-import 'package:todavenda/companies/bloc/company_selector_bloc.dart';
 
+import '../../models/product_category.dart';
 import '../../pages/product_categories_selector/bloc/product_categories_selector_bloc.dart';
-import '../../products.dart';
+import '../../services/product_categories_repository.dart';
 
 class ProductCategoriesSelectorListPage extends StatelessWidget {
   const ProductCategoriesSelectorListPage({
@@ -18,10 +18,8 @@ class ProductCategoriesSelectorListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final companyUuid = CompanySelectorBloc.getCompanyUuid(context);
-    final repository = context.read<ProductsRepository>();
+    final repository = context.read<ProductCategoriesRepository>();
     final event = ProductCategoriesSelectorStarted(
-      companyUuid: companyUuid,
       initialSelectedCategories: selectedCategories,
     );
     return BlocProvider(
@@ -37,7 +35,6 @@ class ProductCategoriesSelectorListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final companyUuid = CompanySelectorBloc.getCompanyUuid(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Categorias de Produtos'),
@@ -48,9 +45,8 @@ class ProductCategoriesSelectorListView extends StatelessWidget {
                 .then((value) {
               context
                   .read<ProductCategoriesSelectorBloc>()
-                  .add(ProductCategoriesSelectorStarted(
-                    companyUuid: companyUuid,
-                    initialSelectedCategories: const [],
+                  .add(const ProductCategoriesSelectorStarted(
+                    initialSelectedCategories: [],
                   ));
             }),
             icon: const Icon(Icons.add),

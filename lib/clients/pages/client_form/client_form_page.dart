@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/widgets/exception_widget.dart';
 import 'package:todavenda/commons/widgets/loading_widget.dart';
-import 'package:todavenda/companies/companies.dart';
 
 import '../../services/clients_repository.dart';
 import 'bloc/client_form_bloc.dart';
@@ -25,7 +24,6 @@ class ClientFormView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final companyUuid = CompanySelectorBloc.getCompanyUuid(context);
     return Scaffold(
       appBar: AppBar(title: const Text('Novo cliente')),
       body: BlocConsumer<ClientFormBloc, ClientFormState>(
@@ -93,7 +91,6 @@ class ClientFormView extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () {
                         final event = ClientFormSubmitted(
-                          companyUuid: companyUuid,
                           name: name,
                           phone: phone,
                           address: address,

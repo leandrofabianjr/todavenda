@@ -1,9 +1,8 @@
 import 'package:equatable/equatable.dart';
 
 class Company extends Equatable {
-  const Company({required this.uuid, required this.name});
+  const Company({required this.name});
 
-  final String uuid;
   final String name;
 
   @override
@@ -11,14 +10,12 @@ class Company extends Equatable {
 
   Map<String, dynamic> toJson() {
     return {
-      'uuid': uuid,
       'name': name,
     };
   }
 
   factory Company.fromJson(Map<String, dynamic> json) {
     return Company(
-      uuid: json['uuid'],
       name: json['name'],
     );
   }

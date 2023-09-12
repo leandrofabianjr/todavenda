@@ -20,8 +20,7 @@ class ClientListBloc extends Bloc<ClientListEvent, ClientListState> {
   ) async {
     emit(ClientListLoading());
     try {
-      final clientList =
-          await clientsRepository.loadClients(companyUuid: event.companyUuid);
+      final clientList = await clientsRepository.loadClients();
       emit(ClientListLoaded(clientList));
     } catch (ex) {
       emit(ClientListException(ex));

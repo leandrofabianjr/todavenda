@@ -10,12 +10,8 @@ sealed class CompanySelectorState extends Equatable {
 final class CompanySelectorInitial extends CompanySelectorState {}
 
 final class CompanySelectorSuccess extends CompanySelectorState {
-  const CompanySelectorSuccess({
-    required this.companies,
-    required this.company,
-  });
+  const CompanySelectorSuccess({required this.company});
 
-  final List<Company> companies;
   final Company company;
 }
 

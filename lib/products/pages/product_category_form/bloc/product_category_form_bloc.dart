@@ -2,19 +2,19 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:todavenda/commons/validators.dart';
 
-import '../../../products.dart';
+import '../../../services/product_categories_repository.dart';
 
 part 'product_category_form_event.dart';
 part 'product_category_form_state.dart';
 
 class ProductCategoryFormBloc
     extends Bloc<ProductCategoryFormEvent, ProductCategoryFormState> {
-  ProductCategoryFormBloc(this.productRepository)
+  ProductCategoryFormBloc(this.productCategoriesRepository)
       : super(const ProductCategoryFormEditing()) {
     on<ProductCategoryFormSubmitted>(_onFormSubmitted);
   }
 
-  final ProductsRepository productRepository;
+  final ProductCategoriesRepository productCategoriesRepository;
 
   void _onFormSubmitted(
     ProductCategoryFormSubmitted event,
@@ -33,8 +33,7 @@ class ProductCategoryFormBloc
     emit(ProductCategoryFormSubmitting());
 
     try {
-      await productRepository.createProductCategory(
-        companyUuid: event.companyUuid,
+      await productCategoriesRepository.create(
         name: event.name,
         description: event.description,
       );

@@ -40,8 +40,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     try {
       emit(state.copyWith(status: CartStatus.loading));
 
-      final products =
-          await productRepository.loadProducts(companyUuid: event.companyUuid);
+      final products = await productRepository.loadProducts();
       final initialItems = state.items;
       final items = {
         for (var product in products)
@@ -90,7 +89,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       emit(state.copyWith(status: CartStatus.loading));
 
       final sale = await salesRepository.createSale(
-        companyUuid: event.companyUuid,
         items: state.selectedItems,
         client: state.client,
       );
@@ -107,7 +105,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     try {
       emit(state.copyWith(status: CartStatus.loading));
       final sale = await salesRepository.newPayment(
-        companyUuid: event.companyUuid,
         sale: state.sale!,
         type: event.type,
         value: event.value,

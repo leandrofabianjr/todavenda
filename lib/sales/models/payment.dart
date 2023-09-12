@@ -34,14 +34,12 @@ extension PaymenTypeX on PaymentType {
 
 class Payment extends Equatable {
   const Payment({
-    required this.companyUuid,
     this.uuid,
     required this.type,
     required this.value,
     this.createdAt,
   });
 
-  final String companyUuid;
   final String? uuid;
   final PaymentType type;
   final double value;
@@ -54,7 +52,6 @@ class Payment extends Equatable {
 
   Map<String, dynamic> toJson() {
     return {
-      'companyUuid': companyUuid,
       'uuid': uuid,
       'type': type.value,
       'value': value,
@@ -62,11 +59,8 @@ class Payment extends Equatable {
     };
   }
 
-  static Payment? fromJson(Map<String, dynamic>? json) {
-    if (json == null) return null;
-
+  static Payment fromJson(Map<String, dynamic> json) {
     return Payment(
-      companyUuid: json['companyUuid'],
       uuid: json['uuid'],
       type: PaymenTypeX.fromValue(json['type']),
       value: json['value'],

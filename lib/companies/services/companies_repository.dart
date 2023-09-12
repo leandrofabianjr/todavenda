@@ -1,5 +1,5 @@
-import '../models/Company.dart';
+import '../models/company.dart';
 
 abstract class CompaniesRepository {
-  Future<List<Company>> loadByUser({required String userUuid});
+  Future<Company> load();
 }

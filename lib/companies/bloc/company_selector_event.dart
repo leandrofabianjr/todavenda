@@ -8,7 +8,5 @@ sealed class CompanySelectorEvent extends Equatable {
 }
 
 class CompanySelectorStarted extends CompanySelectorEvent {
-  const CompanySelectorStarted({required this.user});
-
-  final AuthUser user;
+  const CompanySelectorStarted();
 }

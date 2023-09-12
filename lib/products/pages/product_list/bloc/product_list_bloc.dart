@@ -20,8 +20,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
   ) async {
     emit(ProductListLoading());
     try {
-      final productList =
-          await productRepository.loadProducts(companyUuid: event.companyUuid);
+      final productList = await productRepository.loadProducts();
       emit(ProductListLoaded(productList));
     } catch (ex) {
       emit(ProductListException(ex));

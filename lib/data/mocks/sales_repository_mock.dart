@@ -12,21 +12,18 @@ const _uuid = Uuid();
 
 final mockPayments = [
   Payment(
-    companyUuid: '',
     uuid: _uuid.v4(),
     type: PaymentType.cash,
     value: 17.95,
     createdAt: DateTime(2023, 8, 31, 14, 39, 23),
   ),
   Payment(
-    companyUuid: '',
     uuid: _uuid.v4(),
     type: PaymentType.cash,
     value: 1.75,
     createdAt: DateTime(2023, 9, 1, 11, 20, 14),
   ),
   Payment(
-    companyUuid: '',
     uuid: _uuid.v4(),
     type: PaymentType.pix,
     value: 2.25,
@@ -57,7 +54,6 @@ final mockSaleItems = [
 
 final mockSales = [
   Sale(
-    companyUuid: '',
     uuid: _uuid.v4(),
     items: mockSaleItems.sublist(0, 2),
     total: mockSaleItems
@@ -68,7 +64,6 @@ final mockSales = [
     createdAt: DateTime(2023, 8, 31, 14, 38, 23),
   ),
   Sale(
-    companyUuid: '',
     uuid: _uuid.v4(),
     items: mockSaleItems.sublist(1, 2),
     total: mockSaleItems
@@ -89,7 +84,6 @@ class SalesRepositoryMock implements SalesRepository {
 
   @override
   Future<Sale> createSale({
-    required String companyUuid,
     required Map<Product, int> items,
     Client? client,
   }) async {
@@ -109,7 +103,6 @@ class SalesRepositoryMock implements SalesRepository {
       },
     );
     final sale = Sale(
-      companyUuid: companyUuid,
       uuid: _uuid.v4(),
       items: saleItems,
       total: saleItems.fold(0, (total, i) => total + i.unitPrice * i.quantity),
@@ -126,8 +119,7 @@ class SalesRepositoryMock implements SalesRepository {
   }
 
   @override
-  Future<List<Sale>> loadSales({required String companyUuid}) =>
-      _delayed(() => _sales);
+  Future<List<Sale>> loadSales() => _delayed(() => _sales);
 
   @override
   Future<void> removeSale(String uuid) =>
@@ -135,13 +127,11 @@ class SalesRepositoryMock implements SalesRepository {
 
   @override
   Future<Sale> newPayment({
-    required String companyUuid,
     required Sale sale,
     required PaymentType type,
     required double value,
   }) async {
     final payment = Payment(
-      companyUuid: companyUuid,
       uuid: _uuid.v4(),
       type: type,
       value: value,
@@ -152,7 +142,6 @@ class SalesRepositoryMock implements SalesRepository {
     final saleIndex = _sales.indexWhere((s) => s.uuid == sale.uuid);
 
     final newSale = Sale(
-      companyUuid: companyUuid,
       uuid: sale.uuid,
       items: sale.items,
       total: sale.total,

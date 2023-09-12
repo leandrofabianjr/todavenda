@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:todavenda/auth/services/google_sign_in.dart';
 import 'package:todavenda/auth/services/services.dart';
 
 import '../../auth/models/user.dart';
@@ -57,12 +56,6 @@ class AuthServiceFirebase implements AuthService {
         return null;
       }
     });
-  }
-
-  @override
-  Future<AuthUser> loginWithGoogle() async {
-    final UserCredential userCredential = await googleSignIn();
-    return userCredential.user!.authUser;
   }
 
   @override

@@ -8,16 +8,14 @@ part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc({required this.authService, required this.usersRepository})
-      : super(const LoginState()) {
-    on<LoginWithEmail>(_onLoginWithEmail);
+  LoginBloc({required this.authService}) : super(const LoginState()) {
+    on<LoginSubmitted>(_onLoginWithEmail);
   }
 
   final AuthService authService;
-  final UsersRepository usersRepository;
 
   _onLoginWithEmail(
-    LoginWithEmail event,
+    LoginSubmitted event,
     Emitter<LoginState> emit,
   ) async {
     try {

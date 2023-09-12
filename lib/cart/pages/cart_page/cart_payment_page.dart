@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
-import 'package:todavenda/companies/companies.dart';
 import 'package:todavenda/sales/models/models.dart';
 
 import '../../cart.dart';
@@ -30,7 +29,6 @@ class _CartPaymentViewState extends State<CartPaymentView> {
   @override
   Widget build(BuildContext context) {
     double amountPaid;
-    final companyUuid = CompanySelectorBloc.getCompanyUuid(context);
     return WillPopScope(
       onWillPop: () async {
         context.read<CartBloc>().add(const CartSaleRemoved());
@@ -98,7 +96,6 @@ class _CartPaymentViewState extends State<CartPaymentView> {
                         ElevatedButton.icon(
                           onPressed: () => context.read<CartBloc>().add(
                                 CartPaid(
-                                  companyUuid: companyUuid,
                                   type: PaymentType.cash,
                                   value: amountPaid,
                                 ),
@@ -109,7 +106,6 @@ class _CartPaymentViewState extends State<CartPaymentView> {
                         ElevatedButton.icon(
                           onPressed: () => context.read<CartBloc>().add(
                                 CartPaid(
-                                  companyUuid: companyUuid,
                                   type: PaymentType.credit,
                                   value: amountPaid,
                                 ),
@@ -120,7 +116,6 @@ class _CartPaymentViewState extends State<CartPaymentView> {
                         ElevatedButton.icon(
                           onPressed: () => context.read<CartBloc>().add(
                                 CartPaid(
-                                  companyUuid: companyUuid,
                                   type: PaymentType.debit,
                                   value: amountPaid,
                                 ),
@@ -131,7 +126,6 @@ class _CartPaymentViewState extends State<CartPaymentView> {
                         ElevatedButton.icon(
                           onPressed: () => context.read<CartBloc>().add(
                                 CartPaid(
-                                  companyUuid: companyUuid,
                                   type: PaymentType.pix,
                                   value: amountPaid,
                                 ),

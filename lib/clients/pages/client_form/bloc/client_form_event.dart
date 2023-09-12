@@ -6,14 +6,12 @@ sealed class ClientFormEvent extends Equatable {
 
 final class ClientFormSubmitted extends ClientFormEvent {
   const ClientFormSubmitted({
-    required this.companyUuid,
     required this.name,
     this.phone,
     this.address,
     this.observation,
   });
 
-  final String companyUuid;
   final String name;
   final String? phone;
   final String? address;

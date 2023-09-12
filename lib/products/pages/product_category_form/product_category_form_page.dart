@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
-import 'package:todavenda/companies/companies.dart';
 
 import '../../pages/product_category_form/bloc/product_category_form_bloc.dart';
-import '../../products.dart';
+import '../../services/product_categories_repository.dart';
 
 class ProductCategoryFormPage extends StatelessWidget {
   const ProductCategoryFormPage({super.key});
@@ -14,7 +13,7 @@ class ProductCategoryFormPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ProductCategoryFormBloc(
-        context.read<ProductsRepository>(),
+        context.read<ProductCategoriesRepository>(),
       ),
       child: const ProductCategoryFormView(),
     );
@@ -43,7 +42,6 @@ class ProductCategoryFormView extends StatelessWidget {
           if (state is ProductCategoryFormEditing) {
             var name = state.name;
             var description = state.description;
-            final companyUuid = CompanySelectorBloc.getCompanyUuid(context);
 
             return SingleChildScrollView(
               child: Padding(
@@ -70,7 +68,6 @@ class ProductCategoryFormView extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () {
                         final event = ProductCategoryFormSubmitted(
-                          companyUuid: companyUuid,
                           name: name,
                           description: description,
                         );

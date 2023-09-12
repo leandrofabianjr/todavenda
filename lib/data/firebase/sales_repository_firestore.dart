@@ -1,57 +1,48 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todavenda/clients/clients.dart';
+import 'package:todavenda/data/firebase/firestore_repository.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/sales.dart';
 import 'package:uuid/uuid.dart';
 
 const _uuid = Uuid();
 
-class SalesRepositoryFirestore implements SalesRepository {
-  static const salesCollectionPath = 'sales';
-  static const paymentsCollectionPath = 'payments';
-
+class SalesRepositoryFirestore extends FirestoreRepository<Sale>
+    implements SalesRepository {
   var _sales = <Sale>[];
   var _products = <Product>[];
   var _clients = <Client>[];
   var _payments = <Payment>[];
 
-  SalesRepositoryFirestore({
+  SalesRepositoryFirestore(
+    String companyUuid, {
     required this.productsRepository,
     required this.clientsRepository,
-  });
+    required this.paymentsRepository,
+  }) : super(companyUuid: companyUuid, resourcePath: 'sales');
 
   final ProductsRepository productsRepository;
   final ClientsRepository clientsRepository;
+  final PaymentsRepository paymentsRepository;
 
-  CollectionReference<Sale?> get salesCollection =>
-      FirebaseFirestore.instance.collection(salesCollectionPath).withConverter(
-            fromFirestore: (snapshot, _) => Sale.fromJson(
-              snapshot.data(),
-              _products,
-              _clients,
-              _payments,
-            ),
-            toFirestore: (value, _) => value?.toJson() ?? {},
-          );
+  @override
+  fromJson(Map<String, dynamic> json) => Sale.fromJson(
+        json,
+        _products,
+        _clients,
+        _payments,
+      );
 
-  CollectionReference<Payment?> get paymentsCollection =>
-      FirebaseFirestore.instance
-          .collection(paymentsCollectionPath)
-          .withConverter(
-            fromFirestore: (snapshot, _) => Payment.fromJson(snapshot.data()),
-            toFirestore: (value, _) => value?.toJson() ?? {},
-          );
+  @override
+  Map<String, dynamic> toJson(value) => value.toJson();
 
-  Future<void> _updateDependencies(String companyUuid) async {
-    _products = await productsRepository.loadProducts(companyUuid: companyUuid);
-    _clients = await clientsRepository.loadClients(companyUuid: companyUuid);
-    final snapshot = await paymentsCollection.get();
-    _payments = snapshot.docs.map((e) => e.data()!).toList();
+  Future<void> _updateDependencies() async {
+    _products = await productsRepository.loadProducts();
+    _clients = await clientsRepository.loadClients();
+    _payments = await paymentsRepository.load();
   }
 
   @override
   Future<Sale> createSale({
-    required String companyUuid,
     required Map<Product, int> items,
     Client? client,
   }) async {
@@ -71,62 +62,54 @@ class SalesRepositoryFirestore implements SalesRepository {
       },
     );
     final sale = Sale(
-      companyUuid: companyUuid,
       uuid: _uuid.v4(),
       items: saleItems,
       total: saleItems.fold(0, (total, i) => total + i.unitPrice * i.quantity),
       client: client,
       createdAt: DateTime.now(),
     );
-    await salesCollection.doc(sale.uuid).set(sale);
+    await collection.doc(sale.uuid).set(sale);
     _sales.add(sale);
     return sale;
   }
 
   @override
   Future<Sale> loadSaleByUuid(String uuid) async {
-    final snapshot = await salesCollection.doc(uuid).get();
+    final snapshot = await collection.doc(uuid).get();
     return snapshot.data()!;
   }
 
   @override
-  Future<List<Sale>> loadSales({required String companyUuid}) async {
-    await _updateDependencies(companyUuid);
+  Future<List<Sale>> loadSales() async {
+    await _updateDependencies();
     if (_sales.isEmpty) {
-      final snapshot = await salesCollection.get();
-      _sales = snapshot.docs.map((e) => e.data()!).toList();
+      final snapshot = await collection.get();
+      _sales = snapshot.docs.map((e) => e.data()).toList();
     }
     return _sales;
   }
 
   @override
   Future<Sale> newPayment({
-    required String companyUuid,
     required Sale sale,
     required PaymentType type,
     required double value,
   }) async {
-    final payment = Payment(
-      companyUuid: companyUuid,
-      uuid: _uuid.v4(),
-      type: type,
-      value: value,
-      createdAt: DateTime.now(),
-    );
-    await paymentsCollection.doc(payment.uuid).set(payment);
+    final payment =
+        await paymentsRepository.create(sale: sale, type: type, value: value);
     _payments.add(payment);
     final newSale = sale.copyWith(
       payments: [...sale.payments, payment],
       amountPaid: sale.calculateAmountPaid(),
     );
-    await salesCollection.doc(sale.uuid).set(newSale);
+    await collection.doc(sale.uuid).set(newSale);
     _sales[_sales.indexOf(sale)] = newSale;
     return newSale;
   }
 
   @override
   Future<void> removeSale(String uuid) async {
-    await salesCollection.doc(uuid).delete();
+    await collection.doc(uuid).delete();
     _sales.removeWhere((element) => element.uuid == uuid);
   }
 }

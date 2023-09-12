@@ -1,9 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todavenda/auth/models/user.dart';
-import 'package:todavenda/companies/companies.dart';
-import 'package:todavenda/companies/models/Company.dart';
+
+import '../models/models.dart';
+import '../services/services.dart';
 
 part 'company_selector_event.dart';
 part 'company_selector_state.dart';
@@ -15,12 +14,6 @@ class CompanySelectorBloc
     on<CompanySelectorStarted>(_onCompanySelectorStarted);
   }
 
-  static String getCompanyUuid(BuildContext context) {
-    return (context.read<CompanySelectorBloc>().state as CompanySelectorSuccess)
-        .company
-        .uuid;
-  }
-
   final CompaniesRepository companiesRepository;
 
   _onCompanySelectorStarted(
@@ -28,13 +21,8 @@ class CompanySelectorBloc
     Emitter<CompanySelectorState> emit,
   ) async {
     try {
-      final companies = await companiesRepository.loadByUser(
-        userUuid: event.user.uuid!,
-      );
-      emit(CompanySelectorSuccess(
-        companies: companies,
-        company: companies.first,
-      ));
+      final company = await companiesRepository.load();
+      emit(CompanySelectorSuccess(company: company));
     } catch (ex) {
       emit(CompanySelectorException(ex: ex));
     }
