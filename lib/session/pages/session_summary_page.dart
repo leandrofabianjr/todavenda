@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
 
-class FlowSummaryPage extends StatelessWidget {
-  const FlowSummaryPage({super.key});
+class SessionSummaryPage extends StatelessWidget {
+  const SessionSummaryPage({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -45,15 +45,15 @@ class Payment extends Equatable {
   final double value;
   final DateTime? createdAt;
 
+  String get formattedValue => CurrencyFormatter().formatPtBr(value);
+
   @override
   List<Object?> get props => [uuid];
-
-  String get formattedValue => CurrencyFormatter().formatPtBr(value);
 
   Map<String, dynamic> toJson() {
     return {
       'uuid': uuid,
-      'type': type.value,
+      'paymentType': type.value,
       'value': value,
       'createdAt': createdAt.toString(),
     };
@@ -62,7 +62,7 @@ class Payment extends Equatable {
   static Payment fromJson(Map<String, dynamic> json) {
     return Payment(
       uuid: json['uuid'],
-      type: PaymenTypeX.fromValue(json['type']),
+      type: PaymenTypeX.fromValue(json['paymentType']),
       value: json['value'],
       createdAt: DateTime.tryParse(json['createdAt']),
     );
