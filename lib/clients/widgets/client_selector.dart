@@ -6,7 +6,7 @@ import 'package:todavenda/commons/commons.dart';
 import '../models/client.dart';
 import '../services/services.dart';
 
-class ClientSelector extends StatelessWidget {
+class ClientSelector extends StatefulWidget {
   const ClientSelector({
     super.key,
     required this.clientsRepository,
@@ -16,36 +16,47 @@ class ClientSelector extends StatelessWidget {
 
   final ClientsRepository clientsRepository;
   final Client? initial;
-  final void Function(Client client) onChanged;
+  final void Function(Client? client) onChanged;
+
+  @override
+  State<ClientSelector> createState() => _ClientSelectorState();
+}
+
+class _ClientSelectorState extends State<ClientSelector> {
+  Client? client;
+
+  @override
+  void initState() {
+    client = widget.initial;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
       style: TextButton.styleFrom(padding: EdgeInsets.zero),
-      onPressed: () {
-        showDialog<Client>(
-          context: context,
-          builder: (context) {
-            return ClientSelectorDialog(
-              clientsRepository: clientsRepository,
-              selectedClient: initial,
-            );
-          },
-        ).then((client) {
-          if (client != null) {
-            onChanged(client);
-          }
-        });
-      },
+      onPressed: () => showDialog<Client>(
+        context: context,
+        builder: (context) {
+          return ClientSelectorDialog(
+            clientsRepository: widget.clientsRepository,
+            selectedClient: client,
+            onChanged: (value) {
+              widget.onChanged(value);
+              setState(() => client = value);
+            },
+          );
+        },
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const Icon(Icons.person),
           const SizedBox(width: 8),
-          initial == null
+          client == null
               ? const Text('Selecione o cliente')
               : Text(
-                  initial!.name,
+                  client!.name,
                   overflow: TextOverflow.ellipsis,
                 )
         ],
@@ -59,10 +70,12 @@ class ClientSelectorDialog extends StatefulWidget {
     super.key,
     required this.clientsRepository,
     this.selectedClient,
+    required this.onChanged,
   });
 
   final ClientsRepository clientsRepository;
   final Client? selectedClient;
+  final void Function(Client? client) onChanged;
 
   @override
   State<ClientSelectorDialog> createState() => _ClientSelectorDialogState();
@@ -104,7 +117,7 @@ class _ClientSelectorDialogState extends State<ClientSelectorDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return SimpleDialog(
+    return AlertDialog(
       title: searching
           ? TextField(
               controller: searchTextController,
@@ -128,39 +141,54 @@ class _ClientSelectorDialogState extends State<ClientSelectorDialog> {
                 ),
               ],
             ),
-      children: [
-        FutureBuilder(
-          future: getClients(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return ErrorWidget(snapshot.error!);
-            }
+      content: FutureBuilder(
+        future: getClients(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return ErrorWidget(snapshot.error!);
+          }
 
-            if (!snapshot.hasData) {
-              return const LoadingWidget();
-            }
+          if (!snapshot.hasData) {
+            return const LoadingWidget();
+          }
 
-            final clients = snapshot.data!;
+          final clients = snapshot.data!;
 
-            if (clients.isEmpty) {
-              return const Text(
-                'Não há clientes cadastrados',
-                textAlign: TextAlign.center,
-              );
-            }
-
-            return Column(
-              children: clients
-                  .map(
-                    (client) => ListTile(
-                      selected: client == selectedClient,
-                      title: Text(client.name),
-                      onTap: () => Navigator.of(context).pop(client),
-                    ),
-                  )
-                  .toList(),
+          if (clients.isEmpty) {
+            return const Text(
+              'Não há clientes cadastrados',
+              textAlign: TextAlign.center,
             );
+          }
+
+          return Column(
+            children: clients
+                .map(
+                  (client) => ListTile(
+                    selected: client == selectedClient,
+                    title: Text(client.name),
+                    onTap: () {
+                      widget.onChanged(client);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                )
+                .toList(),
+          );
+        },
+      ),
+      actions: [
+        TextButton.icon(
+          onPressed: () {
+            widget.onChanged(null);
+            Navigator.of(context).pop();
           },
+          icon: const Icon(Icons.delete),
+          label: const Text('Remover'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Ok'),
         ),
       ],
     );

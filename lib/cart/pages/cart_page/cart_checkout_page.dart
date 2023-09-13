@@ -73,7 +73,7 @@ class _CartCheckoutViewState extends State<CartCheckoutView> {
                   initial: selectedClient,
                   onChanged: (client) => context
                       .read<CartBloc>()
-                      .add(CartClientAdded(client: client)),
+                      .add(CartClientChanged(client: client)),
                 ),
               ),
               Column(

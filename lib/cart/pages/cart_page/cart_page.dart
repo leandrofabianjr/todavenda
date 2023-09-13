@@ -81,7 +81,7 @@ class _CartViewState extends State<CartView> {
                 initial: selectedClient,
                 onChanged: (client) => context
                     .read<CartBloc>()
-                    .add(CartClientAdded(client: client)),
+                    .add(CartClientChanged(client: client)),
               ),
             ),
             if (totalQuantity > 0)

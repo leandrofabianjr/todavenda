@@ -15,7 +15,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<CartStarted>(_onStarted);
     on<CartItemAdded>(_onItemAdded);
     on<CartItemRemoved>(_onItemRemoved);
-    on<CartClientAdded>(_onClientAdded);
+    on<CartClientChanged>(_onClientChanged);
     on<CartCheckouted>(_onCheckouted);
     on<CartConfirmed>(_onConfirmed);
     on<CartPaid>(_onPaid);
@@ -77,7 +77,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(state.copyWith(items: items));
   }
 
-  void _onClientAdded(CartClientAdded event, Emitter<CartState> emit) {
+  void _onClientChanged(CartClientChanged event, Emitter<CartState> emit) {
     emit(state.copyWith(client: event.client));
   }
 
