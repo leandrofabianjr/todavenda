@@ -90,7 +90,7 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
   }
 
   @override
-  Future<Sale> newPayment({
+  Future<Sale> addPayment({
     required Sale sale,
     required PaymentType type,
     required double value,
@@ -111,5 +111,22 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
   Future<void> removeSale(String uuid) async {
     await collection.doc(uuid).delete();
     _sales.removeWhere((element) => element.uuid == uuid);
+  }
+
+  @override
+  Future<Sale> removePayment({
+    required Sale sale,
+    required Payment payment,
+  }) async {
+    await paymentsRepository.remove(payment: payment);
+    _payments.remove(payment);
+    final payments = sale.payments.where((p) => p != payment).toList();
+    final newSale = sale.copyWith(
+      payments: payments,
+      amountPaid: sale.calculateAmountPaid(),
+    );
+    await collection.doc(sale.uuid).set(newSale);
+    _sales[_sales.indexOf(sale)] = newSale;
+    return newSale;
   }
 }

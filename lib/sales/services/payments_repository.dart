@@ -8,4 +8,6 @@ abstract class PaymentsRepository {
     required PaymentType type,
     required double value,
   });
+
+  Future<Payment> remove({required Payment payment});
 }

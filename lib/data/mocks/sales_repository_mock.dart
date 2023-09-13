@@ -126,7 +126,7 @@ class SalesRepositoryMock implements SalesRepository {
       _delayed(() => _sales.removeWhere((s) => s.uuid == uuid));
 
   @override
-  Future<Sale> newPayment({
+  Future<Sale> addPayment({
     required Sale sale,
     required PaymentType type,
     required double value,
@@ -146,6 +146,30 @@ class SalesRepositoryMock implements SalesRepository {
       items: sale.items,
       total: sale.total,
       payments: [...sale.payments, payment],
+      createdAt: sale.createdAt,
+      client: sale.client,
+    );
+    _sales[saleIndex] = newSale;
+
+    return await _delayed(() => newSale);
+  }
+
+  @override
+  Future<Sale> removePayment({
+    required Sale sale,
+    required Payment payment,
+  }) async {
+    _payments.remove(payment);
+
+    final saleIndex = _sales.indexWhere((s) => s.uuid == sale.uuid);
+
+    final payments = sale.payments.where((p) => p != payment).toList();
+
+    final newSale = Sale(
+      uuid: sale.uuid,
+      items: sale.items,
+      total: sale.total,
+      payments: payments,
       createdAt: sale.createdAt,
       client: sale.client,
     );

@@ -18,7 +18,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<CartClientChanged>(_onClientChanged);
     on<CartCheckouted>(_onCheckouted);
     on<CartConfirmed>(_onConfirmed);
-    on<CartPaid>(_onPaid);
+    on<CartPaymentAdded>(_onPaymentAdded);
+    on<CartPaymentRemoved>(_onPaymentRemoved);
+    on<CartPaymentsFinalized>(_onPaymentsFinalized);
     on<CartCleaned>(_onCleaned);
     on<CartSaleRemoved>(_onSaleRemoved);
   }
@@ -98,24 +100,50 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     }
   }
 
-  Future<void> _onPaid(
-    CartPaid event,
+  Future<void> _onPaymentAdded(
+    CartPaymentAdded event,
     Emitter<CartState> emit,
   ) async {
     try {
       emit(state.copyWith(status: CartStatus.loading));
-      final sale = await salesRepository.newPayment(
+      final sale = await salesRepository.addPayment(
         sale: state.sale!,
         type: event.type,
         value: event.value,
       );
-      if (sale.isFullyPaid) {
-        emit(state.copyWith(status: CartStatus.finalizing, sale: sale));
-      } else {
-        emit(state.copyWith(status: CartStatus.payment, sale: sale));
-      }
+      emit(state.copyWith(status: CartStatus.payment, sale: sale));
     } catch (ex) {
       emit(state.copyWith(status: CartStatus.failure, exception: ex));
+    }
+  }
+
+  Future<void> _onPaymentRemoved(
+    CartPaymentRemoved event,
+    Emitter<CartState> emit,
+  ) async {
+    try {
+      emit(state.copyWith(status: CartStatus.loading));
+      final sale = await salesRepository.removePayment(
+        sale: state.sale!,
+        payment: event.payment,
+      );
+      emit(state.copyWith(status: CartStatus.payment, sale: sale));
+    } catch (ex) {
+      emit(state.copyWith(status: CartStatus.failure, exception: ex));
+    }
+  }
+
+  void _onPaymentsFinalized(
+    CartPaymentsFinalized event,
+    Emitter<CartState> emit,
+  ) {
+    if (state.sale!.isFullyPaid) {
+      emit(state.copyWith(status: CartStatus.finalizing));
+    } else {
+      emit(state.copyWith(
+        status: CartStatus.payment,
+        errorMessage: 'A venda ainda não foi totalmente paga',
+      ));
     }
   }
 

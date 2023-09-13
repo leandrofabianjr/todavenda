@@ -42,4 +42,13 @@ class PaymentsRepositoryFirestore extends FirestoreRepository<Payment>
     _payments.add(payment);
     return payment;
   }
+
+  @override
+  Future<Payment> remove({
+    required Payment payment,
+  }) async {
+    await collection.doc(payment.uuid).delete();
+    _payments.remove(payment);
+    return payment;
+  }
 }
