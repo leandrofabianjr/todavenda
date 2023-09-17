@@ -1,7 +1,7 @@
 import 'package:todavenda/sales/models/models.dart';
 
 abstract class PaymentsRepository {
-  Future<List<Payment>> load();
+  Future<List<Payment>> load({required String saleUuid});
 
   Future<Payment> create({
     required Sale sale,

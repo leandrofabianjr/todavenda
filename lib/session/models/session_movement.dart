@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:todavenda/sales/sales.dart';
+import 'package:todavenda/session/models/models.dart';
 
 enum SessionMovementType {
   payment,
@@ -27,24 +29,38 @@ extension SessionMovementTypeX on SessionMovementType {
       };
 }
 
-class SessionMovement extends Equatable {
-  const SessionMovement({required this.uuid, required this.type});
+abstract class SessionMovement extends Equatable {
+  const SessionMovement({
+    this.uuid,
+    required this.type,
+    required this.sessionUuid,
+    this.createdAt,
+  });
 
   final String? uuid;
   final SessionMovementType type;
+  final String sessionUuid;
+  final DateTime? createdAt;
 
   Map<String, dynamic> toJson() {
     return {
       'uuid': uuid,
       'type': type,
+      'sessionUuid': sessionUuid,
+      'createdAt': createdAt.toString(),
     };
   }
 
   static SessionMovement fromJson(Map<String, dynamic> json) {
-    return SessionMovement(
-      uuid: json['uuid'],
-      type: SessionMovementTypeX.fromValue(json['type']),
-    );
+    final type = SessionMovementTypeX.fromValue(json['type']);
+    switch (type) {
+      case SessionMovementType.payment:
+        return Payment.fromJson(json);
+      case SessionMovementType.supply:
+        return SessionSupply.fromJson(json);
+      case SessionMovementType.pickUp:
+        return SessionPickUp.fromJson(json);
+    }
   }
 
   @override

@@ -5,10 +5,11 @@ sealed class CartEvent extends Equatable {
 }
 
 final class CartStarted extends CartEvent {
-  const CartStarted();
+  const CartStarted({required this.session});
+  final Session session;
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [session];
 }
 
 final class CartResumed extends CartEvent {

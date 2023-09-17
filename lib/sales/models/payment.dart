@@ -1,5 +1,5 @@
-import 'package:equatable/equatable.dart';
 import 'package:todavenda/commons/commons.dart';
+import 'package:todavenda/session/models/models.dart';
 
 enum PaymentType {
   cash,
@@ -32,39 +32,42 @@ extension PaymenTypeX on PaymentType {
       };
 }
 
-class Payment extends Equatable {
+class Payment extends SessionMovement {
   const Payment({
-    this.uuid,
-    required this.type,
-    required this.value,
-    this.createdAt,
+    super.uuid,
+    required super.type,
+    required super.sessionUuid,
+    super.createdAt,
+    required this.saleUuid,
+    required this.paymentType,
+    required this.amount,
   });
 
-  final String? uuid;
-  final PaymentType type;
-  final double value;
-  final DateTime? createdAt;
+  final String saleUuid;
+  final PaymentType paymentType;
+  final double amount;
 
-  String get formattedValue => CurrencyFormatter().formatPtBr(value);
+  String get formattedValue => CurrencyFormatter().formatPtBr(amount);
 
   @override
-  List<Object?> get props => [uuid];
-
   Map<String, dynamic> toJson() {
     return {
-      'uuid': uuid,
-      'paymentType': type.value,
-      'value': value,
-      'createdAt': createdAt.toString(),
+      ...super.toJson(),
+      'saleUuid': saleUuid,
+      'paymentType': paymentType.value,
+      'amount': amount,
     };
   }
 
   static Payment fromJson(Map<String, dynamic> json) {
     return Payment(
       uuid: json['uuid'],
-      type: PaymenTypeX.fromValue(json['paymentType']),
-      value: json['value'],
+      type: SessionMovementType.payment,
+      sessionUuid: json['sessionUuid'],
       createdAt: DateTime.tryParse(json['createdAt']),
+      saleUuid: json['saleUuid'],
+      paymentType: PaymenTypeX.fromValue(json['paymentType']),
+      amount: json['amount'],
     );
   }
 }

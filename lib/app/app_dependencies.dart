@@ -7,6 +7,7 @@ import 'package:todavenda/data/firebase/auth_service_firebase.dart';
 import 'package:todavenda/data/firebase/firebase.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/sales.dart';
+import 'package:todavenda/session/services/sessions_repository.dart';
 
 import 'app_bloc_observer.dart';
 
@@ -27,9 +28,9 @@ injectBlocProviders() {
     ),
     BlocProvider(
       create: (context) => CartBloc(
-        productRepository: context.read<ProductsRepository>(),
-        salesRepository: context.read<SalesRepository>(),
-      ),
+          productRepository: context.read<ProductsRepository>(),
+          salesRepository: context.read<SalesRepository>(),
+          sessionsRepository: context.read<SessionsRepository>()),
     ),
   ];
 }

@@ -2,6 +2,8 @@ import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/data/firebase/firestore_repository.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/sales.dart';
+import 'package:todavenda/session/models/models.dart';
+import 'package:todavenda/session/services/session_movements_repository.dart';
 import 'package:uuid/uuid.dart';
 
 const _uuid = Uuid();
@@ -17,12 +19,12 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
     String companyUuid, {
     required this.productsRepository,
     required this.clientsRepository,
-    required this.paymentsRepository,
+    required this.sessionMovementsRepository,
   }) : super(companyUuid: companyUuid, resourcePath: 'sales');
 
   final ProductsRepository productsRepository;
   final ClientsRepository clientsRepository;
-  final PaymentsRepository paymentsRepository;
+  final SessionMovementsRepository sessionMovementsRepository;
 
   @override
   fromJson(Map<String, dynamic> json) => Sale.fromJson(
@@ -38,11 +40,13 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
   Future<void> _updateDependencies() async {
     _products = await productsRepository.loadProducts();
     _clients = await clientsRepository.loadClients();
-    _payments = await paymentsRepository.load();
+    _payments = await sessionMovementsRepository.list(
+        type: SessionMovementType.payment) as List<Payment>;
   }
 
   @override
   Future<Sale> createSale({
+    required Session session,
     required Map<Product, int> items,
     Client? client,
   }) async {
@@ -67,6 +71,7 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
       total: saleItems.fold(0, (total, i) => total + i.unitPrice * i.quantity),
       client: client,
       createdAt: DateTime.now(),
+      sessionUuid: session.uuid,
     );
     await collection.doc(sale.uuid).set(sale);
     _sales.add(sale);
@@ -80,23 +85,27 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
   }
 
   @override
-  Future<List<Sale>> loadSales() async {
+  Future<List<Sale>> list({String? sessionUuid}) async {
     await _updateDependencies();
     if (_sales.isEmpty) {
       final snapshot = await collection.get();
       _sales = snapshot.docs.map((e) => e.data()).toList();
     }
-    return _sales;
+    return _sales.where((s) => s.sessionUuid == sessionUuid).toList();
   }
 
   @override
   Future<Sale> addPayment({
     required Sale sale,
     required PaymentType type,
-    required double value,
+    required double amount,
   }) async {
-    final payment =
-        await paymentsRepository.create(sale: sale, type: type, value: value);
+    final payment = await sessionMovementsRepository.createPayment(
+      sale: sale,
+      paymentType: type,
+      amount: amount,
+      sessionUuid: sale.sessionUuid,
+    );
     _payments.add(payment);
     final newSale = sale.copyWith(
       payments: [...sale.payments, payment],
@@ -118,7 +127,7 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
     required Sale sale,
     required Payment payment,
   }) async {
-    await paymentsRepository.remove(payment: payment);
+    await sessionMovementsRepository.remove(payment.uuid);
     _payments.remove(payment);
     final payments = sale.payments.where((p) => p != payment).toList();
     final newSale = sale.copyWith(

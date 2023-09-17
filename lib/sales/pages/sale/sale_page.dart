@@ -155,7 +155,7 @@ class SalePaymentsReport extends StatelessWidget {
               .map<DataRow>(
                 (p) => DataRow(
                   cells: [
-                    DataCell(Text(p.type.label)),
+                    DataCell(Text(p.paymentType.label)),
                     DataCell(Text(p.formattedValue, textAlign: TextAlign.end)),
                   ],
                 ),

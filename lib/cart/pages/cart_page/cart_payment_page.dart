@@ -101,8 +101,8 @@ class _CartPaymentViewState extends State<CartPaymentView> {
                           ...state.sale!.payments
                               .map(
                                 (p) => ListTile(
-                                  title: Text(p.type.label),
-                                  leading: PaymentTypeIcon(type: p.type),
+                                  title: Text(p.paymentType.label),
+                                  leading: PaymentTypeIcon(type: p.paymentType),
                                   subtitle: Text(
                                     p.formattedValue,
                                     style: theme.textTheme.titleSmall,

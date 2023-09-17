@@ -16,6 +16,7 @@ extension CartStatusX on CartStatus {
 final class CartState extends Equatable {
   const CartState({
     this.status = CartStatus.initial,
+    this.session,
     this.items = const {},
     this.exception,
     this.sale,
@@ -24,6 +25,7 @@ final class CartState extends Equatable {
   });
 
   final CartStatus status;
+  final Session? session;
   final Map<Product, int> items;
   final Sale? sale;
   final Client? client;
@@ -56,6 +58,7 @@ final class CartState extends Equatable {
 
   CartState copyWith({
     CartStatus? status,
+    Session? session,
     Map<Product, int>? items,
     Object? exception,
     Sale? sale,
@@ -69,6 +72,7 @@ final class CartState extends Equatable {
       sale: sale ?? this.sale,
       client: client ?? this.client,
       errorMessage: errorMessage,
+      session: session ?? this.session,
     );
   }
 

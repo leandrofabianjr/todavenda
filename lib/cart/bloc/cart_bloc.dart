@@ -4,13 +4,18 @@ import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/sales.dart';
+import 'package:todavenda/session/models/models.dart';
+import 'package:todavenda/session/services/sessions_repository.dart';
 
 part 'cart_event.dart';
 part 'cart_state.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
-  CartBloc({required this.productRepository, required this.salesRepository})
-      : super(const CartState()) {
+  CartBloc({
+    required this.sessionsRepository,
+    required this.productRepository,
+    required this.salesRepository,
+  }) : super(const CartState()) {
     on<CartResumed>(_onResumed);
     on<CartStarted>(_onStarted);
     on<CartItemAdded>(_onItemAdded);
@@ -25,6 +30,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<CartSaleRemoved>(_onSaleRemoved);
   }
 
+  final SessionsRepository sessionsRepository;
   final ProductsRepository productRepository;
   final SalesRepository salesRepository;
 
@@ -49,7 +55,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           product:
               initialItems.containsKey(product) ? initialItems[product]! : 0
       };
-      emit(state.copyWith(status: CartStatus.initial, items: items));
+      emit(state.copyWith(
+          status: CartStatus.initial, items: items, session: event.session));
     } catch (ex) {
       emit(state.copyWith(status: CartStatus.failure, exception: ex));
     }
@@ -91,6 +98,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       emit(state.copyWith(status: CartStatus.loading));
 
       final sale = await salesRepository.createSale(
+        session: state.session!,
         items: state.selectedItems,
         client: state.client,
       );
@@ -109,7 +117,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       final sale = await salesRepository.addPayment(
         sale: state.sale!,
         type: event.type,
-        value: event.value,
+        amount: event.value,
       );
       emit(state.copyWith(status: CartStatus.payment, sale: sale));
     } catch (ex) {

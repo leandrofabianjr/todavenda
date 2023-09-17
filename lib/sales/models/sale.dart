@@ -15,6 +15,7 @@ class Sale extends Equatable {
     this.client,
     this.createdAt,
     this.amountPaid = 0,
+    required this.sessionUuid,
   });
 
   final String? uuid;
@@ -24,6 +25,7 @@ class Sale extends Equatable {
   final Client? client;
   final DateTime? createdAt;
   final double amountPaid;
+  final String sessionUuid;
 
   String get formattedCreatedAt => DateTimeFormatter.shortDateTime(createdAt);
 
@@ -52,7 +54,7 @@ class Sale extends Equatable {
       CurrencyFormatter().formatPtBr(missingAmountPaid);
 
   double calculateAmountPaid() =>
-      payments.fold(0.0, (total, p) => total + p.value);
+      payments.fold(0.0, (total, p) => total + p.amount);
 
   Map<String, dynamic> toJson() {
     return {
@@ -63,6 +65,7 @@ class Sale extends Equatable {
       'clientUuid': client?.uuid,
       'createdAt': createdAt.toString(),
       'amountPaid': calculateAmountPaid(),
+      'sessionUuid': sessionUuid,
     };
   }
 
@@ -86,6 +89,7 @@ class Sale extends Equatable {
           : clients.firstWhere((c) => c.uuid == json['clientUuid']),
       createdAt: DateTime.tryParse(json['createdAt']),
       amountPaid: json['amountPaid'] ?? 0,
+      sessionUuid: json['sessionUuid'],
     );
   }
 
@@ -101,6 +105,7 @@ class Sale extends Equatable {
       client: client,
       createdAt: createdAt,
       amountPaid: amountPaid ?? this.amountPaid,
+      sessionUuid: sessionUuid,
     );
   }
 }

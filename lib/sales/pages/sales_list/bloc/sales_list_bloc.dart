@@ -19,7 +19,7 @@ class SalesListBloc extends Bloc<SalesListEvent, SalesListState> {
   ) async {
     emit(const SalesListLoading());
     try {
-      final sales = await salesRepository.loadSales();
+      final sales = await salesRepository.list();
       sales.sortByCompare(
         (element) => element.createdAt!,
         (a, b) => b.microsecondsSinceEpoch - a.microsecondsSinceEpoch,
