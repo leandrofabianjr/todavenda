@@ -8,8 +8,8 @@ import 'package:todavenda/commons/commons.dart';
 import '../../cart.dart';
 import '../../widgets/cart_list_tile.dart';
 
-class CartCheckoutPage extends StatelessWidget {
-  const CartCheckoutPage({super.key});
+class SellCheckoutPage extends StatelessWidget {
+  const SellCheckoutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,21 +29,21 @@ class CartCheckoutPage extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          return const CartCheckoutView();
+          return const SellCheckoutView();
         },
       ),
     );
   }
 }
 
-class CartCheckoutView extends StatefulWidget {
-  const CartCheckoutView({super.key});
+class SellCheckoutView extends StatefulWidget {
+  const SellCheckoutView({super.key});
 
   @override
-  State<CartCheckoutView> createState() => _CartCheckoutViewState();
+  State<SellCheckoutView> createState() => _SellCheckoutViewState();
 }
 
-class _CartCheckoutViewState extends State<CartCheckoutView> {
+class _SellCheckoutViewState extends State<SellCheckoutView> {
   String formattedTotalQuantity = '';
   String formattedTotalPrice = '';
   Client? selectedClient;
@@ -115,7 +115,7 @@ class _CartCheckoutViewState extends State<CartCheckoutView> {
                   children: state.items.entries
                       .toList()
                       .map(
-                        (item) => CartListTile(
+                        (item) => SellListTile(
                           product: item.key,
                           quantity: item.value,
                           onAdded: () => context

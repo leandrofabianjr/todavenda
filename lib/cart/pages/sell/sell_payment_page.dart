@@ -6,26 +6,26 @@ import 'package:todavenda/sales/models/models.dart';
 
 import '../../cart.dart';
 
-class CartPaymentPage extends StatelessWidget {
-  const CartPaymentPage({super.key});
+class SellPaymentPage extends StatelessWidget {
+  const SellPaymentPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: BlocProvider.of<CartBloc>(context)..add(const CartResumed()),
-      child: const CartPaymentView(),
+      child: const SellPaymentView(),
     );
   }
 }
 
-class CartPaymentView extends StatefulWidget {
-  const CartPaymentView({super.key});
+class SellPaymentView extends StatefulWidget {
+  const SellPaymentView({super.key});
 
   @override
-  State<CartPaymentView> createState() => _CartPaymentViewState();
+  State<SellPaymentView> createState() => _SellPaymentViewState();
 }
 
-class _CartPaymentViewState extends State<CartPaymentView> {
+class _SellPaymentViewState extends State<SellPaymentView> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -102,7 +102,7 @@ class _CartPaymentViewState extends State<CartPaymentView> {
                               .map(
                                 (p) => ListTile(
                                   title: Text(p.paymentType.label),
-                                  leading: PaymentTypeIcon(type: p.paymentType),
+                                  leading: p.paymentType.icon,
                                   subtitle: Text(
                                     p.formattedValue,
                                     style: theme.textTheme.titleSmall,
@@ -137,7 +137,7 @@ class _CartPaymentViewState extends State<CartPaymentView> {
                               onTap: () => context.read<CartBloc>().add(
                                   CartPaymentAdded(
                                       type: type, value: amountPaid)),
-                              leading: PaymentTypeIcon(type: type),
+                              leading: type.icon,
                               title: Text(type.label),
                             ),
                           )
@@ -163,21 +163,5 @@ class _CartPaymentViewState extends State<CartPaymentView> {
         ),
       ),
     );
-  }
-}
-
-class PaymentTypeIcon extends StatelessWidget {
-  const PaymentTypeIcon({super.key, required this.type});
-
-  final PaymentType type;
-
-  @override
-  Widget build(BuildContext context) {
-    return switch (type) {
-      PaymentType.cash => const Icon(Icons.money),
-      PaymentType.credit => const Icon(Icons.credit_card),
-      PaymentType.debit => const Icon(Icons.credit_card),
-      PaymentType.pix => const Icon(Icons.pix),
-    };
   }
 }

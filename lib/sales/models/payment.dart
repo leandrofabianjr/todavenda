@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/session/models/models.dart';
 
@@ -29,6 +30,13 @@ extension PaymenTypeX on PaymentType {
         'credit' => PaymentType.credit,
         'debit' => PaymentType.debit,
         _ => PaymentType.cash,
+      };
+
+  Widget get icon => switch (this) {
+        PaymentType.cash => const Icon(Icons.money),
+        PaymentType.credit => const Icon(Icons.credit_card),
+        PaymentType.debit => const Icon(Icons.credit_card),
+        PaymentType.pix => const Icon(Icons.pix),
       };
 }
 

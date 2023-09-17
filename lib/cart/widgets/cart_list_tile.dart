@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:todavenda/products/products.dart';
 
-class CartListTile extends StatelessWidget {
-  const CartListTile({
+class SellListTile extends StatelessWidget {
+  const SellListTile({
     super.key,
     required this.product,
     required this.quantity,

@@ -44,20 +44,20 @@ final appRouterConfig = GoRouter(
           navigatorKey: _cartNavigatorKey,
           routes: <RouteBase>[
             GoRoute(
-              path: '/carrinho',
-              builder: (context, state) => const CartPage(),
+              path: '/vender',
+              builder: (context, state) => const SellPage(),
               routes: [
                 GoRoute(
                   path: 'confirmacao',
-                  builder: (context, state) => const CartCheckoutPage(),
+                  builder: (context, state) => const SellCheckoutPage(),
                 ),
                 GoRoute(
                   path: 'pagamento',
-                  builder: (context, state) => const CartPaymentPage(),
+                  builder: (context, state) => const SellPaymentPage(),
                 ),
                 GoRoute(
                   path: 'finalizado',
-                  builder: (context, state) => const CartFinalizingPage(),
+                  builder: (context, state) => const SellFinalizingPage(),
                 ),
               ],
             ),

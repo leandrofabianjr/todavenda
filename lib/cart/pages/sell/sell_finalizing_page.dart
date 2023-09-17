@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/cart/cart.dart';
 
-class CartFinalizingPage extends StatelessWidget {
-  const CartFinalizingPage({super.key});
+class SellFinalizingPage extends StatelessWidget {
+  const SellFinalizingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +22,15 @@ class CartFinalizingPage extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          return const CartFinalizingView();
+          return const SellFinalizingView();
         },
       ),
     );
   }
 }
 
-class CartFinalizingView extends StatelessWidget {
-  const CartFinalizingView({super.key});
+class SellFinalizingView extends StatelessWidget {
+  const SellFinalizingView({super.key});
 
   @override
   Widget build(BuildContext context) {

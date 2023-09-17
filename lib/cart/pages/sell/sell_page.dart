@@ -9,8 +9,8 @@ import 'package:todavenda/products/products.dart';
 import '../../cart.dart';
 import '../../widgets/cart_list_tile.dart';
 
-class CartPage extends StatelessWidget {
-  const CartPage({super.key});
+class SellPage extends StatelessWidget {
+  const SellPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,21 +30,21 @@ class CartPage extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          return const CartView();
+          return const SellView();
         },
       ),
     );
   }
 }
 
-class CartView extends StatefulWidget {
-  const CartView({super.key});
+class SellView extends StatefulWidget {
+  const SellView({super.key});
 
   @override
-  State<CartView> createState() => _CartViewState();
+  State<SellView> createState() => _SellViewState();
 }
 
-class _CartViewState extends State<CartView> {
+class _SellViewState extends State<SellView> {
   int totalQuantity = 0;
   String formattedTotalPrice = '';
   Client? selectedClient;
@@ -108,7 +108,7 @@ class _CartViewState extends State<CartView> {
             case CartStatus.failure:
               return ExceptionWidget(exception: state.exception);
             case CartStatus.initial:
-              return CartSelectorView(
+              return SellSelectorView(
                 items: state.items,
                 onAdded: (product) => context
                     .read<CartBloc>()
@@ -126,8 +126,8 @@ class _CartViewState extends State<CartView> {
   }
 }
 
-class CartSelectorView extends StatelessWidget {
-  const CartSelectorView({
+class SellSelectorView extends StatelessWidget {
+  const SellSelectorView({
     super.key,
     required this.items,
     required this.onAdded,
@@ -164,7 +164,7 @@ class CartSelectorView extends StatelessWidget {
               items.entries
                   .toList()
                   .map(
-                    (item) => CartListTile(
+                    (item) => SellListTile(
                       product: item.key,
                       quantity: item.value,
                       onAdded: () => onAdded(item.key),
