@@ -14,9 +14,14 @@ class ReportsMenuPage extends StatelessWidget {
             delegate: SliverChildListDelegate(
               [
                 ListTile(
-                  leading: const Icon(Icons.point_of_sale),
+                  leading: const Icon(Icons.show_chart),
                   title: const Text('Vendas'),
                   onTap: () => context.go('/relatorios/vendas'),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.point_of_sale),
+                  title: const Text('Sessões de caixa'),
+                  onTap: () => context.go('/relatorios/sessoes'),
                 ),
               ],
             ),

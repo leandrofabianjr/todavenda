@@ -101,6 +101,18 @@ final appRouterConfig = GoRouter(
                     ),
                   ],
                 ),
+                GoRoute(
+                  path: 'sessoes',
+                  builder: (context, state) => const SessionsListPage(),
+                  routes: [
+                    GoRoute(
+                      path: ':uuid',
+                      builder: (context, state) => SalePage(
+                        uuid: state.pathParameters['uuid']!,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ],
