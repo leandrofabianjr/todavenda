@@ -27,18 +27,24 @@ firebaseRepositoryProviders(String companyUuid) {
     productCategoriesRepository: productCategoriesRepository,
   );
   final clientsRepository = ClientsRepositoryFirestore(companyUuid);
-  final sessionsRepository = SessionsRepositoryFirestore(companyUuid);
-  final sessionMovementsRepository = SessionMovementsRepositoryFirestore(
-    companyUuid,
-  );
+
   final sessionSuppliesRepository = SessionSuppliesRepositoryFirestore(
     companyUuid,
   );
   final sessionPickUpsRepository = SessionPickUpsRepositoryFirestore(
     companyUuid,
   );
+  final sessionsRepository = SessionsRepositoryFirestore(
+    companyUuid,
+    sessionSuppliesRepository: sessionSuppliesRepository,
+    sessionPickUpsRepository: sessionPickUpsRepository,
+  );
+  final sessionMovementsRepository = SessionMovementsRepositoryFirestore(
+    companyUuid,
+  );
   final paymentsRepository = PaymentsRepositoryFirestore(
     companyUuid,
+    sessionsRepository: sessionsRepository,
   );
   final salesRepository = SalesRepositoryFirestore(
     companyUuid,

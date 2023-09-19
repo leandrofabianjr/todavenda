@@ -14,7 +14,7 @@ abstract class SalesRepository {
     Client? client,
   });
 
-  Future<void> removeSale(String uuid);
+  Future<void> remove(Sale sale);
 
   Future<Sale> addPayment({
     required Sale sale,

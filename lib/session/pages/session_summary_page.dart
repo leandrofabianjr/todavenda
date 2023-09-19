@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
+import 'package:todavenda/session/bloc/session_bloc.dart';
 
 class SessionSummaryPage extends StatelessWidget {
   const SessionSummaryPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider.value(
+      value: BlocProvider.of<SessionBloc>(context)
+        ..add(const SessionInitiated()),
+      child: const SessionSummaryView(),
+    );
+  }
+}
+
+class SessionSummaryView extends StatelessWidget {
+  const SessionSummaryView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,62 +32,82 @@ class SessionSummaryPage extends StatelessWidget {
             onPressed: () => context.go('/vender'),
           ),
           title: const Text('Caixa atual')),
-      body: ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                DescriptionDetail(
-                  description: const Text('Em caixa'),
-                  detail: Text('R\$ 999,99', style: textTheme.titleLarge),
-                ),
-                DescriptionDetail(
-                  description: const Text('Suprimentos'),
-                  detail: Text('R\$ 999,99', style: textTheme.titleLarge),
-                ),
-                DescriptionDetail(
-                  description: const Text('Sangrias'),
-                  detail: Text('R\$ 999,99', style: textTheme.titleLarge),
-                ),
-              ],
-            ),
-          ),
-          Column(
-            children: [
-              const Divider(),
-              const Text('Histórico'),
-              ListTile(
-                onTap: () => context.go('/caixa/fluxo'),
-                leading: const Icon(Icons.compare_arrows),
-                title: const Text('Ver fluxo'),
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              const Divider(),
-              const Text('Operações'),
-              ListTile(
-                onTap: () => context.go('/caixa/suprimento'),
-                leading: const Icon(Icons.login),
-                title: const Text('Suprimento'),
-              ),
-              ListTile(
-                onTap: () => context.go('/caixa/sangria'),
-                leading: const Icon(Icons.logout),
-                title: const Text('Sangria'),
-              ),
-              ListTile(
-                onTap: () => context.go('/caixa/fechamento'),
-                leading: const Icon(Icons.archive_outlined),
-                title: const Text('Fechamento'),
-                textColor: colorScheme.error,
-                iconColor: colorScheme.error,
-              ),
-            ],
-          ),
-        ],
+      body: BlocConsumer<SessionBloc, SessionState>(
+        listener: (context, state) {
+          if (state.status == SessionStatus.closed) {
+            context.go('/caixa/abrir');
+          }
+        },
+        builder: (context, state) {
+          switch (state.status) {
+            case SessionStatus.closed:
+            case SessionStatus.loading:
+              return const LoadingWidget();
+            default:
+              final session = state.session;
+              return ListView(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        DescriptionDetail(
+                          description: const Text('Sessão aberta em'),
+                          detail: Text(
+                            session.formattedCreatedAt,
+                          ),
+                        ),
+                        DescriptionDetail(
+                          description: const Text('Dinheiro em caixa'),
+                          detail: Text(
+                            session.formattedCurrentAmount,
+                            style: textTheme.titleLarge,
+                          ),
+                        ),
+                        DescriptionDetail(
+                          description: const Text('Suprimentos'),
+                          detail: Text(
+                            session.formattedSupplyAmount,
+                            style: textTheme.titleLarge,
+                          ),
+                        ),
+                        DescriptionDetail(
+                          description: const Text('Sangrias'),
+                          detail: Text(
+                            session.formattedPickUpAmount,
+                            style: textTheme.titleLarge,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      const Divider(),
+                      const Text('Operações'),
+                      ListTile(
+                        onTap: () => context.go('/caixa/suprir'),
+                        leading: const Icon(Icons.login),
+                        title: const Text('Suprimento'),
+                      ),
+                      ListTile(
+                        onTap: () => context.go('/caixa/sangrar'),
+                        leading: const Icon(Icons.logout),
+                        title: const Text('Sangria'),
+                      ),
+                      ListTile(
+                        onTap: () => context.go('/caixa/fechar'),
+                        leading: const Icon(Icons.archive_outlined),
+                        title: const Text('Fechamento'),
+                        textColor: colorScheme.error,
+                        iconColor: colorScheme.error,
+                      ),
+                    ],
+                  ),
+                ],
+              );
+          }
+        },
       ),
     );
   }

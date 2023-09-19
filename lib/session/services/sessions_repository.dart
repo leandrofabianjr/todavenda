@@ -11,7 +11,11 @@ abstract interface class SessionsRepository {
 
   Future<Session> create({double? openingAmount});
 
+  Future<Session> createSupply(double amount);
+
+  Future<Session> createPickUp(double amount);
+
   Future<Session> update(Session updatedSession);
 
-  Future<Session> close();
+  Future<Session> close({double? closingAmount});
 }

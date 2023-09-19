@@ -116,9 +116,12 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
   }
 
   @override
-  Future<void> removeSale(String uuid) async {
-    await collection.doc(uuid).delete();
-    _sales.removeWhere((element) => element.uuid == uuid);
+  Future<void> remove(Sale sale) async {
+    await collection.doc(sale.uuid).delete();
+    _sales.remove(sale);
+    for (final p in sale.payments) {
+      await paymentsRepository.remove(p.uuid);
+    }
   }
 
   @override

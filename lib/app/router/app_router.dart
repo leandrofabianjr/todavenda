@@ -48,6 +48,18 @@ final appRouterConfig = GoRouter(
                   path: 'abrir',
                   builder: (context, state) => const CreateSessionPage(),
                 ),
+                GoRoute(
+                  path: 'suprir',
+                  builder: (context, state) => const CreateSessionSupplyPage(),
+                ),
+                GoRoute(
+                  path: 'sangrar',
+                  builder: (context, state) => const CreateSessionPickUpPage(),
+                ),
+                GoRoute(
+                  path: 'fechar',
+                  builder: (context, state) => const CloseSessionPage(),
+                ),
               ],
             ),
             GoRoute(

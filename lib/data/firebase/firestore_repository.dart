@@ -18,4 +18,6 @@ abstract class FirestoreRepository<T> {
             fromFirestore: (snapshot, _) => fromJson(snapshot.data()!),
             toFirestore: (value, _) => toJson(value),
           );
+
+  WriteBatch initTransaction() => FirebaseFirestore.instance.batch();
 }

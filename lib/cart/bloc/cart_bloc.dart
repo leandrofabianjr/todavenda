@@ -182,7 +182,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           errorMessage: 'A venda já recebeu pagamentos e não pode ser excluída',
         ));
       } else {
-        await salesRepository.removeSale(state.sale!.uuid!);
+        await salesRepository.remove(state.sale!);
         emit(state.copyWith(status: CartStatus.checkout));
       }
     } catch (ex) {

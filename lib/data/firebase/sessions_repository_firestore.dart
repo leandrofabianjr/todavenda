@@ -1,6 +1,6 @@
 import 'package:todavenda/data/firebase/firestore_repository.dart';
 import 'package:todavenda/session/models/models.dart';
-import 'package:todavenda/session/services/sessions_repository.dart';
+import 'package:todavenda/session/services/services.dart';
 import 'package:uuid/uuid.dart';
 
 const _uuid = Uuid();
@@ -9,8 +9,14 @@ class SessionsRepositoryFirestore extends FirestoreRepository<Session>
     implements SessionsRepository {
   static const currentSessionUuid = 'current';
 
-  SessionsRepositoryFirestore(String companyUuid)
-      : super(companyUuid: companyUuid, resourcePath: 'sessions');
+  SessionsRepositoryFirestore(
+    String companyUuid, {
+    required this.sessionSuppliesRepository,
+    required this.sessionPickUpsRepository,
+  }) : super(companyUuid: companyUuid, resourcePath: 'sessions');
+
+  final SessionSuppliesRepository sessionSuppliesRepository;
+  final SessionPickUpsRepository sessionPickUpsRepository;
 
   @override
   Session fromJson(Map<String, dynamic> json) => Session.fromJson(json);
@@ -18,8 +24,11 @@ class SessionsRepositoryFirestore extends FirestoreRepository<Session>
   @override
   Map<String, dynamic> toJson(Session value) => value.toJson();
 
+  Session? _current;
+
   @override
-  Future<Session?> get current => getByUuid(currentSessionUuid);
+  Future<Session?> get current async =>
+      _current ?? await getByUuid(currentSessionUuid);
 
   @override
   Future<bool> get hasCurrentSession async => (await current) != null;
@@ -44,19 +53,49 @@ class SessionsRepositoryFirestore extends FirestoreRepository<Session>
       openingAmount: openingAmount ?? 0,
     );
     await collection.doc(currentSessionUuid).set(session);
+    _current = session;
     return session;
   }
 
   @override
   Future<Session> update(Session updatedSession) async {
-    await collection.doc(updatedSession.uuid).set(updatedSession);
+    await collection.doc(currentSessionUuid).set(updatedSession);
+    _current = updatedSession;
     return updatedSession;
   }
 
   @override
-  Future<Session> close() async {
+  Future<Session> close({double? closingAmount}) async {
     final session = (await current)!;
-    await collection.doc(session.uuid).set(session);
+    final closedSession = session.copyWith(
+      closingAmount: closingAmount,
+      closedAt: DateTime.now(),
+    );
+    final transaction = initTransaction();
+    transaction.set(collection.doc(closedSession.uuid), closedSession);
+    transaction.delete(collection.doc(currentSessionUuid));
+    await transaction.commit();
+    _current = null;
     return session;
+  }
+
+  @override
+  Future<Session> createSupply(double amount) async {
+    final session = (await current)!;
+    await sessionSuppliesRepository.create(
+      sessionUuid: session.uuid,
+      amount: amount,
+    );
+    return update(session.afterSupply(amount));
+  }
+
+  @override
+  Future<Session> createPickUp(double amount) async {
+    final session = (await current)!;
+    await sessionPickUpsRepository.create(
+      sessionUuid: session.uuid,
+      amount: amount,
+    );
+    return update(session.afterPickUp(amount));
   }
 }

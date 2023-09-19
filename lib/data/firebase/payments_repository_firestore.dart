@@ -1,4 +1,5 @@
 import 'package:todavenda/data/firebase/firestore_repository.dart';
+import 'package:todavenda/data/firebase/sessions_repository_firestore.dart';
 import 'package:todavenda/sales/sales.dart';
 import 'package:todavenda/session/models/models.dart';
 import 'package:todavenda/session/services/services.dart';
@@ -10,8 +11,12 @@ class PaymentsRepositoryFirestore extends FirestoreRepository<Payment>
     implements PaymentsRepository {
   static const currentSessionUuid = 'current';
 
-  PaymentsRepositoryFirestore(String companyUuid)
-      : super(companyUuid: companyUuid, resourcePath: 'sessionMovements');
+  PaymentsRepositoryFirestore(
+    String companyUuid, {
+    required this.sessionsRepository,
+  }) : super(companyUuid: companyUuid, resourcePath: 'sessionMovements');
+
+  final SessionsRepositoryFirestore sessionsRepository;
 
   @override
   Payment fromJson(Map<String, dynamic> json) => Payment.fromJson(json);
@@ -35,7 +40,12 @@ class PaymentsRepositoryFirestore extends FirestoreRepository<Payment>
       paymentType: paymentType,
       amount: amount,
     );
-    await collection.doc(movement.uuid).set(movement);
+    if (paymentType == PaymentType.cash) {
+      await collection.doc(movement.uuid).set(movement);
+      final session =
+          (await sessionsRepository.current)!.afterCashPayment(amount);
+      await sessionsRepository.update(session);
+    }
     return movement;
   }
 
