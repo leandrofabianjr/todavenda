@@ -37,10 +37,11 @@ class SessionsRepositoryFirestore extends FirestoreRepository<Session>
   }
 
   @override
-  Future<Session> create() async {
+  Future<Session> create({double? openingAmount}) async {
     final session = Session(
       uuid: _uuid.v4(),
       createdAt: DateTime.now(),
+      openingAmount: openingAmount ?? 0,
     );
     await collection.doc(currentSessionUuid).set(session);
     return session;

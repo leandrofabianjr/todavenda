@@ -19,11 +19,11 @@ class SellCheckoutPage extends StatelessWidget {
         listener: (context, state) {
           switch (state.status) {
             case CartStatus.initial:
-              return context.go('/carrinho');
+              return context.go('/vender');
             case CartStatus.payment:
-              return context.go('/carrinho/pagamento');
+              return context.go('/vender/pagamento');
             case CartStatus.finalizing:
-              return context.go('/carrinho/finalizado');
+              return context.go('/vender/finalizado');
             default:
               null;
           }
@@ -53,7 +53,7 @@ class _SellCheckoutViewState extends State<SellCheckoutView> {
     return WillPopScope(
       onWillPop: () async {
         context.read<CartBloc>().add(const CartStarted());
-        context.go('/carrinho');
+        context.go('/vender');
         return false;
       },
       child: Scaffold(

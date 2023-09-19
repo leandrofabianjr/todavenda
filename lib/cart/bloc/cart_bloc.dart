@@ -48,6 +48,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     try {
       emit(state.copyWith(status: CartStatus.loading));
 
+      final session = await sessionsRepository.current;
+      if (session == null) {
+        return emit(state.copyWith(status: CartStatus.closedSession));
+      }
+
       final products = await productRepository.loadProducts();
       final initialItems = state.items;
       final items = {
@@ -56,7 +61,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
               initialItems.containsKey(product) ? initialItems[product]! : 0
       };
       emit(state.copyWith(
-          status: CartStatus.initial, items: items, session: event.session));
+        status: CartStatus.initial,
+        items: items,
+        session: session,
+      ));
     } catch (ex) {
       emit(state.copyWith(status: CartStatus.failure, exception: ex));
     }

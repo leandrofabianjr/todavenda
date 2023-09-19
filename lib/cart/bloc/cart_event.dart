@@ -2,21 +2,17 @@ part of 'cart_bloc.dart';
 
 sealed class CartEvent extends Equatable {
   const CartEvent();
+
+  @override
+  List<Object?> get props => [];
 }
 
 final class CartStarted extends CartEvent {
-  const CartStarted({required this.session});
-  final Session session;
-
-  @override
-  List<Object?> get props => [session];
+  const CartStarted();
 }
 
 final class CartResumed extends CartEvent {
   const CartResumed();
-
-  @override
-  List<Object?> get props => [];
 }
 
 final class CartItemAdded extends CartEvent {
@@ -25,7 +21,7 @@ final class CartItemAdded extends CartEvent {
   final Product product;
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [product];
 }
 
 final class CartItemRemoved extends CartEvent {
@@ -34,7 +30,7 @@ final class CartItemRemoved extends CartEvent {
   final Product product;
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [product];
 }
 
 final class CartClientChanged extends CartEvent {
@@ -43,28 +39,19 @@ final class CartClientChanged extends CartEvent {
   final Client? client;
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [client];
 }
 
 final class CartCheckClicked extends CartEvent {
   const CartCheckClicked();
-
-  @override
-  List<Object> get props => [];
 }
 
 final class CartCheckouted extends CartEvent {
   const CartCheckouted();
-
-  @override
-  List<Object> get props => [];
 }
 
 final class CartConfirmed extends CartEvent {
   const CartConfirmed();
-
-  @override
-  List<Object> get props => [];
 }
 
 final class CartPaymentAdded extends CartEvent {
@@ -90,21 +77,12 @@ final class CartPaymentRemoved extends CartEvent {
 
 final class CartPaymentsFinalized extends CartEvent {
   const CartPaymentsFinalized();
-
-  @override
-  List<Object?> get props => [];
 }
 
 final class CartCleaned extends CartEvent {
   const CartCleaned();
-
-  @override
-  List<Object?> get props => [];
 }
 
 final class CartSaleRemoved extends CartEvent {
   const CartSaleRemoved();
-
-  @override
-  List<Object?> get props => [];
 }

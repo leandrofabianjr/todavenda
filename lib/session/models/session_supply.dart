@@ -3,11 +3,10 @@ import 'package:todavenda/session/models/models.dart';
 class SessionSupply extends SessionMovement {
   const SessionSupply({
     super.uuid,
-    required super.type,
     required super.sessionUuid,
     super.createdAt,
     required this.amount,
-  });
+  }) : super(type: SessionMovementType.supply);
 
   final double amount;
 
@@ -22,7 +21,6 @@ class SessionSupply extends SessionMovement {
   static SessionSupply fromJson(Map<String, dynamic> json) {
     return SessionSupply(
       uuid: json['uuid'],
-      type: SessionMovementType.supply,
       sessionUuid: json['sessionUuid'],
       createdAt: DateTime.tryParse(json['createdAt']),
       amount: json['amount'],

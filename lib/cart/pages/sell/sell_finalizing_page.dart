@@ -14,9 +14,9 @@ class SellFinalizingPage extends StatelessWidget {
         listener: (context, state) {
           switch (state.status) {
             case CartStatus.checkout:
-              return context.go('/carrinho/confirmacao');
+              return context.go('/vender/confirmacao');
             case CartStatus.payment:
-              return context.go('/carrinho/pagamento');
+              return context.go('/vender/pagamento');
             default:
               null;
           }
@@ -52,7 +52,7 @@ class SellFinalizingView extends StatelessWidget {
         ElevatedButton(
           onPressed: () {
             context.read<CartBloc>().add(const CartStarted());
-            context.go('/carrinho');
+            context.go('/vender');
           },
           child: const Text('Iniciar nova venda'),
         ),

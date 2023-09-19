@@ -20,11 +20,13 @@ class SellPage extends StatelessWidget {
         listener: (context, state) {
           switch (state.status) {
             case CartStatus.checkout:
-              return context.go('/carrinho/confirmacao');
+              return context.go('/vender/confirmacao');
             case CartStatus.payment:
-              return context.go('/carrinho/pagamento');
+              return context.go('/vender/pagamento');
             case CartStatus.finalizing:
-              return context.go('/carrinho/finalizado');
+              return context.go('/vender/finalizado');
+            case CartStatus.closedSession:
+              return context.go('/caixa/abrir');
             default:
               null;
           }

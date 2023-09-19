@@ -28,9 +28,10 @@ injectBlocProviders() {
     ),
     BlocProvider(
       create: (context) => CartBloc(
-          productRepository: context.read<ProductsRepository>(),
-          salesRepository: context.read<SalesRepository>(),
-          sessionsRepository: context.read<SessionsRepository>()),
+        productRepository: context.read<ProductsRepository>(),
+        salesRepository: context.read<SalesRepository>(),
+        sessionsRepository: context.read<SessionsRepository>(),
+      ),
     ),
   ];
 }

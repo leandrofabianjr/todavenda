@@ -1,6 +1,7 @@
 part of 'cart_bloc.dart';
 
 enum CartStatus {
+  closedSession,
   initial,
   loading,
   failure,

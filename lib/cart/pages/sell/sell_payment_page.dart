@@ -42,10 +42,10 @@ class _SellPaymentViewState extends State<SellPaymentView> {
         body: BlocConsumer<CartBloc, CartState>(
           listener: (context, state) {
             if (state.status == CartStatus.finalizing) {
-              context.go('/carrinho/finalizado');
+              context.go('/vender/finalizado');
             }
             if (state.status == CartStatus.checkout) {
-              context.go('/carrinho/confirmacao');
+              context.go('/vender/confirmacao');
             }
             if (state.errorMessage != null) {
               ScaffoldMessenger.of(context).showSnackBar(

@@ -14,7 +14,7 @@ class SessionSummaryPage extends StatelessWidget {
           automaticallyImplyLeading: false,
           leading: IconButton(
             icon: const Icon(Icons.close),
-            onPressed: () => context.go('/carrinho'),
+            onPressed: () => context.go('/vender'),
           ),
           title: const Text('Caixa atual')),
       body: ListView(

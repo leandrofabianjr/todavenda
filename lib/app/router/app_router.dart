@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/app/router/guards/auth_guard.dart';
 import 'package:todavenda/auth/auth.dart';
+import 'package:todavenda/cart/cart.dart';
 import 'package:todavenda/cart/pages/pages.dart';
 import 'package:todavenda/clients/pages/pages.dart';
-import 'package:todavenda/session/pages/pages.dart';
 import 'package:todavenda/me/pages/me_page.dart';
 import 'package:todavenda/products/pages/pages.dart';
 import 'package:todavenda/registers/pages/pages.dart';
 import 'package:todavenda/reports/pages/pages.dart';
 import 'package:todavenda/sales/pages/pages.dart';
+import 'package:todavenda/session/pages/pages.dart';
 
 import '../app_tab_bar.dart';
 import 'app_router_observer.dart';
@@ -26,14 +27,10 @@ final appRouterConfig = GoRouter(
   observers: [AppRouterObserver()],
   redirect: (context, state) => authGuard(context),
   routes: [
-    GoRoute(path: '/', redirect: (context, state) => '/carrinho'),
+    GoRoute(path: '/', redirect: (context, state) => '/vender'),
     GoRoute(
       path: '/login',
       builder: (context, state) => const LoginPage(),
-    ),
-    GoRoute(
-      path: '/caixa',
-      builder: (context, state) => const SessionSummaryPage(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
@@ -43,6 +40,16 @@ final appRouterConfig = GoRouter(
         StatefulShellBranch(
           navigatorKey: _cartNavigatorKey,
           routes: <RouteBase>[
+            GoRoute(
+              path: '/caixa',
+              builder: (context, state) => const SessionSummaryPage(),
+              routes: [
+                GoRoute(
+                  path: 'abrir',
+                  builder: (context, state) => const CreateSessionPage(),
+                ),
+              ],
+            ),
             GoRoute(
               path: '/vender',
               builder: (context, state) => const SellPage(),

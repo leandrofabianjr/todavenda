@@ -3,7 +3,7 @@ import 'package:todavenda/data/firebase/firestore_repository.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/sales.dart';
 import 'package:todavenda/session/models/models.dart';
-import 'package:todavenda/session/services/session_movements_repository.dart';
+import 'package:todavenda/session/services/payments_repository.dart';
 import 'package:uuid/uuid.dart';
 
 const _uuid = Uuid();
@@ -19,12 +19,12 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
     String companyUuid, {
     required this.productsRepository,
     required this.clientsRepository,
-    required this.sessionMovementsRepository,
+    required this.paymentsRepository,
   }) : super(companyUuid: companyUuid, resourcePath: 'sales');
 
   final ProductsRepository productsRepository;
   final ClientsRepository clientsRepository;
-  final SessionMovementsRepository sessionMovementsRepository;
+  final PaymentsRepository paymentsRepository;
 
   @override
   fromJson(Map<String, dynamic> json) => Sale.fromJson(
@@ -40,8 +40,7 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
   Future<void> _updateDependencies() async {
     _products = await productsRepository.loadProducts();
     _clients = await clientsRepository.loadClients();
-    _payments = await sessionMovementsRepository.list(
-        type: SessionMovementType.payment) as List<Payment>;
+    _payments = await paymentsRepository.list();
   }
 
   @override
@@ -100,7 +99,7 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
     required PaymentType type,
     required double amount,
   }) async {
-    final payment = await sessionMovementsRepository.createPayment(
+    final payment = await paymentsRepository.create(
       sale: sale,
       paymentType: type,
       amount: amount,
@@ -127,7 +126,7 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
     required Sale sale,
     required Payment payment,
   }) async {
-    await sessionMovementsRepository.remove(payment.uuid);
+    await paymentsRepository.remove(payment.uuid);
     _payments.remove(payment);
     final payments = sale.payments.where((p) => p != payment).toList();
     final newSale = sale.copyWith(

@@ -9,7 +9,7 @@ abstract interface class SessionsRepository {
 
   Future<Session?> getByUuid(String uuid);
 
-  Future<Session> create();
+  Future<Session> create({double? openingAmount});
 
   Future<Session> update(Session updatedSession);
 

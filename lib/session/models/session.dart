@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 class Session extends Equatable {
   const Session({
     required this.uuid,
+    this.openingAmount = 0,
     this.currentAmount = 0,
     this.supplyAmount = 0,
     this.pickUpAmount = 0,
@@ -11,6 +12,7 @@ class Session extends Equatable {
   });
 
   final String uuid;
+  final double openingAmount;
   final double currentAmount;
   final double supplyAmount;
   final double pickUpAmount;
@@ -55,7 +57,7 @@ class Session extends Equatable {
       currentAmount: json['currentAmount'],
       supplyAmount: json['supplyAmount'],
       pickUpAmount: json['pickUpAmount'],
-      closedAt: DateTime.tryParse(json['closedAt']),
+      closedAt: DateTime.tryParse(json['closedAt'] ?? ''),
     );
   }
 

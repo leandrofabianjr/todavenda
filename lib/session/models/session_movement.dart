@@ -45,7 +45,7 @@ abstract class SessionMovement extends Equatable {
   Map<String, dynamic> toJson() {
     return {
       'uuid': uuid,
-      'type': type,
+      'type': type.value,
       'sessionUuid': sessionUuid,
       'createdAt': createdAt.toString(),
     };
