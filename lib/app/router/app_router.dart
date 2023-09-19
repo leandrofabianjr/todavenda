@@ -11,6 +11,7 @@ import 'package:todavenda/registers/pages/pages.dart';
 import 'package:todavenda/reports/pages/pages.dart';
 import 'package:todavenda/sales/pages/pages.dart';
 import 'package:todavenda/session/pages/pages.dart';
+import 'package:todavenda/session/pages/session/session_page.dart';
 
 import '../app_tab_bar.dart';
 import 'app_router_observer.dart';
@@ -107,7 +108,7 @@ final appRouterConfig = GoRouter(
                   routes: [
                     GoRoute(
                       path: ':uuid',
-                      builder: (context, state) => SalePage(
+                      builder: (context, state) => SessionPage(
                         uuid: state.pathParameters['uuid']!,
                       ),
                     ),

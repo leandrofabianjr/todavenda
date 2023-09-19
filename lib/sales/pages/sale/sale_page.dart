@@ -97,25 +97,6 @@ class SaleView extends StatelessWidget {
   }
 }
 
-class SectionCardWidget extends StatelessWidget {
-  const SectionCardWidget({super.key, required this.children});
-
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: children,
-        ),
-      ),
-    );
-  }
-}
-
 class SalePaymentsReport extends StatelessWidget {
   const SalePaymentsReport({super.key, required this.sale});
   final Sale sale;
