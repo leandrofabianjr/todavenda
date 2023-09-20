@@ -58,6 +58,9 @@ firebaseRepositoryProviders(String companyUuid) {
       value: sessionSuppliesRepository as SessionSuppliesRepository,
     ),
     RepositoryProvider.value(
+      value: paymentsRepository as PaymentsRepository,
+    ),
+    RepositoryProvider.value(
       value: sessionPickUpsRepository as SessionPickUpsRepository,
     ),
     RepositoryProvider.value(value: sessionsRepository as SessionsRepository),

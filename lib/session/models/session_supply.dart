@@ -4,7 +4,7 @@ class SessionSupply extends SessionMovement {
   const SessionSupply({
     super.uuid,
     required super.sessionUuid,
-    super.createdAt,
+    required super.createdAt,
     required this.amount,
   }) : super(type: SessionMovementType.supply);
 
@@ -22,7 +22,7 @@ class SessionSupply extends SessionMovement {
     return SessionSupply(
       uuid: json['uuid'],
       sessionUuid: json['sessionUuid'],
-      createdAt: DateTime.tryParse(json['createdAt']),
+      createdAt: DateTime.parse(json['createdAt']),
       amount: json['amount'],
     );
   }

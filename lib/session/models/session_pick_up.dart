@@ -4,7 +4,7 @@ class SessionPickUp extends SessionMovement {
   const SessionPickUp({
     super.uuid,
     required super.sessionUuid,
-    super.createdAt,
+    required super.createdAt,
     required this.amount,
   }) : super(type: SessionMovementType.pickUp);
 
@@ -22,7 +22,7 @@ class SessionPickUp extends SessionMovement {
     return SessionPickUp(
       uuid: json['uuid'],
       sessionUuid: json['sessionUuid'],
-      createdAt: DateTime.tryParse(json['createdAt']),
+      createdAt: DateTime.parse(json['createdAt']),
       amount: json['amount'],
     );
   }

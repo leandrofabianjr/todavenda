@@ -34,13 +34,13 @@ abstract class SessionMovement extends Equatable {
     this.uuid,
     required this.type,
     required this.sessionUuid,
-    this.createdAt,
+    required this.createdAt,
   });
 
   final String? uuid;
   final SessionMovementType type;
   final String sessionUuid;
-  final DateTime? createdAt;
+  final DateTime createdAt;
 
   Map<String, dynamic> toJson() {
     return {
