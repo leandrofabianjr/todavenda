@@ -22,6 +22,8 @@ class _PaymentsLineChartState extends State<PaymentsLineChart> {
   late List<Payment> payments;
   bool loading = true;
 
+  bool showReloadButton = false;
+
   double minX = 0;
   double maxX = 0;
   double minY = 0;
@@ -92,20 +94,21 @@ class _PaymentsLineChartState extends State<PaymentsLineChart> {
 
     return Column(
       children: <Widget>[
-        Align(
-          alignment: Alignment.topRight,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: IconButton.filledTonal(
-              onPressed: () => updateData(),
-              icon: const Icon(Icons.refresh),
+        if (showReloadButton)
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: IconButton.filledTonal(
+                onPressed: () => updateData(),
+                icon: const Icon(Icons.refresh),
+              ),
             ),
           ),
-        ),
         SizedBox(
           height: 150,
           child: Padding(
-            padding: const EdgeInsets.only(right: 16.0),
+            padding: const EdgeInsets.only(right: 16.0, top: 8.0),
             child: LineChart(mainData()),
           ),
         ),
