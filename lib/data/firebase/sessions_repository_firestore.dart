@@ -27,14 +27,22 @@ class SessionsRepositoryFirestore extends FirestoreRepository<Session>
   Session? _current;
 
   @override
-  Future<Session?> get current async =>
-      _current ?? await getByUuid(currentSessionUuid);
+  Future<Session?> get current async {
+    if (_current != null) return _current;
+
+    final snapshot = await collection.doc(currentSessionUuid).get();
+    return snapshot.data();
+  }
 
   @override
   Future<bool> get hasCurrentSession async => (await current) != null;
 
   @override
   Future<Session?> getByUuid(String uuid) async {
+    final session = await current;
+    if (session != null && uuid == session.uuid) {
+      return current;
+    }
     final snapshot = await collection.doc(uuid).get();
     return snapshot.data();
   }
