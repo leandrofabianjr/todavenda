@@ -40,8 +40,8 @@ class PaymentsRepositoryFirestore extends FirestoreRepository<Payment>
       paymentType: paymentType,
       amount: amount,
     );
+    await collection.doc(movement.uuid).set(movement);
     if (paymentType == PaymentType.cash) {
-      await collection.doc(movement.uuid).set(movement);
       final session =
           (await sessionsRepository.current)!.afterCashPayment(amount);
       await sessionsRepository.update(session);

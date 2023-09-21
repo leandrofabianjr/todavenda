@@ -6,9 +6,11 @@ import 'package:todavenda/sales/models/models.dart';
 import 'package:todavenda/session/services/payments_repository.dart';
 
 class PaymentsLineChart extends StatefulWidget {
-  const PaymentsLineChart({super.key, required this.paymentsRepository});
+  const PaymentsLineChart(
+      {super.key, required this.paymentsRepository, this.sessionUuid});
 
   final PaymentsRepository paymentsRepository;
+  final String? sessionUuid;
 
   @override
   State<PaymentsLineChart> createState() => _PaymentsLineChartState();
@@ -20,27 +22,43 @@ class _PaymentsLineChartState extends State<PaymentsLineChart> {
   late List<Payment> payments;
   bool loading = true;
 
-  double greatestPayment = 0;
+  double minX = 0;
+  double maxX = 0;
+  double minY = 0;
+  double maxY = 0;
+
+  calculateAxisValues() {
+    if (payments.isEmpty) return;
+
+    final firstTimeDate = payments.first.createdAt;
+    final lastTimeDate = payments.last.createdAt;
+    const lowestAmount = 0.0;
+    double greatestAmount = 0;
+
+    for (var p in payments) {
+      if (p.amount > greatestAmount) {
+        greatestAmount = p.amount;
+      }
+    }
+
+    minX = firstTimeDate.lastFullHour.millisecondsSinceEpoch.toDouble();
+    maxX = lastTimeDate.nextFullHour.millisecondsSinceEpoch.toDouble();
+    minY = lowestAmount;
+    maxY = (((greatestAmount / 4) * 5) / 10).round() * 10.0;
+  }
 
   updateData() async {
     if (!loading) setState(() => loading = true);
 
-    payments = await widget.paymentsRepository.list();
+    payments = await widget.paymentsRepository.list(
+      sessionUuid: widget.sessionUuid,
+    );
     payments.sortBy((p) => p.createdAt);
 
-    for (var p in payments) {
-      if (p.amount > greatestPayment) {
-        greatestPayment = p.amount;
-      }
-    }
+    calculateAxisValues();
 
     setState(() => loading = false);
   }
-
-  double get minX => payments.first.createdAt.millisecondsSinceEpoch.toDouble();
-  double get maxX => payments.last.createdAt.millisecondsSinceEpoch.toDouble();
-  double get minY => 0;
-  double get maxY => greatestPayment;
 
   List<FlSpot> get spots => payments
       .map(
@@ -66,6 +84,12 @@ class _PaymentsLineChartState extends State<PaymentsLineChart> {
       return const LoadingWidget();
     }
 
+    if (payments.isEmpty) {
+      return const Center(
+        child: Text('Ainda não há vendas realizadas nesta sessão'),
+      );
+    }
+
     return Column(
       children: <Widget>[
         Align(
@@ -78,15 +102,10 @@ class _PaymentsLineChartState extends State<PaymentsLineChart> {
             ),
           ),
         ),
-        AspectRatio(
-          aspectRatio: 1.5,
+        SizedBox(
+          height: 150,
           child: Padding(
-            padding: const EdgeInsets.only(
-              right: 18,
-              left: 12,
-              top: 24,
-              bottom: 12,
-            ),
+            padding: const EdgeInsets.only(right: 16.0),
             child: LineChart(mainData()),
           ),
         ),
@@ -95,33 +114,26 @@ class _PaymentsLineChartState extends State<PaymentsLineChart> {
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    final style = TextStyle(color: colorScheme.primary);
+    final dt = DateTime.fromMillisecondsSinceEpoch(value.toInt());
 
-    if (value == maxX || value == minX) {
-      final dt = DateTime.fromMillisecondsSinceEpoch(value.toInt());
-      final a = DateTimeFormatter.shortDateTime(dt);
-      return SideTitleWidget(
-        axisSide: meta.axisSide,
-        child: Text(a, style: style, textAlign: TextAlign.left),
-      );
-    }
-
-    return const SizedBox();
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      child: Text(
+        DateTimeFormatter.hourMinute(dt),
+        style: TextStyle(color: colorScheme.primary, fontSize: 10),
+        textAlign: TextAlign.left,
+        softWrap: false,
+      ),
+    );
   }
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
-    final style = TextStyle(
-      color: colorScheme.primary,
+    return Text(
+      CurrencyFormatter().formatPtBr(value),
+      style: TextStyle(color: colorScheme.primary, fontSize: 10),
+      textAlign: TextAlign.left,
+      softWrap: false,
     );
-
-    if (value == 0) {
-      return Text('R\$ 0', style: style, textAlign: TextAlign.left);
-    }
-    if (value == greatestPayment) {
-      return Text('R\$ $greatestPayment',
-          style: style, textAlign: TextAlign.left);
-    }
-    return const SizedBox();
   }
 
   LineChartData mainData() {
@@ -155,15 +167,16 @@ class _PaymentsLineChartState extends State<PaymentsLineChart> {
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            interval: maxX - minX,
+            interval: (maxX - minX) / 3,
             getTitlesWidget: bottomTitleWidgets,
           ),
         ),
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            interval: maxY - minY,
+            interval: (maxY - minY) / 3,
             getTitlesWidget: leftTitleWidgets,
+            reservedSize: 40,
           ),
         ),
       ),
@@ -181,8 +194,21 @@ class _PaymentsLineChartState extends State<PaymentsLineChart> {
           color: colorScheme.primary,
           barWidth: 1.5,
           isStrokeCapRound: true,
-          dotData: const FlDotData(
-            show: false,
+          dotData: FlDotData(
+            show: true,
+            getDotPainter: (
+              FlSpot spot,
+              double xPercentage,
+              LineChartBarData bar,
+              int index, {
+              double? size,
+            }) {
+              return FlDotCirclePainter(
+                radius: 1.5,
+                color: colorScheme.primary,
+                strokeColor: colorScheme.primary,
+              );
+            },
           ),
           belowBarData: BarAreaData(
             show: true,

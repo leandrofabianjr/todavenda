@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:todavenda/session/services/payments_repository.dart';
-import 'package:todavenda/session/session.dart';
 
 class ReportsMenuPage extends StatelessWidget {
   const ReportsMenuPage({super.key});
@@ -16,9 +13,6 @@ class ReportsMenuPage extends StatelessWidget {
           SliverList(
             delegate: SliverChildListDelegate(
               [
-                PaymentsLineChart(
-                  paymentsRepository: context.read<PaymentsRepository>(),
-                ),
                 ListTile(
                   leading: const Icon(Icons.show_chart),
                   title: const Text('Vendas'),
