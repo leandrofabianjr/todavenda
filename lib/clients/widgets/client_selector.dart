@@ -83,6 +83,7 @@ class ClientSelectorDialog extends StatefulWidget {
 
 class _ClientSelectorDialogState extends State<ClientSelectorDialog> {
   final searchTextController = TextEditingController();
+  final searchTextFocusNode = FocusNode();
   Client? selectedClient;
   bool searching = false;
   Timer? _debounce;
@@ -96,6 +97,7 @@ class _ClientSelectorDialogState extends State<ClientSelectorDialog> {
   @override
   void dispose() {
     _debounce?.cancel();
+    searchTextFocusNode.dispose();
     super.dispose();
   }
 
@@ -117,10 +119,15 @@ class _ClientSelectorDialogState extends State<ClientSelectorDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return AlertDialog(
+      contentPadding: EdgeInsets.zero,
+      backgroundColor: colorScheme.background,
       title: searching
           ? TextField(
               controller: searchTextController,
+              focusNode: searchTextFocusNode,
               decoration: InputDecoration(
                 label: const Text('Pesquise pelo cliente'),
                 suffixIcon: IconButton(
@@ -136,55 +143,65 @@ class _ClientSelectorDialogState extends State<ClientSelectorDialog> {
               children: [
                 const Text('Selecione o cliente'),
                 IconButton(
-                  onPressed: () => setState(() => searching = true),
+                  onPressed: () => setState(() {
+                    searching = true;
+                    searchTextFocusNode.requestFocus();
+                  }),
                   icon: const Icon(Icons.search),
                 ),
               ],
             ),
-      content: FutureBuilder(
-        future: getClients(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return ErrorWidget(snapshot.error!);
-          }
+      content: SizedBox(
+        height: 300,
+        width: double.maxFinite,
+        child: FutureBuilder(
+          future: getClients(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return ErrorWidget(snapshot.error!);
+            }
 
-          if (!snapshot.hasData) {
-            return const LoadingWidget();
-          }
+            if (!snapshot.hasData) {
+              return const LoadingWidget();
+            }
 
-          final clients = snapshot.data!;
+            final clients = snapshot.data!;
 
-          if (clients.isEmpty) {
-            return const Text(
-              'Não há clientes cadastrados',
-              textAlign: TextAlign.center,
+            if (clients.isEmpty) {
+              return const Center(
+                child: Text(
+                  'Nenhum cliente encontrado',
+                  textAlign: TextAlign.center,
+                ),
+              );
+            }
+
+            return ListView.builder(
+              itemCount: clients.length,
+              itemBuilder: (context, index) {
+                final client = clients[index];
+                return ListTile(
+                  selected: client == selectedClient,
+                  title: Text(client.name),
+                  onTap: () {
+                    widget.onChanged(client);
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
             );
-          }
-
-          return Column(
-            children: clients
-                .map(
-                  (client) => ListTile(
-                    selected: client == selectedClient,
-                    title: Text(client.name),
-                    onTap: () {
-                      widget.onChanged(client);
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                )
-                .toList(),
-          );
-        },
+          },
+        ),
       ),
       actions: [
-        TextButton.icon(
-          onPressed: () {
-            widget.onChanged(null);
-            Navigator.of(context).pop();
-          },
-          icon: const Icon(Icons.delete),
-          label: const Text('Remover'),
+        TextButton(
+          onPressed: selectedClient == null
+              ? null
+              : () {
+                  widget.onChanged(null);
+                  Navigator.of(context).pop();
+                },
+          child: const Text('Desselecionar'),
         ),
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
