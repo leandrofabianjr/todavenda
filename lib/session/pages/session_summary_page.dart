@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/session/bloc/session_bloc.dart';
-import 'package:todavenda/session/services/payments_repository.dart';
-import 'package:todavenda/session/session.dart';
 
 class SessionSummaryPage extends StatelessWidget {
   const SessionSummaryPage({super.key});
@@ -49,9 +47,6 @@ class SessionSummaryView extends StatelessWidget {
               final session = state.session;
               return ListView(
                 children: [
-                  PaymentsLineChart(
-                    paymentsRepository: context.read<PaymentsRepository>(),
-                  ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(

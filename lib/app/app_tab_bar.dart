@@ -3,53 +3,65 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:todavenda/companies/widgets/company_selector_bar.dart';
+import 'package:todavenda/companies/widgets/company_app_bar.dart';
+
+class AppTabBarTabData {
+  const AppTabBarTabData({
+    required this.iconData,
+    required this.label,
+  });
+
+  final IconData iconData;
+  final String label;
+}
 
 class AppTabBar extends StatelessWidget {
-  const AppTabBar({
+  AppTabBar({
     super.key,
     required this.navigationShell,
   });
 
   final StatefulNavigationShell navigationShell;
 
+  final List<AppTabBarTabData> tabsData = [
+    const AppTabBarTabData(
+      iconData: Icons.shopping_cart_outlined,
+      label: 'Vender',
+    ),
+    const AppTabBarTabData(
+      iconData: Icons.app_registration,
+      label: 'Cadastros',
+    ),
+    const AppTabBarTabData(
+      iconData: Icons.query_stats,
+      label: 'Relatórios',
+    ),
+  ];
+
+  List<Tab> get tabs => tabsData
+      .map(
+        (e) => Tab(
+          height: 48,
+          iconMargin: EdgeInsets.zero,
+          icon: Icon(e.iconData),
+          text: navigationShell.currentIndex == tabsData.indexOf(e)
+              ? e.label
+              : null,
+        ),
+      )
+      .toList();
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       initialIndex: navigationShell.currentIndex,
-      length: 4,
+      length: tabsData.length,
       child: Scaffold(
         body: navigationShell,
         appBar: AppBar(
-          toolbarHeight: 24,
-          title: const CompanySelectorBar(),
+          title: const CompanyAppBar(),
           bottom: TabBar(
-            tabs: [
-              Tab(
-                height: 48,
-                iconMargin: EdgeInsets.zero,
-                icon: const Icon(Icons.shopping_cart_outlined),
-                text: navigationShell.currentIndex == 0 ? 'Vender' : null,
-              ),
-              Tab(
-                height: 48,
-                iconMargin: EdgeInsets.zero,
-                icon: const Icon(Icons.history),
-                text: navigationShell.currentIndex == 1 ? 'Relatórios' : null,
-              ),
-              Tab(
-                height: 48,
-                iconMargin: EdgeInsets.zero,
-                icon: const Icon(Icons.app_registration),
-                text: navigationShell.currentIndex == 2 ? 'Cadastros' : null,
-              ),
-              Tab(
-                height: 48,
-                iconMargin: EdgeInsets.zero,
-                icon: const Icon(Icons.account_circle),
-                text: navigationShell.currentIndex == 3 ? 'Meus dados' : null,
-              )
-            ],
+            tabs: tabs,
             onTap: (index) => navigationShell.goBranch(
               index,
               initialLocation: index == navigationShell.currentIndex,

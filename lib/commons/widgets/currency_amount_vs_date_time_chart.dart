@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:todavenda/commons/commons.dart';
@@ -59,6 +60,7 @@ class _CurrencyAmountVsDateTimeChartState<T>
 
   updateData() async {
     data = await widget.getData();
+    data.sortBy(widget.getDateTime);
     calculateAxisValues();
     return data;
   }
@@ -101,7 +103,7 @@ class _CurrencyAmountVsDateTimeChartState<T>
           return widget.emptyDataWidget;
         }
 
-        return Column(
+        return Stack(
           children: <Widget>[
             if (widget.showReloadButton)
               Align(
@@ -114,13 +116,7 @@ class _CurrencyAmountVsDateTimeChartState<T>
                   ),
                 ),
               ),
-            SizedBox(
-              height: 150,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 16.0, top: 8.0),
-                child: LineChart(mainData()),
-              ),
-            ),
+            LineChart(mainData()),
           ],
         );
       },

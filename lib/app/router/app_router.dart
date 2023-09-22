@@ -5,7 +5,6 @@ import 'package:todavenda/auth/auth.dart';
 import 'package:todavenda/cart/cart.dart';
 import 'package:todavenda/cart/pages/pages.dart';
 import 'package:todavenda/clients/pages/pages.dart';
-import 'package:todavenda/me/pages/me_page.dart';
 import 'package:todavenda/products/pages/pages.dart';
 import 'package:todavenda/registers/pages/pages.dart';
 import 'package:todavenda/reports/pages/pages.dart';
@@ -20,7 +19,6 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _cartNavigatorKey = GlobalKey<NavigatorState>();
 final _reportsNavigatorKey = GlobalKey<NavigatorState>();
 final _registersNavigatorKey = GlobalKey<NavigatorState>();
-final _meNavigatorKey = GlobalKey<NavigatorState>();
 
 final appRouterConfig = GoRouter(
   navigatorKey: _rootNavigatorKey,
@@ -84,41 +82,6 @@ final appRouterConfig = GoRouter(
           ],
         ),
         StatefulShellBranch(
-          navigatorKey: _reportsNavigatorKey,
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/relatorios',
-              builder: (context, state) => const ReportsMenuPage(),
-              routes: [
-                GoRoute(
-                  path: 'vendas',
-                  builder: (context, state) => const SalesListPage(),
-                  routes: [
-                    GoRoute(
-                      path: ':uuid',
-                      builder: (context, state) => SalePage(
-                        uuid: state.pathParameters['uuid']!,
-                      ),
-                    ),
-                  ],
-                ),
-                GoRoute(
-                  path: 'sessoes',
-                  builder: (context, state) => const SessionsListPage(),
-                  routes: [
-                    GoRoute(
-                      path: ':uuid',
-                      builder: (context, state) => SessionPage(
-                        uuid: state.pathParameters['uuid']!,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-        StatefulShellBranch(
           navigatorKey: _registersNavigatorKey,
           routes: <RouteBase>[
             GoRoute(
@@ -167,11 +130,41 @@ final appRouterConfig = GoRouter(
           ],
         ),
         StatefulShellBranch(
-          navigatorKey: _meNavigatorKey,
+          navigatorKey: _reportsNavigatorKey,
           routes: <RouteBase>[
             GoRoute(
-              path: '/eu',
-              builder: (context, state) => const MePage(),
+              path: '/relatorios',
+              builder: (context, state) => const ReportsPage(),
+              routes: [
+                GoRoute(
+                  path: 'listagens',
+                  builder: (context, state) => const ReportsListsPage(),
+                ),
+                GoRoute(
+                  path: 'vendas',
+                  builder: (context, state) => const SalesListPage(),
+                  routes: [
+                    GoRoute(
+                      path: ':uuid',
+                      builder: (context, state) => SalePage(
+                        uuid: state.pathParameters['uuid']!,
+                      ),
+                    ),
+                  ],
+                ),
+                GoRoute(
+                  path: 'sessoes',
+                  builder: (context, state) => const SessionsListPage(),
+                  routes: [
+                    GoRoute(
+                      path: ':uuid',
+                      builder: (context, state) => SessionPage(
+                        uuid: state.pathParameters['uuid']!,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),

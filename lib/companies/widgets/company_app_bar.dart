@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todavenda/companies/companies.dart';
 
-class CompanySelectorBar extends StatelessWidget {
-  const CompanySelectorBar({super.key});
+class CompanyAppBar extends StatelessWidget {
+  const CompanyAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,10 @@ class CompanySelectorBar extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextButton.icon(
-                onPressed: () {},
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (_) => const CompanyPage(),
+                ),
                 icon: const Icon(Icons.storefront),
                 label: Text(company.name, style: const TextStyle(fontSize: 16)),
               ),
