@@ -10,7 +10,6 @@ const _uuid = Uuid();
 
 class SalesRepositoryFirestore extends FirestoreRepository<Sale>
     implements SalesRepository {
-  var _sales = <Sale>[];
   var _products = <Product>[];
   var _clients = <Client>[];
   var _payments = <Payment>[];
@@ -73,7 +72,6 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
       sessionUuid: session.uuid,
     );
     await collection.doc(sale.uuid).set(sale);
-    _sales.add(sale);
     return sale;
   }
 
@@ -86,11 +84,12 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
   @override
   Future<List<Sale>> list({String? sessionUuid}) async {
     await _updateDependencies();
-    if (_sales.isEmpty) {
-      final snapshot = await collection.get();
-      _sales = snapshot.docs.map((e) => e.data()).toList();
+    final query = collection;
+    if (sessionUuid != null) {
+      query.where('sessionUuid', isEqualTo: sessionUuid);
     }
-    return _sales.where((s) => s.sessionUuid == sessionUuid).toList();
+    final snapshot = await collection.get();
+    return snapshot.docs.map((e) => e.data()).toList();
   }
 
   @override
@@ -111,14 +110,12 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
       amountPaid: sale.calculateAmountPaid(),
     );
     await collection.doc(sale.uuid).set(newSale);
-    _sales[_sales.indexOf(sale)] = newSale;
     return newSale;
   }
 
   @override
   Future<void> remove(Sale sale) async {
     await collection.doc(sale.uuid).delete();
-    _sales.remove(sale);
     for (final p in sale.payments) {
       await paymentsRepository.remove(p.uuid);
     }
@@ -137,7 +134,6 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
       amountPaid: sale.calculateAmountPaid(),
     );
     await collection.doc(sale.uuid).set(newSale);
-    _sales[_sales.indexOf(sale)] = newSale;
     return newSale;
   }
 }

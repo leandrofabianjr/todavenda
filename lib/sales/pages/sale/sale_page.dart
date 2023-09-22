@@ -84,6 +84,7 @@ class SaleView extends StatelessWidget {
                 ),
                 SaleItemsReport(sale: sale),
                 SalePaymentsReport(sale: sale),
+                const SizedBox(height: 80.0),
               ],
             );
           }
