@@ -25,6 +25,8 @@ class Session extends Equatable {
   @override
   List<Object?> get props => [uuid];
 
+  double get closingDifference => (closingAmount ?? 0) - currentAmount;
+
   String get formattedCurrentAmount =>
       CurrencyFormatter().formatPtBr(currentAmount);
 
@@ -35,6 +37,15 @@ class Session extends Equatable {
       CurrencyFormatter().formatPtBr(pickUpAmount);
 
   String get formattedCreatedAt => DateTimeFormatter.shortDateTime(createdAt);
+
+  String get formattedClosingAmount =>
+      CurrencyFormatter().formatPtBr(closingAmount ?? 0);
+
+  String get formattedOpeningAmount =>
+      CurrencyFormatter().formatPtBr(openingAmount);
+
+  String get formattedClosingDifference =>
+      CurrencyFormatter().formatPtBr(closingDifference);
 
   Session copyWith({
     final String? uuid,

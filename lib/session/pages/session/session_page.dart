@@ -51,9 +51,9 @@ class SessionView extends StatelessWidget {
                       ),
                     ),
                     DescriptionDetail(
-                      description: const Text('Dinheiro em caixa'),
+                      description: const Text('Valor de abertura'),
                       detail: Text(
-                        session.formattedCurrentAmount,
+                        session.formattedOpeningAmount,
                         style: textTheme.titleLarge,
                       ),
                     ),
@@ -68,6 +68,27 @@ class SessionView extends StatelessWidget {
                       description: const Text('Sangrias'),
                       detail: Text(
                         session.formattedPickUpAmount,
+                        style: textTheme.titleLarge,
+                      ),
+                    ),
+                    DescriptionDetail(
+                      description: const Text('Total no fechamento'),
+                      detail: Text(
+                        session.formattedCurrentAmount,
+                        style: textTheme.titleLarge,
+                      ),
+                    ),
+                    DescriptionDetail(
+                      description: const Text('Total informado no fechamento'),
+                      detail: Text(
+                        session.formattedClosingAmount,
+                        style: textTheme.titleLarge,
+                      ),
+                    ),
+                    DescriptionDetail(
+                      description: const Text('Diferença no fechamento'),
+                      detail: Text(
+                        session.formattedClosingDifference,
                         style: textTheme.titleLarge,
                       ),
                     ),
