@@ -22,7 +22,7 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
     emit(ClientLoading());
     try {
       final client = await clientsRepository.loadClientByUuid(uuid);
-      emit(ClientLoaded(client: client));
+      emit(ClientReady(client: client));
     } catch (ex) {
       emit(ClientException(ex));
     }

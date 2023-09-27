@@ -7,7 +7,8 @@ abstract class ClientsRepository {
 
   Future<List<Client>> searchClients({required String term});
 
-  Future<Client> createClient({
+  Future<Client> saveClient({
+    String? uuid,
     required String name,
     String? phone,
     String? address,

@@ -9,8 +9,8 @@ final class ClientLoading extends ClientState {
   List<Object> get props => [];
 }
 
-final class ClientLoaded extends ClientState {
-  const ClientLoaded({required this.client});
+final class ClientReady extends ClientState {
+  const ClientReady({required this.client});
 
   final Client client;
 

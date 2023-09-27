@@ -6,6 +6,7 @@ sealed class ClientFormState extends Equatable {
 
 final class ClientFormEditing extends ClientFormState {
   const ClientFormEditing({
+    this.uuid,
     this.name = '',
     this.nameError,
     this.phone,
@@ -13,6 +14,7 @@ final class ClientFormEditing extends ClientFormState {
     this.observation,
   });
 
+  final String? uuid;
   final String name;
   final String? phone;
   final String? address;
@@ -23,6 +25,7 @@ final class ClientFormEditing extends ClientFormState {
   List<Object?> get props => [name];
 
   ClientFormEditing copyWith({
+    String? uuid,
     String? name,
     String? phone,
     String? address,
@@ -30,6 +33,7 @@ final class ClientFormEditing extends ClientFormState {
     String? nameError,
   }) {
     return ClientFormEditing(
+      uuid: uuid ?? this.uuid,
       name: name ?? this.name,
       phone: phone ?? this.phone,
       address: address ?? this.address,

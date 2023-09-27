@@ -24,12 +24,14 @@ final class ProductFormEditing extends ProductFormState {
       [uuid, description, price, categories, descriptionError];
 
   ProductFormEditing copyWith({
+    String? uuid,
     String? description,
     double? price,
     List<ProductCategory>? categories,
     String? descriptionError,
   }) {
     return ProductFormEditing(
+      uuid: uuid ?? this.uuid,
       description: description ?? this.description,
       price: price ?? this.price,
       categories: categories ?? this.categories,

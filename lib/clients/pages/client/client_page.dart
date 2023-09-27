@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
 
 import '../../clients.dart';
@@ -28,77 +29,82 @@ class ClientView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: BlocBuilder<ClientBloc, ClientState>(
+          builder: (context, state) {
+            if (state is ClientReady) {
+              return Text(state.client.name);
+            }
+            return const SizedBox();
+          },
+        ),
+        actions: [
+          BlocBuilder<ClientBloc, ClientState>(
+            builder: (context, state) {
+              if (state is ClientReady) {
+                return IconButton(
+                  onPressed: () => context
+                      .go('/cadastros/clientes/${state.client.uuid}/editar'),
+                  icon: const Icon(Icons.edit),
+                );
+              }
+              return const SizedBox();
+            },
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: CustomScrollView(
-          slivers: [
-            BlocBuilder<ClientBloc, ClientState>(
-              builder: (context, state) {
-                if (state is ClientLoaded) {
-                  final client = state.client;
-                  return SliverAppBar(
-                    title: Text(client.name),
-                  );
-                }
-                return const SliverAppBar();
-              },
-            ),
-            BlocBuilder<ClientBloc, ClientState>(
-              builder: (context, state) {
-                if (state is ClientLoading) {
-                  return const SliverFillRemaining(child: LoadingWidget());
-                }
+        child: BlocBuilder<ClientBloc, ClientState>(
+          builder: (context, state) {
+            if (state is ClientLoading) {
+              return const LoadingWidget();
+            }
 
-                if (state is ClientLoaded) {
-                  final client = state.client;
+            if (state is ClientReady) {
+              final client = state.client;
 
-                  return SliverList(
-                    delegate: SliverChildListDelegate(
-                      [
-                        DescriptionDetail(
-                          description: const Text('Nome'),
-                          detail: Text(
-                            client.name,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ),
-                        if (client.phone != null)
-                          DescriptionDetail(
-                            description: const Text('Telefone'),
-                            detail: Text(
-                              client.phone!,
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                          ),
-                        if (client.address != null)
-                          DescriptionDetail(
-                            description: const Text('Endereço'),
-                            detail: Text(
-                              client.address!,
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                          ),
-                        if (client.observation != null)
-                          DescriptionDetail(
-                            description: const Text('Observação'),
-                            detail: Text(
-                              client.observation!,
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                          ),
-                      ],
+              return Column(
+                children: [
+                  DescriptionDetail(
+                    description: const Text('Nome'),
+                    detail: Text(
+                      client.name,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
-                  );
-                }
-
-                return SliverFillRemaining(
-                  child: ExceptionWidget(
-                    exception: state is ClientException ? state.ex : null,
                   ),
-                );
-              },
-            ),
-          ],
+                  if (client.phone != null)
+                    DescriptionDetail(
+                      description: const Text('Telefone'),
+                      detail: Text(
+                        client.phone!,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                  if (client.address != null)
+                    DescriptionDetail(
+                      description: const Text('Endereço'),
+                      detail: Text(
+                        client.address!,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                  if (client.observation != null)
+                    DescriptionDetail(
+                      description: const Text('Observação'),
+                      detail: Text(
+                        client.observation!,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                ],
+              );
+            }
+
+            return ExceptionWidget(
+              exception: state is ClientException ? state.ex : null,
+            );
+          },
         ),
       ),
     );

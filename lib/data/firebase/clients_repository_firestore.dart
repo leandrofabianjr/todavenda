@@ -19,22 +19,29 @@ class ClientsRepositoryFirestore extends FirestoreRepository<Client>
   Map<String, dynamic> toJson(Client value) => value.toJson();
 
   @override
-  Future<Client> createClient({
+  Future<Client> saveClient({
+    String? uuid,
     required String name,
     String? phone,
     String? address,
     String? observation,
   }) async {
     final client = Client(
-      uuid: _uuid.v4(),
+      uuid: uuid ?? _uuid.v4(),
       name: name,
       phone: phone,
       address: address,
       observation: observation,
     );
     await collection.doc(client.uuid).set(client);
-    _clients.add(client);
-    _clients.sortBy((e) => e.name);
+
+    final index = _clients.indexOf(client);
+    if (index == -1) {
+      _clients.add(client);
+      _clients.sortBy((e) => e.name);
+    } else {
+      _clients[index] = client;
+    }
     return client;
   }
 

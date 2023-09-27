@@ -8,12 +8,15 @@ import '../../services/clients_repository.dart';
 import 'bloc/client_form_bloc.dart';
 
 class ClientFormPage extends StatelessWidget {
-  const ClientFormPage({super.key});
+  const ClientFormPage({super.key, this.uuid});
+
+  final String? uuid;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ClientFormBloc(context.read<ClientsRepository>()),
+      create: (context) => ClientFormBloc(context.read<ClientsRepository>())
+        ..add(ClientFormStarted(uuid: uuid)),
       child: const ClientFormView(),
     );
   }
@@ -91,6 +94,7 @@ class ClientFormView extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () {
                         final event = ClientFormSubmitted(
+                          uuid: state.uuid,
                           name: name,
                           phone: phone,
                           address: address,

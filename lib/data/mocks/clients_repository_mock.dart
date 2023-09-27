@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../clients/models/client.dart';
@@ -49,21 +50,30 @@ class ClientsRepositoryMock implements ClientsRepository {
   Future<List<Client>> loadClients() => _delayed(() => _clients);
 
   @override
-  Future<Client> createClient({
+  Future<Client> saveClient({
+    String? uuid,
     required String name,
     String? phone,
     String? address,
     String? observation,
   }) async {
     final client = Client(
-      uuid: _uuid.v4(),
+      uuid: uuid ?? _uuid.v4(),
       name: name,
       phone: phone,
       address: address,
       observation: observation,
     );
-    await _delayed(() => _clients.add(client));
-    return client;
+
+    final index = _clients.indexOf(client);
+    if (index == -1) {
+      _clients.add(client);
+      _clients.sortBy((e) => e.name);
+    } else {
+      _clients[index] = client;
+    }
+
+    return await _delayed(() => client);
   }
 
   @override

@@ -129,6 +129,12 @@ final appRouterConfig = GoRouter(
                         uuid: state.pathParameters['uuid']!,
                       ),
                     ),
+                    GoRoute(
+                      path: ':uuid/editar',
+                      builder: (context, state) => ClientFormPage(
+                        uuid: state.pathParameters['uuid']!,
+                      ),
+                    ),
                   ],
                 ),
               ],
