@@ -29,9 +29,9 @@ class PaymentsBarChart extends StatelessWidget {
     return CurrencyVsDateTimeBarChart<Sale>(
       data: config.data,
       getDateTime: (obj) => obj.createdAt,
-      getAmount: (obj) => obj.amountPaid,
+      getAmount: (obj) => obj.total,
       emptyDataWidget: const Center(
-        child: Text('Ainda não há vendas realizadas nesta sessão'),
+        child: Text('Não há vendas realizadas no período'),
       ),
       start: config.start,
       end: config.end,
@@ -224,7 +224,21 @@ class _CurrencyVsDateTimeBarChartState<T>
               TextStyle(
                 color: colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
+                fontSize: 12,
               ),
+              children: [
+                const TextSpan(text: '\n'),
+                TextSpan(
+                  text: DateTimeFormatter.shortDateTime(
+                    chartData.entries.elementAt(groupIndex).key,
+                  ),
+                  style: TextStyle(
+                    color: colorScheme.onPrimary,
+                    fontSize: 10,
+                    overflow: TextOverflow.visible,
+                  ),
+                ),
+              ],
             );
           },
         ),

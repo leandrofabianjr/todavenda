@@ -17,14 +17,12 @@ class ReportsPage extends StatefulWidget {
 class _ReportsPageState extends State<ReportsPage> {
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
   late final SalesRepository salesRepository;
-  late final SessionsRepository sessionsRepository;
   var reportType = ReportConfigType.today;
   ReportConfig? reportConfig;
 
   @override
   void initState() {
     salesRepository = context.read<SalesRepository>();
-    sessionsRepository = context.read<SessionsRepository>();
     SchedulerBinding.instance.addPostFrameCallback((_) => refresh());
     super.initState();
   }

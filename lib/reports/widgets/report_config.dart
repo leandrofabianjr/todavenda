@@ -50,7 +50,7 @@ class ReportConfig extends Equatable {
         showBarTitleEach = 6;
         break;
       case ReportConfigType.today:
-        end = DateTime.now();
+        end = DateTime.now().add(const Duration(hours: 1)).lastFullHour;
         start = end.firstInstantOfTheDay;
         showBarTitleEach = 3;
         break;
@@ -62,7 +62,7 @@ class ReportConfig extends Equatable {
     }
 
     final data = await salesRepository.list(createdBetween: [start, end]);
-    if (reportType == ReportConfigType.today) {
+    if (reportType == ReportConfigType.today && data.isNotEmpty) {
       start = data.first.createdAt.firstInstantOfTheHour;
     }
 

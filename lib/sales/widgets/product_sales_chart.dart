@@ -26,9 +26,18 @@ class ProductSalesChart extends StatelessWidget {
           }
         }
 
-        return ranking;
+        final topList = Map.fromEntries(
+          ranking.entries.toList()
+            ..sort((e1, e2) => e2.value - e1.value)
+            ..take(5),
+        );
+
+        return topList;
       },
-      emptyDataWidget: const Text('Não há vendas realizadas'),
+      emptyDataWidget: const Padding(
+        padding: EdgeInsets.all(24.0),
+        child: Center(child: Text('Não há vendas realizadas no período')),
+      ),
       getLabel: (obj) => obj.description,
     );
   }
@@ -42,7 +51,7 @@ class RankingBarChart<T> extends StatefulWidget {
     required this.emptyDataWidget,
   });
 
-  final FutureOr<Map<T, int>> Function() getData;
+  final Future<Map<T, int>> Function() getData;
   final String Function(T obj) getLabel;
   final Widget emptyDataWidget;
 
@@ -51,19 +60,10 @@ class RankingBarChart<T> extends StatefulWidget {
 }
 
 class _RankingBarChartState<T> extends State<RankingBarChart<T>> {
-  Future<Map<T, int>> updateData() async {
-    final data = await widget.getData();
-
-    final sortedData = Map.fromEntries(
-      data.entries.toList()..sort((e1, e2) => e2.value - e1.value),
-    );
-    return sortedData;
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: updateData(),
+      future: widget.getData(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return ExceptionWidget(exception: snapshot.error);
