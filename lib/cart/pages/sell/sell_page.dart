@@ -147,11 +147,7 @@ class SellSelectorView extends StatelessWidget {
       child: CustomScrollView(
         slivers: [
           SliverAppBar(
-            title: Text(
-              'Selecione os items da venda',
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            centerTitle: true,
+            title: const Text('Nova venda'),
             pinned: false,
             actions: [
               IconButton(
@@ -161,21 +157,26 @@ class SellSelectorView extends StatelessWidget {
               ),
             ],
           ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              items.entries
-                  .toList()
-                  .map(
-                    (item) => SellListTile(
-                      product: item.key,
-                      quantity: item.value,
-                      onAdded: () => onAdded(item.key),
-                      onRemoved: () => onRemoved(item.key),
-                    ),
-                  )
-                  .toList(),
+          if (items.isEmpty)
+            const SliverFillRemaining(
+              child: Center(child: Text('Não há produtos cadastrados')),
             ),
-          ),
+          if (items.isNotEmpty)
+            SliverList(
+              delegate: SliverChildListDelegate(
+                items.entries
+                    .toList()
+                    .map(
+                      (item) => SellListTile(
+                        product: item.key,
+                        quantity: item.value,
+                        onAdded: () => onAdded(item.key),
+                        onRemoved: () => onRemoved(item.key),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
           const SliverToBoxAdapter(child: SizedBox(height: 80)),
         ],
       ),

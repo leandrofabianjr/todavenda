@@ -35,10 +35,11 @@ class SessionsRepositoryFirestore extends FirestoreRepository<Session>
   @override
   Map<String, dynamic> toJson(Session value) => {
         'uuid': value.uuid,
+        'openingAmount': value.openingAmount,
+        'closingAmount': value.closingAmount,
         'currentAmount': value.currentAmount,
         'supplyAmount': value.supplyAmount,
         'pickUpAmount': value.pickUpAmount,
-        'closingAmount': value.closingAmount,
         'createdAt': value.createdAt,
         'closedAt': value.closedAt,
       };
@@ -78,6 +79,7 @@ class SessionsRepositoryFirestore extends FirestoreRepository<Session>
       uuid: _uuid.v4(),
       createdAt: DateTime.now(),
       openingAmount: openingAmount ?? 0,
+      currentAmount: openingAmount ?? 0,
     );
     await collection.doc(currentSessionUuid).set(session);
     _current = session;

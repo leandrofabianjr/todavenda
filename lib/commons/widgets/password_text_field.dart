@@ -5,10 +5,12 @@ class PasswordTextField extends StatefulWidget {
     super.key,
     this.initialValue = '',
     required this.onChanged,
+    this.onSubmitted,
   });
 
   final String initialValue;
   final void Function(String) onChanged;
+  final void Function(String)? onSubmitted;
 
   @override
   State<PasswordTextField> createState() => _PasswordTextFieldState();
@@ -41,6 +43,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
       autocorrect: false,
       keyboardType: TextInputType.visiblePassword,
       onChanged: widget.onChanged,
+      onSubmitted: widget.onSubmitted,
     );
   }
 }

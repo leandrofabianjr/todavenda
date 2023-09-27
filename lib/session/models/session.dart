@@ -38,19 +38,21 @@ class Session extends Equatable {
 
   Session copyWith({
     final String? uuid,
+    final double? openingAmount,
+    final double? closingAmount,
     final double? currentAmount,
     final double? supplyAmount,
     final double? pickUpAmount,
-    final double? closingAmount,
     final DateTime? createdAt,
     final DateTime? closedAt,
   }) {
     return Session(
       uuid: uuid ?? this.uuid,
+      openingAmount: openingAmount ?? this.openingAmount,
+      closingAmount: closingAmount ?? this.closingAmount,
       currentAmount: currentAmount ?? this.currentAmount,
       supplyAmount: supplyAmount ?? this.supplyAmount,
       pickUpAmount: pickUpAmount ?? this.pickUpAmount,
-      closingAmount: closingAmount ?? this.closingAmount,
       createdAt: createdAt ?? this.createdAt,
       closedAt: closedAt ?? this.closedAt,
     );

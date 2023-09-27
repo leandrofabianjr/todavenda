@@ -30,6 +30,16 @@ class LoginPage extends StatelessWidget {
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
+
+  submit(BuildContext context, String email, String password) {
+    context.read<LoginBloc>().add(
+          LoginSubmitted(
+            email: email,
+            password: password,
+          ),
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -83,6 +93,8 @@ class LoginView extends StatelessWidget {
                           PasswordTextField(
                             initialValue: password,
                             onChanged: (value) => password = value,
+                            onSubmitted: (value) =>
+                                submit(context, email, value),
                           ),
                           const SizedBox(height: 16.0),
                           if (state.status == LoginStatus.failure)
@@ -95,12 +107,7 @@ class LoginView extends StatelessWidget {
                             ),
                           const SizedBox(height: 8.0),
                           TextButton(
-                            onPressed: () => context.read<LoginBloc>().add(
-                                  LoginSubmitted(
-                                    email: email,
-                                    password: password,
-                                  ),
-                                ),
+                            onPressed: () => submit(context, email, password),
                             child: const Text('Entrar'),
                           ),
                         ],
