@@ -18,6 +18,11 @@ final class SaleLoaded extends SaleState {
   List<Object> get props => [sale];
 }
 
+final class SaleRemoveSuccess extends SaleState {
+  @override
+  List<Object> get props => [];
+}
+
 final class SaleException extends SaleState {
   const SaleException(this.ex);
 

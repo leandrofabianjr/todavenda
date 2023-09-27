@@ -10,3 +10,12 @@ class SaleStarted extends SaleEvent {
   @override
   List<Object> get props => [];
 }
+
+class SaleRemoved extends SaleEvent {
+  const SaleRemoved({required this.sale});
+
+  final Sale sale;
+
+  @override
+  List<Object> get props => [sale];
+}

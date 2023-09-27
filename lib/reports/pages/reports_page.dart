@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/reports/reports.dart';
 import 'package:todavenda/sales/sales.dart';
-import 'package:todavenda/session/services/services.dart';
 import 'package:todavenda/session/widgets/payments_bar_chart.dart';
 
 class ReportsPage extends StatefulWidget {

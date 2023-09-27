@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:todavenda/clients/pages/pages.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/products/products.dart';
@@ -29,9 +30,40 @@ class SaleView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Venda')),
-      body: BlocBuilder<SaleBloc, SaleState>(
+      appBar: AppBar(
+        title: const Text('Venda'),
+        actions: [
+          BlocBuilder<SaleBloc, SaleState>(builder: (context, state) {
+            if (state is SaleLoaded) {
+              return IconButton(
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (_) => const DeleteSaleConfirmationDialog(),
+                ).then((value) {
+                  if (value == true) {
+                    context.read<SaleBloc>().add(SaleRemoved(sale: state.sale));
+                  }
+                }),
+                icon: Icon(
+                  Icons.delete,
+                  color: colorScheme.error,
+                ),
+              );
+            }
+            return const SizedBox();
+          }),
+        ],
+      ),
+      body: BlocConsumer<SaleBloc, SaleState>(
+        listener: (context, state) {
+          if (state is SaleRemoveSuccess) {
+            context.pop();
+          }
+        },
         builder: (context, state) {
           if (state is SaleLoading) {
             return const LoadingWidget();
@@ -39,8 +71,6 @@ class SaleView extends StatelessWidget {
 
           if (state is SaleLoaded) {
             final sale = state.sale;
-
-            final theme = Theme.of(context);
 
             return ListView(
               children: [
@@ -56,7 +86,7 @@ class SaleView extends StatelessWidget {
                       description: const Text('Valor'),
                       detail: Text(
                         sale.formattedTotal,
-                        style: theme.textTheme.titleMedium,
+                        style: textTheme.titleMedium,
                       ),
                     ),
                     if (sale.client != null)
@@ -64,12 +94,12 @@ class SaleView extends StatelessWidget {
                         description: const Text('Cliente'),
                         detail: ActionChip(
                           avatar: const Icon(Icons.person),
-                          backgroundColor: theme.colorScheme.secondaryContainer,
+                          backgroundColor: colorScheme.secondaryContainer,
                           padding: EdgeInsets.zero,
                           label: Text(
                             sale.client!.name,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: theme.colorScheme.onSecondaryContainer,
+                            style: textTheme.titleMedium?.copyWith(
+                              color: colorScheme.onSecondaryContainer,
                             ),
                           ),
                           onPressed: () => showDialog(
@@ -216,6 +246,28 @@ class SaleItemsReport extends StatelessWidget {
                 style: theme.textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),
+      ],
+    );
+  }
+}
+
+class DeleteSaleConfirmationDialog extends StatelessWidget {
+  const DeleteSaleConfirmationDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Deseja realmente apagar a venda?'),
+      content: const Text('Todos os dados desta venda serão perdidos.'),
+      actions: [
+        TextButton(
+          onPressed: () => context.pop(true),
+          child: const Text('Sim'),
+        ),
+        TextButton(
+          onPressed: () => context.pop(false),
+          child: const Text('Não apague'),
+        )
       ],
     );
   }
