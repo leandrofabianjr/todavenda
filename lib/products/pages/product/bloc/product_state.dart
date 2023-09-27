@@ -9,8 +9,8 @@ final class ProductLoading extends ProductState {
   List<Object> get props => [];
 }
 
-final class ProductLoaded extends ProductState {
-  const ProductLoaded({required this.product});
+final class ProductReady extends ProductState {
+  const ProductReady({required this.product});
 
   final Product product;
 

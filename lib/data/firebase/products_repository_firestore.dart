@@ -27,21 +27,27 @@ class ProductsRepositoryFirestore extends FirestoreRepository<Product>
   Map<String, dynamic> toJson(Product value) => value.toJson();
 
   @override
-  Future<Product> createProduct({
+  Future<Product> saveProduct({
+    String? uuid,
     required String description,
     required List<ProductCategory> categories,
     required double price,
   }) async {
     final product = Product(
-      uuid: _uuid.v4(),
+      uuid: uuid ?? _uuid.v4(),
       description: description,
       categories: categories,
       price: price,
       active: true,
     );
     await collection.doc(product.uuid).set(product);
-    _products.add(product);
-    _products.sortBy((e) => e.description);
+    final index = _products.indexOf(product);
+    if (index == -1) {
+      _products.add(product);
+      _products.sortBy((e) => e.description);
+    } else {
+      _products[index] = product;
+    }
     return product;
   }
 

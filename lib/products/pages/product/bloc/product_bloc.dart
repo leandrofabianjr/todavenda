@@ -22,7 +22,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     emit(ProductLoading());
     try {
       final product = await productRepository.loadProductByUuid(uuid);
-      emit(ProductLoaded(product: product));
+      emit(ProductReady(product: product));
     } catch (ex) {
       emit(ProductException(ex));
     }

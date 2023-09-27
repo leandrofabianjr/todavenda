@@ -6,7 +6,8 @@ abstract class ProductsRepository {
 
   Future<List<Product>> loadProducts();
 
-  Future<Product> createProduct({
+  Future<Product> saveProduct({
+    String? uuid,
     required String description,
     required List<ProductCategory> categories,
     required double price,

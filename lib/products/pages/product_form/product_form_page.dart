@@ -10,12 +10,15 @@ import '../../services/products_repository.dart';
 import '../../widgets/form_fields/form_fields.dart';
 
 class ProductFormPage extends StatelessWidget {
-  const ProductFormPage({super.key});
+  const ProductFormPage({super.key, this.uuid});
+
+  final String? uuid;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ProductFormBloc(context.read<ProductsRepository>()),
+      create: (context) => ProductFormBloc(context.read<ProductsRepository>())
+        ..add(ProductFormStarted(uuid: uuid)),
       child: const ProductFormView(),
     );
   }
@@ -35,7 +38,7 @@ class ProductFormView extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          if (state is ProductFormSubmitting ||
+          if (state is ProductFormLoading ||
               state is ProductFormSuccessfullySubmitted) {
             return const LoadingWidget();
           }
@@ -74,6 +77,7 @@ class ProductFormView extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () {
                         final event = ProductFormSubmitted(
+                          uuid: state.uuid,
                           description: description,
                           price: price,
                           categories: categories,

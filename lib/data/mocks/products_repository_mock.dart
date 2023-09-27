@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:uuid/uuid.dart';
 
@@ -43,19 +44,26 @@ class ProductsRepositoryMock implements ProductsRepository {
   Future<List<Product>> loadProducts() => _delayed(() => _products);
 
   @override
-  Future<Product> createProduct({
+  Future<Product> saveProduct({
+    String? uuid,
     required String description,
     required List<ProductCategory> categories,
     required double price,
   }) async {
     final product = Product(
-      uuid: _uuid.v4(),
+      uuid: uuid ?? _uuid.v4(),
       description: description,
       price: price,
       categories: categories,
     );
-    await _delayed(() => _products.add(product));
-    return product;
+    final index = _products.indexOf(product);
+    if (index == -1) {
+      _products.add(product);
+      _products.sortBy((e) => e.description);
+    } else {
+      _products[index] = product;
+    }
+    return await _delayed(() => product);
   }
 
   @override

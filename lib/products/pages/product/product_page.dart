@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
 
 import '../../pages/product/bloc/product_bloc.dart';
@@ -29,60 +30,62 @@ class ProductView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: CustomScrollView(
-          slivers: [
+      appBar: AppBar(
+          title: BlocBuilder<ProductBloc, ProductState>(
+            builder: (context, state) {
+              if (state is ProductReady) {
+                return Text(state.product.description);
+              }
+              return const SizedBox();
+            },
+          ),
+          actions: [
             BlocBuilder<ProductBloc, ProductState>(
               builder: (context, state) {
-                if (state is ProductLoaded) {
-                  final product = state.product;
-                  return SliverAppBar(
-                    title: Text(product.description),
+                if (state is ProductReady) {
+                  return IconButton(
+                    onPressed: () => context
+                        .go('/cadastros/produtos/${state.product.uuid}/editar'),
+                    icon: const Icon(Icons.edit),
                   );
                 }
-                return const SliverAppBar();
+                return const SizedBox();
               },
             ),
-            BlocBuilder<ProductBloc, ProductState>(
-              builder: (context, state) {
-                if (state is ProductLoading) {
-                  return const SliverFillRemaining(child: LoadingWidget());
-                }
+          ]),
+      body: BlocBuilder<ProductBloc, ProductState>(
+        builder: (context, state) {
+          if (state is ProductLoading) {
+            return const LoadingWidget();
+          }
 
-                if (state is ProductLoaded) {
-                  final product = state.product;
+          if (state is ProductReady) {
+            final product = state.product;
 
-                  return SliverList(
-                    delegate: SliverChildListDelegate(
-                      [
-                        DescriptionDetail(
-                          description: const Text('Preço'),
-                          detail: Text(
-                            product.formattedPrice,
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
-                        ),
-                        DescriptionDetail(
-                          description: const Text('Categorias'),
-                          detail: ProductCategoriesChipList(
-                            categories: product.categories,
-                          ),
-                        )
-                      ],
-                    ),
-                  );
-                }
-
-                return SliverFillRemaining(
-                  child: ExceptionWidget(
-                    exception: state is ProductException ? state.ex : null,
+            return ListView(
+              padding: const EdgeInsets.all(16.0),
+              children: [
+                DescriptionDetail(
+                  description: const Text('Preço'),
+                  detail: Text(
+                    product.formattedPrice,
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
-                );
-              },
-            ),
-          ],
-        ),
+                ),
+                DescriptionDetail(
+                  description: const Text('Categorias'),
+                  detail: ProductCategoriesChipList(
+                    categories: product.categories,
+                  ),
+                )
+              ],
+            );
+          }
+
+          return ExceptionWidget(
+            exception: state is ProductException ? state.ex : null,
+          );
+        },
       ),
     );
   }
