@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todavenda/data/firebase/firestore_repository.dart';
 import 'package:todavenda/data/firebase/sessions_repository_firestore.dart';
 import 'package:todavenda/sales/sales.dart';
@@ -19,10 +20,23 @@ class PaymentsRepositoryFirestore extends FirestoreRepository<Payment>
   final SessionsRepositoryFirestore sessionsRepository;
 
   @override
-  Payment fromJson(Map<String, dynamic> json) => Payment.fromJson(json);
+  Payment fromJson(Map<String, dynamic> json) => Payment(
+        uuid: json['uuid'],
+        type: SessionMovementType.payment,
+        sessionUuid: json['sessionUuid'],
+        createdAt: (json['createdAt'] as Timestamp).toDate(),
+        saleUuid: json['saleUuid'],
+        paymentType: PaymenTypeX.fromValue(json['paymentType']),
+        amount: json['amount'],
+      );
 
   @override
-  Map<String, dynamic> toJson(Payment value) => value.toJson();
+  Map<String, dynamic> toJson(Payment value) => {
+        ...value.toJson(),
+        'saleUuid': value.saleUuid,
+        'paymentType': value.paymentType.value,
+        'amount': value.amount,
+      };
 
   @override
   Future<Payment> create({

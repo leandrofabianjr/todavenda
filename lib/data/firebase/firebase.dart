@@ -9,7 +9,6 @@ import 'package:todavenda/data/firebase/payments_repository_firestore.dart';
 import 'package:todavenda/data/firebase/product_categories_repository_firestore.dart';
 import 'package:todavenda/data/firebase/products_repository_firestore.dart';
 import 'package:todavenda/data/firebase/sales_repository_firestore.dart';
-import 'package:todavenda/data/firebase/session_movements_repository_firestore.dart';
 import 'package:todavenda/data/firebase/session_pick_ups_repository_firestore.dart';
 import 'package:todavenda/data/firebase/session_supplies_repository_firestore.dart';
 import 'package:todavenda/data/firebase/sessions_repository_firestore.dart';
@@ -39,9 +38,6 @@ firebaseRepositoryProviders(String companyUuid) {
     sessionSuppliesRepository: sessionSuppliesRepository,
     sessionPickUpsRepository: sessionPickUpsRepository,
   );
-  final sessionMovementsRepository = SessionMovementsRepositoryFirestore(
-    companyUuid,
-  );
   final paymentsRepository = PaymentsRepositoryFirestore(
     companyUuid,
     sessionsRepository: sessionsRepository,
@@ -64,9 +60,6 @@ firebaseRepositoryProviders(String companyUuid) {
       value: sessionPickUpsRepository as SessionPickUpsRepository,
     ),
     RepositoryProvider.value(value: sessionsRepository as SessionsRepository),
-    RepositoryProvider.value(
-      value: sessionMovementsRepository as SessionMovementsRepository,
-    ),
     RepositoryProvider.value(value: companiesRepository as CompaniesRepository),
     RepositoryProvider.value(
       value: productCategoriesRepository as ProductCategoriesRepository,

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/commons/commons.dart';
@@ -13,7 +14,7 @@ class Sale extends Equatable {
     required this.total,
     this.payments = const [],
     this.client,
-    this.createdAt,
+    required this.createdAt,
     this.amountPaid = 0,
     required this.sessionUuid,
   });
@@ -23,7 +24,7 @@ class Sale extends Equatable {
   final double total;
   final List<Payment> payments;
   final Client? client;
-  final DateTime? createdAt;
+  final DateTime createdAt;
   final double amountPaid;
   final String sessionUuid;
 
@@ -63,7 +64,7 @@ class Sale extends Equatable {
       'total': total,
       'paymentsUuids': payments.map((e) => e.uuid).toList(),
       'clientUuid': client?.uuid,
-      'createdAt': createdAt.toString(),
+      'createdAt': createdAt,
       'amountPaid': calculateAmountPaid(),
       'sessionUuid': sessionUuid,
     };
@@ -87,7 +88,7 @@ class Sale extends Equatable {
       client: json['clientUuid'] == null
           ? null
           : clients.firstWhere((c) => c.uuid == json['clientUuid']),
-      createdAt: DateTime.tryParse(json['createdAt']),
+      createdAt: (json['createdAt'] as Timestamp).toDate(),
       amountPaid: json['amountPaid'] ?? 0,
       sessionUuid: json['sessionUuid'],
     );

@@ -3,24 +3,23 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/products/products.dart';
-import 'package:todavenda/sales/sales.dart';
+import 'package:todavenda/reports/reports.dart';
 
 class ProductSalesChart extends StatelessWidget {
   const ProductSalesChart({
     super.key,
-    required this.salesRepository,
+    required this.config,
   });
 
-  final SalesRepository salesRepository;
+  final ReportConfig config;
 
   @override
   Widget build(BuildContext context) {
     return RankingBarChart(
       getData: () async {
-        final sales = await salesRepository.list();
         Map<Product, int> ranking = {};
 
-        for (final sale in sales) {
+        for (final sale in config.data) {
           for (var item in sale.items) {
             final total = ranking[item.product] ?? 0;
             ranking[item.product] = total + item.quantity;

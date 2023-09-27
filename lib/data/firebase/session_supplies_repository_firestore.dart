@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todavenda/data/firebase/firestore_repository.dart';
 import 'package:todavenda/session/models/models.dart';
 import 'package:todavenda/session/services/services.dart';
@@ -12,11 +13,18 @@ class SessionSuppliesRepositoryFirestore
       : super(companyUuid: companyUuid, resourcePath: 'sessionMovements');
 
   @override
-  SessionSupply fromJson(Map<String, dynamic> json) =>
-      SessionSupply.fromJson(json);
+  SessionSupply fromJson(Map<String, dynamic> json) => SessionSupply(
+        uuid: json['uuid'],
+        sessionUuid: json['sessionUuid'],
+        createdAt: (json['createdAt'] as Timestamp).toDate(),
+        amount: json['amount'],
+      );
 
   @override
-  Map<String, dynamic> toJson(SessionSupply value) => value.toJson();
+  Map<String, dynamic> toJson(SessionSupply value) => {
+        ...value.toJson(),
+        'amount': value.amount,
+      };
 
   @override
   Future<SessionSupply> create({

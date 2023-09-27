@@ -1,6 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:todavenda/sales/sales.dart';
-import 'package:todavenda/session/models/models.dart';
 
 enum SessionMovementType {
   payment,
@@ -47,20 +45,8 @@ abstract class SessionMovement extends Equatable {
       'uuid': uuid,
       'type': type.value,
       'sessionUuid': sessionUuid,
-      'createdAt': createdAt.toString(),
+      'createdAt': createdAt,
     };
-  }
-
-  static SessionMovement fromJson(Map<String, dynamic> json) {
-    final type = SessionMovementTypeX.fromValue(json['type']);
-    switch (type) {
-      case SessionMovementType.payment:
-        return Payment.fromJson(json);
-      case SessionMovementType.supply:
-        return SessionSupply.fromJson(json);
-      case SessionMovementType.pickUp:
-        return SessionPickUp.fromJson(json);
-    }
   }
 
   @override

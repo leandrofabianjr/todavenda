@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todavenda/data/firebase/firestore_repository.dart';
 import 'package:todavenda/session/models/models.dart';
 import 'package:todavenda/session/services/services.dart';
@@ -19,10 +20,28 @@ class SessionsRepositoryFirestore extends FirestoreRepository<Session>
   final SessionPickUpsRepository sessionPickUpsRepository;
 
   @override
-  Session fromJson(Map<String, dynamic> json) => Session.fromJson(json);
+  Session fromJson(Map<String, dynamic> json) => Session(
+        uuid: json['uuid'],
+        currentAmount: double.tryParse(json['currentAmount'].toString()) ?? 0,
+        supplyAmount: double.tryParse(json['supplyAmount'].toString()) ?? 0,
+        pickUpAmount: double.tryParse(json['pickUpAmount'].toString()) ?? 0,
+        closingAmount: double.tryParse(json['closingAmount'].toString()) ?? 0,
+        createdAt: (json['createdAt'] as Timestamp).toDate(),
+        closedAt: json['closedAt'] == null
+            ? null
+            : (json['closedAt'] as Timestamp).toDate(),
+      );
 
   @override
-  Map<String, dynamic> toJson(Session value) => value.toJson();
+  Map<String, dynamic> toJson(Session value) => {
+        'uuid': value.uuid,
+        'currentAmount': value.currentAmount,
+        'supplyAmount': value.supplyAmount,
+        'pickUpAmount': value.pickUpAmount,
+        'closingAmount': value.closingAmount,
+        'createdAt': value.createdAt,
+        'closedAt': value.closedAt,
+      };
 
   Session? _current;
 

@@ -23,7 +23,7 @@ class SessionsListBloc extends Bloc<SessionsListEvent, SessionsListState> {
     try {
       final sessions = await sessionsRepository.list();
       sessions.sortByCompare(
-        (element) => element.createdAt!,
+        (element) => element.createdAt,
         (a, b) => b.microsecondsSinceEpoch - a.microsecondsSinceEpoch,
       );
       emit(SessionsListLoaded(sessions: sessions));

@@ -9,7 +9,7 @@ class Session extends Equatable {
     this.currentAmount = 0,
     this.supplyAmount = 0,
     this.pickUpAmount = 0,
-    this.createdAt,
+    required this.createdAt,
     this.closedAt,
   });
 
@@ -19,7 +19,7 @@ class Session extends Equatable {
   final double currentAmount;
   final double supplyAmount;
   final double pickUpAmount;
-  final DateTime? createdAt;
+  final DateTime createdAt;
   final DateTime? closedAt;
 
   @override
@@ -53,30 +53,6 @@ class Session extends Equatable {
       closingAmount: closingAmount ?? this.closingAmount,
       createdAt: createdAt ?? this.createdAt,
       closedAt: closedAt ?? this.closedAt,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'uuid': uuid,
-      'currentAmount': currentAmount,
-      'supplyAmount': supplyAmount,
-      'pickUpAmount': pickUpAmount,
-      'closingAmount': closingAmount,
-      'createdAt': createdAt?.toString(),
-      'closedAt': closedAt?.toString(),
-    };
-  }
-
-  static Session fromJson(Map<String, dynamic> json) {
-    return Session(
-      uuid: json['uuid'],
-      currentAmount: double.tryParse(json['currentAmount'].toString()) ?? 0,
-      supplyAmount: double.tryParse(json['supplyAmount'].toString()) ?? 0,
-      pickUpAmount: double.tryParse(json['pickUpAmount'].toString()) ?? 0,
-      closingAmount: double.tryParse(json['closingAmount'].toString()) ?? 0,
-      createdAt: DateTime.tryParse(json['createdAt'] ?? ''),
-      closedAt: DateTime.tryParse(json['closedAt'] ?? ''),
     );
   }
 

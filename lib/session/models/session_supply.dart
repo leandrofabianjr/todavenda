@@ -9,21 +9,4 @@ class SessionSupply extends SessionMovement {
   }) : super(type: SessionMovementType.supply);
 
   final double amount;
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      ...super.toJson(),
-      'amount': amount,
-    };
-  }
-
-  static SessionSupply fromJson(Map<String, dynamic> json) {
-    return SessionSupply(
-      uuid: json['uuid'],
-      sessionUuid: json['sessionUuid'],
-      createdAt: DateTime.parse(json['createdAt']),
-      amount: json['amount'],
-    );
-  }
 }

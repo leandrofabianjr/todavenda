@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/data/firebase/firestore_repository.dart';
 import 'package:todavenda/products/products.dart';
@@ -26,15 +27,34 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
   final PaymentsRepository paymentsRepository;
 
   @override
-  fromJson(Map<String, dynamic> json) => Sale.fromJson(
-        json,
-        _products,
-        _clients,
-        _payments,
+  fromJson(Map<String, dynamic> json) => Sale(
+        uuid: json['uuid'],
+        items: (json['items'] as List)
+            .map((e) => SaleItem.fromJson(e, _products))
+            .toList(),
+        payments: ((json['paymentsUuids'] ?? []) as List)
+            .map((e) => _payments.firstWhere((c) => c.uuid == e))
+            .toList(),
+        total: json['total'],
+        client: json['clientUuid'] == null
+            ? null
+            : _clients.firstWhere((c) => c.uuid == json['clientUuid']),
+        createdAt: (json['createdAt'] as Timestamp).toDate(),
+        amountPaid: json['amountPaid'] ?? 0,
+        sessionUuid: json['sessionUuid'],
       );
 
   @override
-  Map<String, dynamic> toJson(value) => value.toJson();
+  Map<String, dynamic> toJson(value) => {
+        'uuid': value.uuid,
+        'items': value.items.map((e) => e.toJson()).toList(),
+        'total': value.total,
+        'paymentsUuids': value.payments.map((e) => e.uuid).toList(),
+        'clientUuid': value.client?.uuid,
+        'createdAt': value.createdAt,
+        'amountPaid': value.calculateAmountPaid(),
+        'sessionUuid': value.sessionUuid,
+      };
 
   Future<void> _updateDependencies() async {
     _products = await productsRepository.loadProducts();
@@ -82,13 +102,24 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
   }
 
   @override
-  Future<List<Sale>> list({String? sessionUuid}) async {
+  Future<List<Sale>> list(
+      {String? sessionUuid, List<DateTime>? createdBetween}) async {
     await _updateDependencies();
-    final query = collection;
+
+    Query<Sale>? query;
+
     if (sessionUuid != null) {
-      query.where('sessionUuid', isEqualTo: sessionUuid);
+      query =
+          (query ?? collection).where('sessionUuid', isEqualTo: sessionUuid);
     }
-    final snapshot = await collection.get();
+    if (createdBetween != null) {
+      query = (query ?? collection).where(
+        'createdAt',
+        isGreaterThanOrEqualTo: (createdBetween[0]),
+        isLessThanOrEqualTo: (createdBetween[1]),
+      );
+    }
+    final snapshot = await (query ?? collection).get();
     return snapshot.docs.map((e) => e.data()).toList();
   }
 

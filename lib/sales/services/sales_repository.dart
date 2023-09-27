@@ -6,7 +6,10 @@ import 'package:todavenda/session/models/models.dart';
 abstract class SalesRepository {
   Future<Sale> loadSaleByUuid(String uuid);
 
-  Future<List<Sale>> list({String? sessionUuid});
+  Future<List<Sale>> list({
+    String? sessionUuid,
+    List<DateTime>? createdBetween,
+  });
 
   Future<Sale> createSale({
     required Session session,

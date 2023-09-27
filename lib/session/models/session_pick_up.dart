@@ -9,21 +9,4 @@ class SessionPickUp extends SessionMovement {
   }) : super(type: SessionMovementType.pickUp);
 
   final double amount;
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      ...super.toJson(),
-      'amount': amount,
-    };
-  }
-
-  static SessionPickUp fromJson(Map<String, dynamic> json) {
-    return SessionPickUp(
-      uuid: json['uuid'],
-      sessionUuid: json['sessionUuid'],
-      createdAt: DateTime.parse(json['createdAt']),
-      amount: json['amount'],
-    );
-  }
 }

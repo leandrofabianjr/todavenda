@@ -21,7 +21,7 @@ class SalesListBloc extends Bloc<SalesListEvent, SalesListState> {
     try {
       final sales = await salesRepository.list();
       sales.sortByCompare(
-        (element) => element.createdAt!,
+        (element) => element.createdAt,
         (a, b) => b.microsecondsSinceEpoch - a.microsecondsSinceEpoch,
       );
       emit(SalesListLoaded(sales: sales));
