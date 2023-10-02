@@ -47,6 +47,12 @@ class ProductCategoriesRepositoryFirestore
   }
 
   @override
+  Future<ProductCategory> loadByUuid(String uuid) async {
+    final snapshot = await collection.doc(uuid).get();
+    return snapshot.data()!;
+  }
+
+  @override
   Future<void> remove(String uuid) async {
     await collection.doc(uuid).delete();
     _productCategories.removeWhere((e) => e.uuid == uuid);

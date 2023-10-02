@@ -13,11 +13,18 @@ class RegistersMenuPage extends StatelessWidget {
           SliverList(
             delegate: SliverChildListDelegate(
               [
+                const ListSubtitle(title: 'Produtos'),
                 ListTile(
                   leading: const Icon(Icons.inventory),
                   title: const Text('Produtos'),
                   onTap: () => context.go('/cadastros/produtos'),
                 ),
+                ListTile(
+                  leading: const Icon(Icons.category),
+                  title: const Text('Categorias de Produtos'),
+                  onTap: () => context.go('/cadastros/produtos/categorias'),
+                ),
+                const ListSubtitle(title: 'Clientes'),
                 ListTile(
                   leading: const Icon(Icons.person),
                   title: const Text('Clientes'),
@@ -27,6 +34,25 @@ class RegistersMenuPage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ListSubtitle extends StatelessWidget {
+  const ListSubtitle({super.key, required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Text(
+        title,
+        style: textTheme.titleSmall!.copyWith(color: colorScheme.primary),
       ),
     );
   }

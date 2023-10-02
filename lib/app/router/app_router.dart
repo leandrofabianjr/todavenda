@@ -6,6 +6,7 @@ import 'package:todavenda/cart/cart.dart';
 import 'package:todavenda/cart/pages/pages.dart';
 import 'package:todavenda/clients/pages/pages.dart';
 import 'package:todavenda/products/pages/pages.dart';
+import 'package:todavenda/products/pages/product_category/product_category_page.dart';
 import 'package:todavenda/registers/pages/pages.dart';
 import 'package:todavenda/reports/pages/pages.dart';
 import 'package:todavenda/sales/pages/pages.dart';
@@ -89,14 +90,32 @@ final appRouterConfig = GoRouter(
               builder: (context, state) => const RegistersMenuPage(),
               routes: [
                 GoRoute(
-                  path: 'produtos',
-                  builder: (context, state) => const ProductListPage(),
+                  path: 'produtos/categorias',
+                  builder: (context, state) => const ProductCategoryListPage(),
                   routes: [
                     GoRoute(
-                      path: 'categorias/cadastrar',
+                      path: 'cadastrar',
                       builder: (context, state) =>
                           const ProductCategoryFormPage(),
                     ),
+                    GoRoute(
+                      path: ':uuid',
+                      builder: (context, state) => ProductCategoryPage(
+                        uuid: state.pathParameters['uuid']!,
+                      ),
+                    ),
+                    GoRoute(
+                      path: ':uuid/editar',
+                      builder: (context, state) => ProductCategoryFormPage(
+                        uuid: state.pathParameters['uuid']!,
+                      ),
+                    ),
+                  ],
+                ),
+                GoRoute(
+                  path: 'produtos',
+                  builder: (context, state) => const ProductListPage(),
+                  routes: [
                     GoRoute(
                       path: 'cadastrar',
                       builder: (context, state) => const ProductFormPage(),

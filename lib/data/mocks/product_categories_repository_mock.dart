@@ -18,7 +18,7 @@ final mockProductCategories = [
   ),
 ];
 
-class ProductsRepositoryMock implements ProductCategoriesRepository {
+class ProductCategoriesRepositoryMock implements ProductCategoriesRepository {
   final _productCategories = mockProductCategories;
 
   Future<T> _delayed<T>(T Function() callback) {
@@ -27,6 +27,10 @@ class ProductsRepositoryMock implements ProductCategoriesRepository {
 
   @override
   Future<List<ProductCategory>> load() => _delayed(() => _productCategories);
+
+  @override
+  Future<ProductCategory> loadByUuid(String uuid) async =>
+      _delayed(() => _productCategories.firstWhere((p) => p.uuid == uuid));
 
   @override
   Future<ProductCategory> create({

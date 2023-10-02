@@ -6,24 +6,28 @@ sealed class ProductCategoryFormState extends Equatable {
 
 final class ProductCategoryFormEditing extends ProductCategoryFormState {
   const ProductCategoryFormEditing({
+    this.uuid,
     this.name = '',
     this.description = '',
     this.nameError,
   });
 
+  final String? uuid;
   final String name;
   final String? description;
   final String? nameError;
 
   @override
-  List<Object?> get props => [name, description, nameError];
+  List<Object?> get props => [uuid, name, description, nameError];
 
   ProductCategoryFormEditing copyWith({
+    String? uuid,
     String? name,
     String? description,
     String? nameError,
   }) {
     return ProductCategoryFormEditing(
+      uuid: uuid ?? this.uuid,
       name: name ?? this.name,
       description: description ?? this.description,
       nameError: nameError ?? this.nameError,

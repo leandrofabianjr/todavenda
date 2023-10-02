@@ -7,14 +7,17 @@ import '../../pages/product_category_form/bloc/product_category_form_bloc.dart';
 import '../../services/product_categories_repository.dart';
 
 class ProductCategoryFormPage extends StatelessWidget {
-  const ProductCategoryFormPage({super.key});
+  const ProductCategoryFormPage({super.key, this.uuid});
+
+  final String? uuid;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ProductCategoryFormBloc(
         context.read<ProductCategoriesRepository>(),
-      ),
+        uuid: uuid,
+      )..add(ProductCategoryFormStarted(uuid: uuid)),
       child: const ProductCategoryFormView(),
     );
   }
@@ -68,6 +71,7 @@ class ProductCategoryFormView extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () {
                         final event = ProductCategoryFormSubmitted(
+                          uuid: state.uuid,
                           name: name,
                           description: description,
                         );
