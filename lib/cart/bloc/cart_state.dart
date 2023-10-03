@@ -23,6 +23,7 @@ final class CartState extends Equatable {
     this.sale,
     this.client,
     this.errorMessage,
+    this.filterTerm,
   });
 
   final CartStatus status;
@@ -32,6 +33,7 @@ final class CartState extends Equatable {
   final Client? client;
   final String? errorMessage;
   final Object? exception;
+  final String? filterTerm;
 
   int get totalQuantity => items.values.fold(0, (total, qtt) => total + qtt);
   bool get isNotEmpty => totalQuantity > 0;
@@ -65,6 +67,7 @@ final class CartState extends Equatable {
     Sale? sale,
     Client? client,
     String? errorMessage,
+    String? filterTerm,
   }) {
     return CartState(
       status: status ?? this.status,
@@ -74,6 +77,7 @@ final class CartState extends Equatable {
       client: client ?? this.client,
       errorMessage: errorMessage,
       session: session ?? this.session,
+      filterTerm: filterTerm ?? this.filterTerm,
     );
   }
 
@@ -85,5 +89,6 @@ final class CartState extends Equatable {
         client,
         errorMessage,
         exception,
+        filterTerm,
       ];
 }

@@ -61,13 +61,22 @@ class ProductsRepositoryFirestore extends FirestoreRepository<Product>
   }
 
   @override
-  Future<List<Product>> loadProducts() async {
+  Future<List<Product>> loadProducts({String? term}) async {
     _productCategories = await productCategoriesRepository.load();
-    // if (_products.isEmpty) {
-    final snapshot = await collection.get();
-    _products = snapshot.docs.map((e) => e.data()).toList();
-    _products.sortBy((e) => e.description);
-    // }
+
+    if (_products.isEmpty) {
+      final snapshot = await collection.get();
+      _products = snapshot.docs.map((e) => e.data()).toList();
+      _products.sortBy((e) => e.description);
+    }
+
+    if (term != null) {
+      return _products
+          .where(
+              (p) => p.description.contains(RegExp(term, caseSensitive: false)))
+          .toList();
+    }
+
     return _products;
   }
 
@@ -89,6 +98,8 @@ class ProductsRepositoryFirestore extends FirestoreRepository<Product>
   }) async {
     final currentStock = product.currentStock + quantity;
     await collection.doc(product.uuid).update({'currentStock': currentStock});
-    return product.copyWith(currentStock: currentStock);
+    final newProduct = product.copyWith(currentStock: currentStock);
+    _products[_products.indexOf(newProduct)] = newProduct;
+    return newProduct;
   }
 }

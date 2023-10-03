@@ -53,7 +53,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         return emit(state.copyWith(status: CartStatus.closedSession));
       }
 
-      final products = await productRepository.loadProducts();
+      final products =
+          await productRepository.loadProducts(term: event.filterterm);
       final initialItems = state.items;
       final items = {
         for (var product in products)
@@ -64,6 +65,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         status: CartStatus.initial,
         items: items,
         session: session,
+        filterTerm: event.filterterm,
       ));
     } catch (ex) {
       emit(state.copyWith(status: CartStatus.failure, exception: ex));

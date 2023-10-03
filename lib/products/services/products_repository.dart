@@ -3,7 +3,7 @@ import 'package:todavenda/products/products.dart';
 abstract class ProductsRepository {
   Future<Product> loadProductByUuid(String uuid);
 
-  Future<List<Product>> loadProducts();
+  Future<List<Product>> loadProducts({String? term});
 
   Future<Product> saveProduct({
     String? uuid,

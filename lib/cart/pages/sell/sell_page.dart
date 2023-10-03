@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -60,6 +62,7 @@ class _SellViewState extends State<SellView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const SellPageAppBar(),
       floatingActionButton: totalQuantity > 0
           ? Badge(
               label: Text(totalQuantity.toString()),
@@ -118,6 +121,9 @@ class _SellViewState extends State<SellView> {
                 onRemoved: (product) => context
                     .read<CartBloc>()
                     .add(CartItemRemoved(product: product)),
+                onSearchChanged: (term) =>
+                    context.read<CartBloc>().add(CartStarted(filterterm: term)),
+                initialSearchTerm: state.filterTerm,
               );
             default:
               return const LoadingWidget();
@@ -134,11 +140,15 @@ class SellSelectorView extends StatelessWidget {
     required this.items,
     required this.onAdded,
     required this.onRemoved,
+    required this.onSearchChanged,
+    this.initialSearchTerm,
   });
 
   final Map<Product, int> items;
   final void Function(Product product) onAdded;
   final void Function(Product product) onRemoved;
+  final void Function(String? term) onSearchChanged;
+  final String? initialSearchTerm;
 
   @override
   Widget build(BuildContext context) {
@@ -146,20 +156,9 @@ class SellSelectorView extends StatelessWidget {
       onRefresh: () async => context.read<CartBloc>().add(const CartStarted()),
       child: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            title: const Text('Nova venda'),
-            pinned: false,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.point_of_sale),
-                color: Theme.of(context).colorScheme.primary,
-                onPressed: () => context.go('/caixa'),
-              ),
-            ],
-          ),
           if (items.isEmpty)
             const SliverFillRemaining(
-              child: Center(child: Text('Não há produtos cadastrados')),
+              child: Center(child: Text('Nenhum produto encontrado')),
             ),
           if (items.isNotEmpty)
             SliverList(
@@ -179,6 +178,104 @@ class SellSelectorView extends StatelessWidget {
             ),
           const SliverToBoxAdapter(child: SizedBox(height: 80)),
         ],
+      ),
+    );
+  }
+}
+
+class SellPageAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const SellPageAppBar({super.key});
+
+  @override
+  Size get preferredSize => const Size.fromHeight(110.0);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CartBloc, CartState>(
+      builder: (context, state) {
+        return SellPageAppBarView(
+          onSearchChanged: (term) =>
+              context.read<CartBloc>().add(CartStarted(filterterm: term)),
+          initialSearchTerm: state.filterTerm,
+        );
+      },
+    );
+  }
+}
+
+class SellPageAppBarView extends StatefulWidget {
+  const SellPageAppBarView({
+    super.key,
+    required this.onSearchChanged,
+    this.initialSearchTerm,
+  });
+
+  final void Function(String? term) onSearchChanged;
+  final String? initialSearchTerm;
+
+  @override
+  State<SellPageAppBarView> createState() => _SellPageAppBarViewState();
+}
+
+class _SellPageAppBarViewState extends State<SellPageAppBarView> {
+  late TextEditingController searchTextController;
+  Timer? _debounce;
+
+  @override
+  void initState() {
+    searchTextController =
+        TextEditingController(text: widget.initialSearchTerm);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  _onSearchChanged(String term) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(
+      const Duration(milliseconds: 500),
+      () => widget.onSearchChanged(term),
+    );
+  }
+
+  _clearSearch() {
+    searchTextController.clear();
+    widget.onSearchChanged(null);
+  }
+
+  bool get searchIsEmpty => searchTextController.text.isEmpty;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      title: const Text('Nova venda'),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.point_of_sale),
+          color: Theme.of(context).colorScheme.primary,
+          onPressed: () => context.go('/caixa'),
+        ),
+      ],
+      bottom: AppBar(
+        title: TextField(
+          controller: searchTextController,
+          decoration: InputDecoration(
+            label: const Text('Pesquisar'),
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: searchIsEmpty
+                ? null
+                : IconButton(
+                    onPressed: _clearSearch,
+                    icon: const Icon(Icons.backspace),
+                  ),
+          ),
+          keyboardType: TextInputType.name,
+          onChanged: _onSearchChanged,
+        ),
       ),
     );
   }
