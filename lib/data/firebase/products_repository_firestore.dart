@@ -6,6 +6,18 @@ import 'package:uuid/uuid.dart';
 
 const _uuid = Uuid();
 
+extension DiacriticsAwareString on String {
+  static const diacritics =
+      'ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËĚèéêëěðČÇçčÐĎďÌÍÎÏìíîïĽľÙÚÛÜŮùúûüůŇÑñňŘřŠšŤťŸÝÿýŽž';
+  static const nonDiacritics =
+      'AAAAAAaaaaaaOOOOOOOooooooEEEEEeeeeeeCCccDDdIIIIiiiiLlUUUUUuuuuuNNnnRrSsTtYYyyZz';
+
+  String get withoutDiacriticalMarks => splitMapJoin('',
+      onNonMatch: (char) => char.isNotEmpty && diacritics.contains(char)
+          ? nonDiacritics[diacritics.indexOf(char)]
+          : char);
+}
+
 class ProductsRepositoryFirestore extends FirestoreRepository<Product>
     implements ProductsRepository {
   static const productCategoriesCollectionPath = 'productCategories';
@@ -71,10 +83,23 @@ class ProductsRepositoryFirestore extends FirestoreRepository<Product>
     }
 
     if (term != null) {
-      return _products
+      final filteredTerm = term.withoutDiacriticalMarks;
+      final containsTerm = _products
           .where(
-              (p) => p.description.contains(RegExp(term, caseSensitive: false)))
+            (p) => p.description.withoutDiacriticalMarks.contains(
+              RegExp(filteredTerm, caseSensitive: false),
+            ),
+          )
           .toList();
+      final startsWith = containsTerm
+          .where(
+            (p) => p.description.withoutDiacriticalMarks.startsWith(
+              RegExp('^$filteredTerm', caseSensitive: false),
+            ),
+          )
+          .toList();
+      containsTerm.removeWhere((e) => startsWith.contains(e));
+      return [...startsWith, ...containsTerm];
     }
 
     return _products;

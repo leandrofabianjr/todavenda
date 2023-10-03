@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -166,7 +167,10 @@ class SellSelectorView extends StatelessWidget {
       }
     }
 
-    return itemsByCategory;
+    final sortedEntries =
+        itemsByCategory.entries.sortedBy((element) => element.key?.name ?? '');
+
+    return Map.fromEntries(sortedEntries);
   }
 
   bool get isSearching {
