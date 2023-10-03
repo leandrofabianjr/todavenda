@@ -44,7 +44,15 @@ class ProductsRepositoryMock implements ProductsRepository {
       _delayed(() => _products.firstWhere((p) => p.uuid == uuid));
 
   @override
-  Future<List<Product>> loadProducts() => _delayed(() => _products);
+  Future<List<Product>> loadProducts({String? term}) => _delayed(() {
+        if (term != null) {
+          return _products
+              .where((p) =>
+                  p.description.contains(RegExp(term, caseSensitive: false)))
+              .toList();
+        }
+        return _products;
+      });
 
   @override
   Future<Product> saveProduct({
