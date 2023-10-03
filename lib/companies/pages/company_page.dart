@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:todavenda/auth/bloc/auth_bloc.dart';
 import 'package:todavenda/commons/commons.dart';
 
@@ -34,6 +35,7 @@ class CompanyPage extends StatelessWidget {
                   accountName: Text(user.name),
                   accountEmail: Text(user.email),
                   otherAccountsPictures: [
+                    const VersionText(),
                     IconButton(
                       onPressed: () => context.pop(),
                       icon: const Icon(Icons.close),
@@ -78,6 +80,36 @@ class LogoutConfirmationDialog extends StatelessWidget {
           child: const Text('Cancelar'),
         )
       ],
+    );
+  }
+}
+
+class VersionText extends StatefulWidget {
+  const VersionText({super.key});
+
+  @override
+  State<VersionText> createState() => _VersionTextState();
+}
+
+class _VersionTextState extends State<VersionText> {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: PackageInfo.fromPlatform(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final info = snapshot.data!;
+          return Text(
+            'v${info.version}',
+            softWrap: false,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onPrimary,
+              fontSize: 12,
+            ),
+          );
+        }
+        return const SizedBox();
+      },
     );
   }
 }
