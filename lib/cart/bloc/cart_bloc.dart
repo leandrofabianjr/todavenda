@@ -65,7 +65,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         status: CartStatus.initial,
         items: items,
         session: session,
-        filterTerm: event.filterterm,
+        filterTerm: event.filterterm ?? '',
       ));
     } catch (ex) {
       emit(state.copyWith(status: CartStatus.failure, exception: ex));

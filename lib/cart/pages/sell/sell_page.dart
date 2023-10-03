@@ -150,6 +150,29 @@ class SellSelectorView extends StatelessWidget {
   final void Function(String? term) onSearchChanged;
   final String? initialSearchTerm;
 
+  Map<ProductCategory?, Map<Product, int>> get itemsByCategory {
+    Map<ProductCategory?, Map<Product, int>> itemsByCategory = {};
+
+    for (final item in items.entries) {
+      final categories =
+          item.key.categories != null && item.key.categories!.isNotEmpty
+              ? item.key.categories!
+              : [null];
+      for (final category in categories) {
+        if (!itemsByCategory.containsKey(category)) {
+          itemsByCategory[category] = {};
+        }
+        itemsByCategory[category]!.addEntries([item]);
+      }
+    }
+
+    return itemsByCategory;
+  }
+
+  bool get isSearching {
+    return initialSearchTerm != null && initialSearchTerm!.isNotEmpty;
+  }
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -162,19 +185,29 @@ class SellSelectorView extends StatelessWidget {
             ),
           if (items.isNotEmpty)
             SliverList(
-              delegate: SliverChildListDelegate(
-                items.entries
+              delegate: SliverChildListDelegate([
+                ...itemsByCategory.entries
                     .toList()
                     .map(
-                      (item) => SellListTile(
-                        product: item.key,
-                        quantity: item.value,
-                        onAdded: () => onAdded(item.key),
-                        onRemoved: () => onRemoved(item.key),
+                      (itemByCategory) => ExpansionTile(
+                        initiallyExpanded: isSearching,
+                        title: Text(
+                          itemByCategory.key == null
+                              ? 'Não categorizado'
+                              : itemByCategory.key!.name,
+                        ),
+                        children: itemByCategory.value.entries
+                            .map((item) => SellListTile(
+                                  product: item.key,
+                                  quantity: item.value,
+                                  onAdded: () => onAdded(item.key),
+                                  onRemoved: () => onRemoved(item.key),
+                                ))
+                            .toList(),
                       ),
                     )
                     .toList(),
-              ),
+              ]),
             ),
           const SliverToBoxAdapter(child: SizedBox(height: 80)),
         ],
