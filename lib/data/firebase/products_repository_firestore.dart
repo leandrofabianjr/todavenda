@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:todavenda/data/firebase/firestore_repository.dart';
+import 'package:todavenda/data/firebase/product_stock_repository_firestore.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:uuid/uuid.dart';
 
@@ -32,6 +33,7 @@ class ProductsRepositoryFirestore extends FirestoreRepository<Product>
     required String description,
     required List<ProductCategory> categories,
     required double price,
+    required int currentStock,
   }) async {
     final product = Product(
       uuid: uuid ?? _uuid.v4(),
@@ -39,6 +41,7 @@ class ProductsRepositoryFirestore extends FirestoreRepository<Product>
       categories: categories,
       price: price,
       active: true,
+      currentStock: currentStock,
     );
     await collection.doc(product.uuid).set(product);
     final index = _products.indexOf(product);
@@ -60,11 +63,11 @@ class ProductsRepositoryFirestore extends FirestoreRepository<Product>
   @override
   Future<List<Product>> loadProducts() async {
     _productCategories = await productCategoriesRepository.load();
-    if (_products.isEmpty) {
-      final snapshot = await collection.get();
-      _products = snapshot.docs.map((e) => e.data()).toList();
-      _products.sortBy((e) => e.description);
-    }
+    // if (_products.isEmpty) {
+    final snapshot = await collection.get();
+    _products = snapshot.docs.map((e) => e.data()).toList();
+    _products.sortBy((e) => e.description);
+    // }
     return _products;
   }
 
@@ -73,5 +76,19 @@ class ProductsRepositoryFirestore extends FirestoreRepository<Product>
     await collection.doc(uuid).delete();
     _products.removeWhere((e) => e.uuid == uuid);
     _products.sortBy((e) => e.description);
+  }
+
+  @override
+  ProductStockRepository stockRepository(Product product) =>
+      ProductStockRepositoryFirestore(companyUuid, productUuid: product.uuid!);
+
+  @override
+  Future<Product> updateStock({
+    required Product product,
+    required int quantity,
+  }) async {
+    final currentStock = product.currentStock + quantity;
+    await collection.doc(product.uuid).update({'currentStock': currentStock});
+    return product.copyWith(currentStock: currentStock);
   }
 }

@@ -34,6 +34,7 @@ class ProductFormBloc extends Bloc<ProductFormEvent, ProductFormState> {
         description: product.description,
         price: product.price,
         categories: product.categories ?? [],
+        currentStock: product.currentStock,
       ));
     } catch (ex) {
       emit(ProductFormException(ex));
@@ -62,6 +63,7 @@ class ProductFormBloc extends Bloc<ProductFormEvent, ProductFormState> {
         description: event.description,
         price: event.price,
         categories: event.categories,
+        currentStock: event.currentStock,
       );
       emit(ProductFormSuccessfullySubmitted());
     } catch (ex) {

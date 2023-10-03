@@ -14,18 +14,21 @@ final mockProducts = [
     description: 'Pão de forma',
     price: 5.99,
     categories: [mockProductCategories[0]],
+    currentStock: 4,
   ),
   Product(
     uuid: _uuid.v4(),
     description: 'Café',
     price: 2.99,
     categories: [mockProductCategories[1]],
+    currentStock: 5,
   ),
   Product(
     uuid: _uuid.v4(),
     description: 'Água',
     price: 2,
     categories: [mockProductCategories[1]],
+    currentStock: 0,
   ),
 ];
 
@@ -49,12 +52,14 @@ class ProductsRepositoryMock implements ProductsRepository {
     required String description,
     required List<ProductCategory> categories,
     required double price,
+    required int currentStock,
   }) async {
     final product = Product(
       uuid: uuid ?? _uuid.v4(),
       description: description,
       price: price,
       categories: categories,
+      currentStock: currentStock,
     );
     final index = _products.indexOf(product);
     if (index == -1) {
@@ -69,4 +74,24 @@ class ProductsRepositoryMock implements ProductsRepository {
   @override
   Future<void> removeProduct(String uuid) async =>
       _delayed(() => _products.removeWhere((p) => p.uuid == uuid));
+
+  @override
+  ProductStockRepository stockRepository(Product product) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Product> updateStock(
+      {required Product product, required int quantity}) async {
+    final currentStock = product.currentStock + quantity;
+    final newProduct = product.copyWith(currentStock: currentStock);
+    final index = _products.indexOf(newProduct);
+    if (index == -1) {
+      _products.add(newProduct);
+      _products.sortBy((e) => e.description);
+    } else {
+      _products[index] = newProduct;
+    }
+    return await _delayed(() => newProduct);
+  }
 }

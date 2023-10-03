@@ -29,6 +29,7 @@ class ProductView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
           title: BlocBuilder<ProductBloc, ProductState>(
@@ -73,10 +74,25 @@ class ProductView extends StatelessWidget {
                   ),
                 ),
                 DescriptionDetail(
+                  description: const Text('Estoque atual'),
+                  detail: Text(
+                    product.currentStock.toString(),
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                ),
+                DescriptionDetail(
                   description: const Text('Categorias'),
                   detail: ProductCategoriesChipList(
                     categories: product.categories,
                   ),
+                ),
+                ListTile(
+                  textColor: colorScheme.primary,
+                  iconColor: colorScheme.primary,
+                  onTap: () => context.go(
+                      '/cadastros/produtos/${product.uuid}/estoque/cadastrar'),
+                  leading: const Icon(Icons.library_add),
+                  title: const Text('Atualizar estoque'),
                 )
               ],
             );

@@ -105,11 +105,14 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     try {
       emit(state.copyWith(status: CartStatus.loading));
 
+      final items = state.selectedItems;
       final sale = await salesRepository.createSale(
         session: state.session!,
-        items: state.selectedItems,
+        items: items,
         client: state.client,
       );
+      await _updateStockOfItems(items);
+
       emit(state.copyWith(status: CartStatus.payment, sale: sale));
     } catch (ex) {
       emit(state.copyWith(status: CartStatus.failure, exception: ex));
@@ -183,10 +186,22 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         ));
       } else {
         await salesRepository.remove(state.sale!);
+        final items = {for (var e in state.sale!.items) e.product: e.quantity};
+        await _updateStockOfItems(items);
+
         emit(state.copyWith(status: CartStatus.checkout));
       }
     } catch (ex) {
       emit(state.copyWith(status: CartStatus.failure, exception: ex));
+    }
+  }
+
+  Future<void> _updateStockOfItems(Map<Product, int> items) async {
+    for (final item in items.entries) {
+      await productRepository.updateStock(
+        product: item.key,
+        quantity: item.value,
+      );
     }
   }
 }

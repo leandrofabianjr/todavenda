@@ -10,6 +10,7 @@ final class ProductFormEditing extends ProductFormState {
     this.description = '',
     this.price = 0,
     this.categories = const [],
+    this.currentStock = 0,
     this.descriptionError,
   });
 
@@ -17,17 +18,25 @@ final class ProductFormEditing extends ProductFormState {
   final String description;
   final double price;
   final List<ProductCategory> categories;
+  final int currentStock;
   final String? descriptionError;
 
   @override
-  List<Object?> get props =>
-      [uuid, description, price, categories, descriptionError];
+  List<Object?> get props => [
+        uuid,
+        description,
+        price,
+        categories,
+        currentStock,
+        descriptionError,
+      ];
 
   ProductFormEditing copyWith({
     String? uuid,
     String? description,
     double? price,
     List<ProductCategory>? categories,
+    int? currentStock,
     String? descriptionError,
   }) {
     return ProductFormEditing(
@@ -36,6 +45,7 @@ final class ProductFormEditing extends ProductFormState {
       price: price ?? this.price,
       categories: categories ?? this.categories,
       descriptionError: descriptionError ?? this.descriptionError,
+      currentStock: currentStock ?? this.currentStock,
     );
   }
 }

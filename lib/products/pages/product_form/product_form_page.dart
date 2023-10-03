@@ -19,18 +19,20 @@ class ProductFormPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => ProductFormBloc(context.read<ProductsRepository>())
         ..add(ProductFormStarted(uuid: uuid)),
-      child: const ProductFormView(),
+      child: ProductFormView(isNew: uuid == null),
     );
   }
 }
 
 class ProductFormView extends StatelessWidget {
-  const ProductFormView({super.key});
+  const ProductFormView({super.key, this.isNew = true});
+
+  final bool isNew;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Novo produto')),
+      appBar: AppBar(title: Text('${isNew ? 'Novo' : 'Editar'} produto')),
       body: BlocConsumer<ProductFormBloc, ProductFormState>(
         listener: (context, state) {
           if (state is ProductFormSuccessfullySubmitted) {
@@ -81,6 +83,7 @@ class ProductFormView extends StatelessWidget {
                           description: description,
                           price: price,
                           categories: categories,
+                          currentStock: state.currentStock,
                         );
                         context.read<ProductFormBloc>().add(event);
                       },

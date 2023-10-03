@@ -19,13 +19,21 @@ final class ProductFormSubmitted extends ProductFormEvent {
     required this.description,
     required this.price,
     required this.categories,
+    required this.currentStock,
   });
 
   final String? uuid;
   final String description;
   final double price;
   final List<ProductCategory> categories;
+  final int currentStock;
 
   @override
-  List<Object?> get props => [uuid, description, price, categories];
+  List<Object?> get props => [
+        uuid,
+        description,
+        price,
+        categories,
+        currentStock,
+      ];
 }

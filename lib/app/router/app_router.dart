@@ -11,7 +11,6 @@ import 'package:todavenda/registers/pages/pages.dart';
 import 'package:todavenda/reports/pages/pages.dart';
 import 'package:todavenda/sales/pages/pages.dart';
 import 'package:todavenda/session/pages/pages.dart';
-import 'package:todavenda/session/pages/session/session_page.dart';
 
 import '../app_tab_bar.dart';
 import 'app_router_observer.dart';
@@ -130,6 +129,12 @@ final appRouterConfig = GoRouter(
                       path: ':uuid/editar',
                       builder: (context, state) => ProductFormPage(
                         uuid: state.pathParameters['uuid']!,
+                      ),
+                    ),
+                    GoRoute(
+                      path: ':uuid/estoque/cadastrar',
+                      builder: (context, state) => ProductStockFormPage(
+                        productUuid: state.pathParameters['uuid']!,
                       ),
                     ),
                   ],
