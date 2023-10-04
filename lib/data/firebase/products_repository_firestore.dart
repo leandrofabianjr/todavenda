@@ -46,6 +46,7 @@ class ProductsRepositoryFirestore extends FirestoreRepository<Product>
     required List<ProductCategory> categories,
     required double price,
     required int currentStock,
+    required bool hasStockControl,
   }) async {
     final product = Product(
       uuid: uuid ?? _uuid.v4(),
@@ -54,6 +55,7 @@ class ProductsRepositoryFirestore extends FirestoreRepository<Product>
       price: price,
       active: true,
       currentStock: currentStock,
+      hasStockControl: hasStockControl,
     );
     await collection.doc(product.uuid).set(product);
     final index = _products.indexOf(product);
@@ -121,6 +123,10 @@ class ProductsRepositoryFirestore extends FirestoreRepository<Product>
     required Product product,
     required int quantity,
   }) async {
+    if (!product.hasStockControl) {
+      return product;
+    }
+
     final currentStock = product.currentStock + quantity;
     await collection.doc(product.uuid).update({'currentStock': currentStock});
     final newProduct = product.copyWith(currentStock: currentStock);

@@ -11,6 +11,7 @@ abstract class ProductsRepository {
     required List<ProductCategory> categories,
     required double price,
     required int currentStock,
+    required bool hasStockControl,
   });
 
   Future<Product> updateStock({

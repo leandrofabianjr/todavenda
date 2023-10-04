@@ -11,6 +11,7 @@ class Product extends Equatable {
     this.categories,
     this.active = true,
     required this.currentStock,
+    required this.hasStockControl,
   });
 
   final String? uuid;
@@ -19,6 +20,7 @@ class Product extends Equatable {
   final List<ProductCategory>? categories;
   final bool active;
   final int currentStock;
+  final bool hasStockControl;
 
   get formattedPrice => CurrencyFormatter().formatPtBr(price);
 
@@ -34,6 +36,7 @@ class Product extends Equatable {
         'categoriesUuids': (categories ?? []).map((e) => e.uuid).toList(),
       'active': active,
       'currentStock': currentStock,
+      'hasStockControl': hasStockControl,
     };
   }
 
@@ -50,6 +53,7 @@ class Product extends Equatable {
               .toList(),
       active: json['active'],
       currentStock: json['currentStock'] ?? 0,
+      hasStockControl: json['hasStockControl'] ?? false,
     );
   }
 
@@ -60,6 +64,7 @@ class Product extends Equatable {
     List<ProductCategory>? categories,
     bool? active,
     int? currentStock,
+    bool? hasStockControl,
   }) {
     return Product(
       uuid: uuid ?? this.uuid,
@@ -68,6 +73,7 @@ class Product extends Equatable {
       currentStock: currentStock ?? this.currentStock,
       active: active ?? this.active,
       categories: categories ?? this.categories,
+      hasStockControl: hasStockControl ?? this.hasStockControl,
     );
   }
 }

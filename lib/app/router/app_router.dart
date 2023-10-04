@@ -124,18 +124,20 @@ final appRouterConfig = GoRouter(
                       builder: (context, state) => ProductPage(
                         uuid: state.pathParameters['uuid']!,
                       ),
-                    ),
-                    GoRoute(
-                      path: ':uuid/editar',
-                      builder: (context, state) => ProductFormPage(
-                        uuid: state.pathParameters['uuid']!,
-                      ),
-                    ),
-                    GoRoute(
-                      path: ':uuid/estoque/cadastrar',
-                      builder: (context, state) => ProductStockFormPage(
-                        productUuid: state.pathParameters['uuid']!,
-                      ),
+                      routes: [
+                        GoRoute(
+                          path: 'editar',
+                          builder: (context, state) => ProductFormPage(
+                            uuid: state.pathParameters['uuid']!,
+                          ),
+                        ),
+                        GoRoute(
+                          path: 'estoque/cadastrar',
+                          builder: (context, state) => ProductStockFormPage(
+                            productUuid: state.pathParameters['uuid']!,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

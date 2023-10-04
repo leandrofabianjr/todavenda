@@ -20,6 +20,7 @@ final class ProductFormSubmitted extends ProductFormEvent {
     required this.price,
     required this.categories,
     required this.currentStock,
+    required this.hasStockControl,
   });
 
   final String? uuid;
@@ -27,6 +28,7 @@ final class ProductFormSubmitted extends ProductFormEvent {
   final double price;
   final List<ProductCategory> categories;
   final int currentStock;
+  final bool hasStockControl;
 
   @override
   List<Object?> get props => [
@@ -35,5 +37,6 @@ final class ProductFormSubmitted extends ProductFormEvent {
         price,
         categories,
         currentStock,
+        hasStockControl,
       ];
 }

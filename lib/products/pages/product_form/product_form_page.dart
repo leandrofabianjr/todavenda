@@ -49,6 +49,7 @@ class ProductFormView extends StatelessWidget {
             var description = state.description;
             var price = state.price;
             var categories = state.categories;
+            var hasStockControl = state.hasStockControl;
 
             return SingleChildScrollView(
               child: Padding(
@@ -69,6 +70,13 @@ class ProductFormView extends StatelessWidget {
                       initialValue: price,
                       onChanged: (value) => price = value,
                     ),
+                    SwitchWidget(
+                      value: hasStockControl,
+                      onChanged: (value) => hasStockControl = value,
+                      selectedTitle: const Text('Tem controle de estoque'),
+                      unselectedTitle:
+                          const Text('Não tem controle de estoque'),
+                    ),
                     ProductCategoriesSelector(
                       decoration:
                           const InputDecoration(labelText: 'Categorias'),
@@ -84,6 +92,7 @@ class ProductFormView extends StatelessWidget {
                           price: price,
                           categories: categories,
                           currentStock: state.currentStock,
+                          hasStockControl: hasStockControl,
                         );
                         context.read<ProductFormBloc>().add(event);
                       },
@@ -100,6 +109,47 @@ class ProductFormView extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class SwitchWidget extends StatefulWidget {
+  const SwitchWidget({
+    super.key,
+    this.value = false,
+    required this.onChanged,
+    required this.selectedTitle,
+    required this.unselectedTitle,
+  });
+
+  final bool value;
+  final void Function(bool value) onChanged;
+  final Widget selectedTitle;
+  final Widget unselectedTitle;
+
+  @override
+  State<SwitchWidget> createState() => _SwitchWidgetState();
+}
+
+class _SwitchWidgetState extends State<SwitchWidget> {
+  late bool value;
+
+  @override
+  void initState() {
+    value = widget.value;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SwitchListTile(
+      contentPadding: const EdgeInsets.only(top: 16),
+      value: value,
+      onChanged: (v) {
+        widget.onChanged(v);
+        setState(() => value = v);
+      },
+      title: value ? widget.selectedTitle : widget.unselectedTitle,
     );
   }
 }

@@ -98,9 +98,25 @@ class ProductListViewTile extends StatelessWidget {
     return ListTile(
       title: Text(product.description),
       subtitle: ProductCategoriesChipList(categories: product.categories),
-      trailing: Text(
-        product.formattedPrice,
-        style: Theme.of(context).textTheme.titleSmall,
+      trailing: Column(
+        children: [
+          Text(
+            product.formattedPrice,
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+          if (product.hasStockControl)
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.inventory, size: 16),
+                const SizedBox(width: 8),
+                Text(
+                  '${product.currentStock}',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ],
+            ),
+        ],
       ),
       onTap: () => context.go('/cadastros/produtos/${product.uuid}'),
     );

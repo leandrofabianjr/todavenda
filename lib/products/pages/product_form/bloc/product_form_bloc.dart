@@ -64,6 +64,7 @@ class ProductFormBloc extends Bloc<ProductFormEvent, ProductFormState> {
         price: event.price,
         categories: event.categories,
         currentStock: event.currentStock,
+        hasStockControl: event.hasStockControl,
       );
       emit(ProductFormSuccessfullySubmitted());
     } catch (ex) {

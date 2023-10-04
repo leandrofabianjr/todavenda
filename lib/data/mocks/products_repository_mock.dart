@@ -15,6 +15,7 @@ final mockProducts = [
     price: 5.99,
     categories: [mockProductCategories[0]],
     currentStock: 4,
+    hasStockControl: true,
   ),
   Product(
     uuid: _uuid.v4(),
@@ -22,6 +23,7 @@ final mockProducts = [
     price: 2.99,
     categories: [mockProductCategories[1]],
     currentStock: 5,
+    hasStockControl: true,
   ),
   Product(
     uuid: _uuid.v4(),
@@ -29,6 +31,7 @@ final mockProducts = [
     price: 2,
     categories: [mockProductCategories[1]],
     currentStock: 0,
+    hasStockControl: false,
   ),
 ];
 
@@ -61,6 +64,7 @@ class ProductsRepositoryMock implements ProductsRepository {
     required List<ProductCategory> categories,
     required double price,
     required int currentStock,
+    required bool hasStockControl,
   }) async {
     final product = Product(
       uuid: uuid ?? _uuid.v4(),
@@ -68,6 +72,7 @@ class ProductsRepositoryMock implements ProductsRepository {
       price: price,
       categories: categories,
       currentStock: currentStock,
+      hasStockControl: hasStockControl,
     );
     final index = _products.indexOf(product);
     if (index == -1) {

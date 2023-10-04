@@ -46,7 +46,13 @@ class ProductView extends StatelessWidget {
                 if (state is ProductReady) {
                   return IconButton(
                     onPressed: () => context
-                        .go('/cadastros/produtos/${state.product.uuid}/editar'),
+                        .push(
+                            '/cadastros/produtos/${state.product.uuid}/editar')
+                        .then(
+                          (value) => context
+                              .read<ProductBloc>()
+                              .add(const ProductStarted()),
+                        ),
                     icon: const Icon(Icons.edit),
                   );
                 }
@@ -73,27 +79,29 @@ class ProductView extends StatelessWidget {
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                 ),
-                DescriptionDetail(
-                  description: const Text('Estoque atual'),
-                  detail: Text(
-                    product.currentStock.toString(),
-                    style: Theme.of(context).textTheme.headlineSmall,
+                if (product.hasStockControl)
+                  DescriptionDetail(
+                    description: const Text('Estoque atual'),
+                    detail: Text(
+                      product.currentStock.toString(),
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
                   ),
-                ),
                 DescriptionDetail(
                   description: const Text('Categorias'),
                   detail: ProductCategoriesChipList(
                     categories: product.categories,
                   ),
                 ),
-                ListTile(
-                  textColor: colorScheme.primary,
-                  iconColor: colorScheme.primary,
-                  onTap: () => context.go(
-                      '/cadastros/produtos/${product.uuid}/estoque/cadastrar'),
-                  leading: const Icon(Icons.library_add),
-                  title: const Text('Atualizar estoque'),
-                )
+                if (product.hasStockControl)
+                  ListTile(
+                    textColor: colorScheme.primary,
+                    iconColor: colorScheme.primary,
+                    onTap: () => context.go(
+                        '/cadastros/produtos/${product.uuid}/estoque/cadastrar'),
+                    leading: const Icon(Icons.inventory),
+                    title: const Text('Atualizar estoque'),
+                  )
               ],
             );
           }

@@ -202,7 +202,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     for (final item in items.entries) {
       await productRepository.updateStock(
         product: item.key,
-        quantity: item.value,
+        quantity: -item.value,
       );
     }
   }

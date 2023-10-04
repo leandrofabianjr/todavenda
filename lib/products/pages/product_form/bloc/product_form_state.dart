@@ -12,6 +12,7 @@ final class ProductFormEditing extends ProductFormState {
     this.categories = const [],
     this.currentStock = 0,
     this.descriptionError,
+    this.hasStockControl = false,
   });
 
   final String? uuid;
@@ -20,6 +21,7 @@ final class ProductFormEditing extends ProductFormState {
   final List<ProductCategory> categories;
   final int currentStock;
   final String? descriptionError;
+  final bool hasStockControl;
 
   @override
   List<Object?> get props => [
@@ -38,6 +40,7 @@ final class ProductFormEditing extends ProductFormState {
     List<ProductCategory>? categories,
     int? currentStock,
     String? descriptionError,
+    bool? hasStockControl,
   }) {
     return ProductFormEditing(
       uuid: uuid ?? this.uuid,
@@ -46,6 +49,7 @@ final class ProductFormEditing extends ProductFormState {
       categories: categories ?? this.categories,
       descriptionError: descriptionError ?? this.descriptionError,
       currentStock: currentStock ?? this.currentStock,
+      hasStockControl: hasStockControl ?? this.hasStockControl,
     );
   }
 }
