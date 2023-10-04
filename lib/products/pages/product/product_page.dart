@@ -97,10 +97,26 @@ class ProductView extends StatelessWidget {
                   ListTile(
                     textColor: colorScheme.primary,
                     iconColor: colorScheme.primary,
-                    onTap: () => context.go(
-                        '/cadastros/produtos/${product.uuid}/estoque/cadastrar'),
+                    onTap: () => context
+                        .push(
+                          '/cadastros/produtos/${product.uuid}/estoque/cadastrar',
+                        )
+                        .then(
+                          (value) => context
+                              .read<ProductBloc>()
+                              .add(const ProductStarted()),
+                        ),
                     leading: const Icon(Icons.inventory),
                     title: const Text('Atualizar estoque'),
+                  ),
+                if (product.hasStockControl)
+                  ListTile(
+                    textColor: colorScheme.primary,
+                    iconColor: colorScheme.primary,
+                    onTap: () => context
+                        .go('/cadastros/produtos/${product.uuid}/estoque'),
+                    leading: const Icon(Icons.history),
+                    title: const Text('Histórico de atualizações de estoque'),
                   )
               ],
             );

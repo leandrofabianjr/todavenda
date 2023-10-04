@@ -21,5 +21,5 @@ abstract class ProductsRepository {
 
   Future<void> removeProduct(String uuid);
 
-  ProductStockRepository stockRepository(Product product);
+  ProductStockRepository stockRepository(String productUuid);
 }

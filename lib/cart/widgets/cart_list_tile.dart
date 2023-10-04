@@ -38,9 +38,26 @@ class SellListTile extends StatelessWidget {
           ],
         ],
       ),
-      subtitle: Text(
-        product.formattedPrice,
-        style: Theme.of(context).textTheme.bodySmall,
+      subtitle: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            product.formattedPrice,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          if (product.hasStockControl)
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.inventory, size: 16),
+                const SizedBox(width: 8),
+                Text(
+                  '${product.currentStock}',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ],
+            ),
+        ],
       ),
     );
   }

@@ -89,7 +89,7 @@ class ProductsRepositoryMock implements ProductsRepository {
       _delayed(() => _products.removeWhere((p) => p.uuid == uuid));
 
   @override
-  ProductStockRepository stockRepository(Product product) {
+  ProductStockRepository stockRepository(String productUuid) {
     throw UnimplementedError();
   }
 

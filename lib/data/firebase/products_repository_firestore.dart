@@ -115,8 +115,8 @@ class ProductsRepositoryFirestore extends FirestoreRepository<Product>
   }
 
   @override
-  ProductStockRepository stockRepository(Product product) =>
-      ProductStockRepositoryFirestore(companyUuid, productUuid: product.uuid!);
+  ProductStockRepository stockRepository(String productUuid) =>
+      ProductStockRepositoryFirestore(companyUuid, productUuid: productUuid);
 
   @override
   Future<Product> updateStock({
@@ -127,7 +127,10 @@ class ProductsRepositoryFirestore extends FirestoreRepository<Product>
       return product;
     }
 
-    final currentStock = product.currentStock + quantity;
+    int currentStock = product.currentStock + quantity;
+    if (currentStock < 0) {
+      currentStock = 0;
+    }
     await collection.doc(product.uuid).update({'currentStock': currentStock});
     final newProduct = product.copyWith(currentStock: currentStock);
     _products[_products.indexOf(newProduct)] = newProduct;
