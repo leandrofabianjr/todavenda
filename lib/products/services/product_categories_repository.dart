@@ -5,7 +5,11 @@ abstract class ProductCategoriesRepository {
 
   Future<ProductCategory> loadByUuid(String uuid);
 
-  Future<ProductCategory> create({required String name, String? description});
+  Future<ProductCategory> save({
+    String? uuid,
+    required String name,
+    String? description,
+  });
 
   Future<void> remove(String uuid);
 }

@@ -21,18 +21,24 @@ class ProductCategoriesRepositoryFirestore
   Map<String, dynamic> toJson(ProductCategory value) => value.toJson();
 
   @override
-  Future<ProductCategory> create({
+  Future<ProductCategory> save({
+    String? uuid,
     required String name,
     String? description,
   }) async {
     final category = ProductCategory(
-      uuid: _uuid.v4(),
+      uuid: uuid ?? _uuid.v4(),
       name: name,
       description: description,
     );
     await collection.doc(category.uuid).set(category);
-    _productCategories.add(category);
-    _productCategories.sortBy((e) => e.name);
+    final index = _productCategories.indexOf(category);
+    if (index == -1) {
+      _productCategories.add(category);
+      _productCategories.sortBy((e) => e.name);
+    } else {
+      _productCategories[index] = category;
+    }
     return category;
   }
 

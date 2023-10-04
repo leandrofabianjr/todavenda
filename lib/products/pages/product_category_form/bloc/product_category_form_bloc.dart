@@ -27,11 +27,12 @@ class ProductCategoryFormBloc
     }
 
     try {
-      final product = await productCategoriesRepository.loadByUuid(event.uuid!);
+      final productCategory =
+          await productCategoriesRepository.loadByUuid(event.uuid!);
       emit(ProductCategoryFormEditing(
-        uuid: product.uuid,
-        name: product.name,
-        description: product.description,
+        uuid: productCategory.uuid,
+        name: productCategory.name,
+        description: productCategory.description,
       ));
     } catch (ex) {
       emit(ProductCategoryFormException(ex));
@@ -55,7 +56,7 @@ class ProductCategoryFormBloc
     emit(ProductCategoryFormSubmitting());
 
     try {
-      await productCategoriesRepository.create(
+      await productCategoriesRepository.save(
         name: event.name,
         description: event.description,
       );
