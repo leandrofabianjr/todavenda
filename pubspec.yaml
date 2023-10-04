@@ -51,6 +51,8 @@ dependencies:
   fl_chart: ^0.63.0
   date_field: ^3.0.5
   package_info_plus: ^4.1.0
+  pix_flutter: ^2.2.0
+  qr_flutter: ^4.1.0
   
 
 dev_dependencies:

@@ -134,9 +134,12 @@ class _SellPaymentViewState extends State<SellPaymentView> {
                       ...PaymentType.values
                           .map(
                             (type) => ListTile(
-                              onTap: () => context.read<CartBloc>().add(
-                                  CartPaymentAdded(
-                                      type: type, value: amountPaid)),
+                              onTap: () => onPaymentSelected(
+                                context,
+                                type,
+                                amountPaid,
+                                state.sale!.uuid!,
+                              ),
                               leading: type.icon,
                               title: Text(type.label),
                             ),
@@ -163,5 +166,36 @@ class _SellPaymentViewState extends State<SellPaymentView> {
         ),
       ),
     );
+  }
+
+  void onPaymentSelected(
+    BuildContext context,
+    PaymentType type,
+    double amountPaid,
+    String saleUuid,
+  ) async {
+    if (type == PaymentType.pix) {
+      return Navigator.of(context)
+          .push<bool?>(
+        MaterialPageRoute(
+          builder: (context) => PixPaymentPage(
+            amount: amountPaid,
+            saleUuid: saleUuid,
+          ),
+        ),
+      )
+          .then(
+        (success) {
+          if (success != null && success) {
+            return context
+                .read<CartBloc>()
+                .add(CartPaymentAdded(type: type, value: amountPaid));
+          }
+        },
+      );
+    }
+    return context
+        .read<CartBloc>()
+        .add(CartPaymentAdded(type: type, value: amountPaid));
   }
 }
