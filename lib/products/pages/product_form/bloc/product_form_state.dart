@@ -13,6 +13,7 @@ final class ProductFormEditing extends ProductFormState {
     this.currentStock = 0,
     this.descriptionError,
     this.hasStockControl = false,
+    this.createdAt,
   });
 
   final String? uuid;
@@ -22,6 +23,7 @@ final class ProductFormEditing extends ProductFormState {
   final int currentStock;
   final String? descriptionError;
   final bool hasStockControl;
+  final DateTime? createdAt;
 
   @override
   List<Object?> get props => [

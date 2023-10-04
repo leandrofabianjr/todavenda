@@ -50,6 +50,7 @@ class ProductFormView extends StatelessWidget {
             var price = state.price;
             var categories = state.categories;
             var hasStockControl = state.hasStockControl;
+            var createdAt = state.createdAt;
 
             return SingleChildScrollView(
               child: Padding(
@@ -93,6 +94,7 @@ class ProductFormView extends StatelessWidget {
                           categories: categories,
                           currentStock: state.currentStock,
                           hasStockControl: hasStockControl,
+                          createdAt: createdAt ?? DateTime.now(),
                         );
                         context.read<ProductFormBloc>().add(event);
                       },

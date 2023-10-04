@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:todavenda/commons/widgets/exception_widget.dart';
-import 'package:todavenda/commons/widgets/loading_widget.dart';
+import 'package:todavenda/commons/commons.dart';
 
 import './bloc/product_list_bloc.dart';
 import '../../models/product.dart';
 import '../../services/products_repository.dart';
 import '../../widgets/widgets.dart';
+import 'product_list_filter.dart';
 
 class ProductListPage extends StatelessWidget {
   const ProductListPage({super.key});
@@ -28,9 +28,9 @@ class ProductListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const ProductListAppBar(),
       body: CustomScrollView(
         slivers: [
-          const ProductListAppBar(),
           BlocBuilder<ProductListBloc, ProductListState>(
             builder: (context, state) {
               if (state is ProductListLoading) {
@@ -76,14 +76,47 @@ class ProductListView extends StatelessWidget {
   }
 }
 
-class ProductListAppBar extends StatelessWidget {
+class ProductListAppBar extends StatelessWidget implements PreferredSizeWidget {
   const ProductListAppBar({super.key});
 
   @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  @override
   Widget build(BuildContext context) {
-    return const SliverAppBar(
-      title: Text('Produtos'),
-      floating: true,
+    return BlocBuilder<ProductListBloc, ProductListState>(
+      builder: (context, state) {
+        if (state is ProductListLoaded) {
+          final filter = state.filter;
+          return AppBarWithSearchView(
+            onSearchChanged: (term) {
+              filter.searchTerm = term;
+              context
+                  .read<ProductListBloc>()
+                  .add(ProductListStarted(filter: filter));
+            },
+            initialSearchTerm: filter.searchTerm,
+            title: const Text('Produtos'),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  ProductListFilterDialog.of(context, state.filter).then(
+                    (filter) {
+                      if (filter != null) {
+                        context
+                            .read<ProductListBloc>()
+                            .add(ProductListStarted(filter: filter));
+                      }
+                    },
+                  );
+                },
+                icon: const Icon(Icons.filter_list),
+              ),
+            ],
+          );
+        }
+        return const SizedBox();
+      },
     );
   }
 }

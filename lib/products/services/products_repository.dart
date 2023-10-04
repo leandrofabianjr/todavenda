@@ -12,6 +12,7 @@ abstract class ProductsRepository {
     required double price,
     required int currentStock,
     required bool hasStockControl,
+    required DateTime createdAt,
   });
 
   Future<Product> updateStock({

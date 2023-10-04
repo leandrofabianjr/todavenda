@@ -10,12 +10,13 @@ final class ProductListLoading extends ProductListState {
 }
 
 final class ProductListLoaded extends ProductListState {
-  const ProductListLoaded(this.products);
+  const ProductListLoaded({required this.products, required this.filter});
 
   final List<Product> products;
+  final ProductListFilter filter;
 
   @override
-  List<Object> get props => [products];
+  List<Object> get props => [products, filter];
 }
 
 final class ProductListException extends ProductListState {

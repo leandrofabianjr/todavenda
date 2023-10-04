@@ -21,6 +21,7 @@ final class ProductFormSubmitted extends ProductFormEvent {
     required this.categories,
     required this.currentStock,
     required this.hasStockControl,
+    required this.createdAt,
   });
 
   final String? uuid;
@@ -29,6 +30,7 @@ final class ProductFormSubmitted extends ProductFormEvent {
   final List<ProductCategory> categories;
   final int currentStock;
   final bool hasStockControl;
+  final DateTime createdAt;
 
   @override
   List<Object?> get props => [
@@ -38,5 +40,6 @@ final class ProductFormSubmitted extends ProductFormEvent {
         categories,
         currentStock,
         hasStockControl,
+        createdAt,
       ];
 }

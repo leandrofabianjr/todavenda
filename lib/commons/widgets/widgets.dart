@@ -1,3 +1,4 @@
+export 'app_bar_with_search.dart';
 export 'currency_amount_vs_date_time_chart.dart';
 export 'currency_field.dart';
 export 'description_detail.dart';

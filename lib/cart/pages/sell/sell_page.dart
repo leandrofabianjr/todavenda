@@ -1,11 +1,8 @@
-import 'dart:async';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/clients/clients.dart';
-import 'package:todavenda/clients/widgets/client_selector.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/products/products.dart';
 
@@ -224,96 +221,26 @@ class SellPageAppBar extends StatelessWidget implements PreferredSizeWidget {
   const SellPageAppBar({super.key});
 
   @override
-  Size get preferredSize => const Size.fromHeight(110.0);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CartBloc, CartState>(
       builder: (context, state) {
-        return SellPageAppBarView(
+        return AppBarWithSearchView(
           onSearchChanged: (term) =>
               context.read<CartBloc>().add(CartStarted(filterterm: term)),
           initialSearchTerm: state.filterTerm,
+          title: const Text('Nova venda'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.point_of_sale),
+              color: Theme.of(context).colorScheme.primary,
+              onPressed: () => context.go('/caixa'),
+            ),
+          ],
         );
       },
-    );
-  }
-}
-
-class SellPageAppBarView extends StatefulWidget {
-  const SellPageAppBarView({
-    super.key,
-    required this.onSearchChanged,
-    this.initialSearchTerm,
-  });
-
-  final void Function(String? term) onSearchChanged;
-  final String? initialSearchTerm;
-
-  @override
-  State<SellPageAppBarView> createState() => _SellPageAppBarViewState();
-}
-
-class _SellPageAppBarViewState extends State<SellPageAppBarView> {
-  late TextEditingController searchTextController;
-  Timer? _debounce;
-
-  @override
-  void initState() {
-    searchTextController =
-        TextEditingController(text: widget.initialSearchTerm);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _debounce?.cancel();
-    super.dispose();
-  }
-
-  _onSearchChanged(String term) {
-    if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(
-      const Duration(milliseconds: 500),
-      () => widget.onSearchChanged(term),
-    );
-  }
-
-  _clearSearch() {
-    searchTextController.clear();
-    widget.onSearchChanged(null);
-  }
-
-  bool get searchIsEmpty => searchTextController.text.isEmpty;
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      title: const Text('Nova venda'),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.point_of_sale),
-          color: Theme.of(context).colorScheme.primary,
-          onPressed: () => context.go('/caixa'),
-        ),
-      ],
-      bottom: AppBar(
-        title: TextField(
-          controller: searchTextController,
-          decoration: InputDecoration(
-            label: const Text('Pesquisar'),
-            prefixIcon: const Icon(Icons.search),
-            suffixIcon: searchIsEmpty
-                ? null
-                : IconButton(
-                    onPressed: _clearSearch,
-                    icon: const Icon(Icons.backspace),
-                  ),
-          ),
-          keyboardType: TextInputType.name,
-          onChanged: _onSearchChanged,
-        ),
-      ),
     );
   }
 }

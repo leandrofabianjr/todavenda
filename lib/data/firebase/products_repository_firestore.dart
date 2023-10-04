@@ -1,22 +1,11 @@
 import 'package:collection/collection.dart';
+import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/data/firebase/firestore_repository.dart';
 import 'package:todavenda/data/firebase/product_stock_repository_firestore.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:uuid/uuid.dart';
 
 const _uuid = Uuid();
-
-extension DiacriticsAwareString on String {
-  static const diacritics =
-      'ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËĚèéêëěðČÇçčÐĎďÌÍÎÏìíîïĽľÙÚÛÜŮùúûüůŇÑñňŘřŠšŤťŸÝÿýŽž';
-  static const nonDiacritics =
-      'AAAAAAaaaaaaOOOOOOOooooooEEEEEeeeeeeCCccDDdIIIIiiiiLlUUUUUuuuuuNNnnRrSsTtYYyyZz';
-
-  String get withoutDiacriticalMarks => splitMapJoin('',
-      onNonMatch: (char) => char.isNotEmpty && diacritics.contains(char)
-          ? nonDiacritics[diacritics.indexOf(char)]
-          : char);
-}
 
 class ProductsRepositoryFirestore extends FirestoreRepository<Product>
     implements ProductsRepository {
@@ -47,6 +36,7 @@ class ProductsRepositoryFirestore extends FirestoreRepository<Product>
     required double price,
     required int currentStock,
     required bool hasStockControl,
+    required DateTime createdAt,
   }) async {
     final product = Product(
       uuid: uuid ?? _uuid.v4(),
@@ -56,6 +46,7 @@ class ProductsRepositoryFirestore extends FirestoreRepository<Product>
       active: true,
       currentStock: currentStock,
       hasStockControl: hasStockControl,
+      createdAt: createdAt,
     );
     await collection.doc(product.uuid).set(product);
     final index = _products.indexOf(product);
@@ -85,23 +76,7 @@ class ProductsRepositoryFirestore extends FirestoreRepository<Product>
     }
 
     if (term != null) {
-      final filteredTerm = term.withoutDiacriticalMarks;
-      final containsTerm = _products
-          .where(
-            (p) => p.description.withoutDiacriticalMarks.contains(
-              RegExp(filteredTerm, caseSensitive: false),
-            ),
-          )
-          .toList();
-      final startsWith = containsTerm
-          .where(
-            (p) => p.description.withoutDiacriticalMarks.startsWith(
-              RegExp('^$filteredTerm', caseSensitive: false),
-            ),
-          )
-          .toList();
-      containsTerm.removeWhere((e) => startsWith.contains(e));
-      return [...startsWith, ...containsTerm];
+      return _products.filterKeyByTerm(key: (p) => p.description, term: term);
     }
 
     return _products;

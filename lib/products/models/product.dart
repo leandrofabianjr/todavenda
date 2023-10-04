@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:todavenda/commons/commons.dart';
 
@@ -12,6 +13,7 @@ class Product extends Equatable {
     this.active = true,
     required this.currentStock,
     required this.hasStockControl,
+    required this.createdAt,
   });
 
   final String? uuid;
@@ -21,6 +23,7 @@ class Product extends Equatable {
   final bool active;
   final int currentStock;
   final bool hasStockControl;
+  final DateTime createdAt;
 
   get formattedPrice => CurrencyFormatter().formatPtBr(price);
 
@@ -37,6 +40,7 @@ class Product extends Equatable {
       'active': active,
       'currentStock': currentStock,
       'hasStockControl': hasStockControl,
+      'createdAt': createdAt,
     };
   }
 
@@ -54,6 +58,7 @@ class Product extends Equatable {
       active: json['active'],
       currentStock: json['currentStock'] ?? 0,
       hasStockControl: json['hasStockControl'] ?? false,
+      createdAt: (json['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }
 
@@ -65,6 +70,7 @@ class Product extends Equatable {
     bool? active,
     int? currentStock,
     bool? hasStockControl,
+    DateTime? createdAt,
   }) {
     return Product(
       uuid: uuid ?? this.uuid,
@@ -74,6 +80,7 @@ class Product extends Equatable {
       active: active ?? this.active,
       categories: categories ?? this.categories,
       hasStockControl: hasStockControl ?? this.hasStockControl,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }

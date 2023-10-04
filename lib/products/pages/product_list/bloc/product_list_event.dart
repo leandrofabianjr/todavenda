@@ -5,8 +5,10 @@ sealed class ProductListEvent extends Equatable {
 }
 
 class ProductListStarted extends ProductListEvent {
-  const ProductListStarted();
+  const ProductListStarted({this.filter});
+
+  final ProductListFilter? filter;
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [filter];
 }
