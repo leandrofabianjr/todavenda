@@ -109,4 +109,19 @@ class Sale extends Equatable {
       sessionUuid: sessionUuid,
     );
   }
+
+  static Map<PaymentType, double> totalsByPaymentType(List<Sale> sales) {
+    final Map<PaymentType, double> totalsByType = {};
+
+    for (final sale in sales) {
+      for (final payment in sale.payments) {
+        if (!totalsByType.containsKey(payment.paymentType)) {
+          totalsByType[payment.paymentType] = 0;
+        }
+        totalsByType[payment.paymentType] =
+            totalsByType[payment.paymentType]! + payment.amount;
+      }
+    }
+    return totalsByType;
+  }
 }

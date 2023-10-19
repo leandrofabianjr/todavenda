@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:todavenda/reports/reports.dart';
 import 'package:todavenda/sales/sales.dart';
 import 'package:todavenda/session/widgets/payments_bar_chart.dart';
+import 'package:todavenda/session/widgets/payments_by_type_pie_chart.dart';
 
 class ReportsPage extends StatefulWidget {
   const ReportsPage({super.key});
@@ -88,6 +89,23 @@ class _ReportsPageState extends State<ReportsPage> {
               SliverList(
                 delegate: SliverChildListDelegate(
                   [
+                    ListTile(
+                      title: const Text(
+                        'Pagamentos por tipo',
+                        textAlign: TextAlign.end,
+                      ),
+                      subtitle: SizedBox(
+                        width: double.maxFinite,
+                        height: 150,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: PaymentsByTypePieChart(
+                            config: reportConfig!,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Divider(),
                     ListTile(
                       title: const Text(
                         'Histórico de vendas',
