@@ -37,7 +37,12 @@ class PaymentsByTypePieChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PieChart<Sale>(data: data);
+    return PieChart<Sale>(
+      data: data,
+      emptyDataWidget: const Center(
+        child: Text('Não há vendas realizadas no período'),
+      ),
+    );
   }
 }
 
@@ -53,9 +58,11 @@ class PieChart<T> extends StatefulWidget {
   const PieChart({
     super.key,
     required this.data,
+    required this.emptyDataWidget,
   });
 
   final List<PieChartData> data;
+  final Widget emptyDataWidget;
 
   @override
   State<PieChart<T>> createState() => _PieChartState<T>();
@@ -66,6 +73,9 @@ class _PieChartState<T> extends State<PieChart<T>> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.data.isEmpty) {
+      return widget.emptyDataWidget;
+    }
     return Row(
       children: <Widget>[
         SizedBox(

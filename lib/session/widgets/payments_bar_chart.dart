@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -87,22 +85,20 @@ class _CurrencyVsDateTimeBarChartState<T>
     extends State<CurrencyVsDateTimeBarChart<T>> {
   late ColorScheme colorScheme;
 
-  Map<DateTime, double> chartData = {};
   double greatestAmount = 0;
   int numBars = 0;
 
   int touchedIndex = -1;
 
-  Future<Map<DateTime, double>> buildChartData() async {
-    if (widget.data.isEmpty) return {};
-
+  Map<DateTime, double> buildChartData() {
+    Map<DateTime, double> chartData = {};
     final data = widget.data;
+
+    if (data.isEmpty) return chartData;
 
     data.sortBy(widget.getDateTime);
 
     greatestAmount = 0;
-    chartData.clear();
-
     chartData.clear();
 
     var nextBarDate = widget.start.add(widget.barDuration);
@@ -149,62 +145,52 @@ class _CurrencyVsDateTimeBarChartState<T>
 
   @override
   Widget build(BuildContext context) {
+    final chartData = buildChartData();
+
+    if (chartData.isEmpty) {
+      return widget.emptyDataWidget;
+    }
+
     colorScheme = Theme.of(context).colorScheme;
-    return FutureBuilder(
-      future: buildChartData(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return ExceptionWidget(exception: snapshot.error);
-        }
-
-        if (!snapshot.hasData) {
-          return const LoadingWidget();
-        }
-
-        if (chartData.isEmpty) {
-          return widget.emptyDataWidget;
-        }
-
-        return BarChart(
-          BarChartData(
-            barTouchData: barTouchData,
-            titlesData: titlesData,
-            borderData: FlBorderData(show: false),
-            barGroups: chartData.entries
-                .mapIndexed(
-                  (index, element) => BarChartGroupData(
-                    x: index,
-                    barRods: [
-                      BarChartRodData(
-                        toY: element.value,
-                        gradient: LinearGradient(
-                          colors: touchedIndex == index
-                              ? [
-                                  colorScheme.primary,
-                                  colorScheme.primary,
-                                ]
-                              : [
-                                  colorScheme.primary.withOpacity(.3),
-                                  colorScheme.primary.withOpacity(.8),
-                                ],
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                        ),
-                      )
-                    ],
-                    showingTooltipIndicators: [0],
-                  ),
-                )
-                .toList(),
-            gridData: const FlGridData(show: false),
-            maxY: greatestAmount,
-          ),
-        );
-      },
+    return BarChart(
+      BarChartData(
+        barTouchData: buildBarTouchData(chartData),
+        titlesData: buildTitlesData(chartData),
+        borderData: FlBorderData(show: false),
+        barGroups: chartData.entries
+            .mapIndexed(
+              (index, element) => BarChartGroupData(
+                x: index,
+                barRods: [
+                  BarChartRodData(
+                    toY: element.value,
+                    gradient: LinearGradient(
+                      colors: touchedIndex == index
+                          ? [
+                              colorScheme.primary,
+                              colorScheme.primary,
+                            ]
+                          : [
+                              colorScheme.primary.withOpacity(.3),
+                              colorScheme.primary.withOpacity(.8),
+                            ],
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                    ),
+                  )
+                ],
+                showingTooltipIndicators: [0],
+              ),
+            )
+            .toList(),
+        gridData: const FlGridData(show: false),
+        maxY: greatestAmount,
+      ),
     );
   }
 
-  BarTouchData get barTouchData => BarTouchData(
+  BarTouchData buildBarTouchData(Map<DateTime, double> chartData) =>
+      BarTouchData(
         enabled: true,
         touchTooltipData: BarTouchTooltipData(
           tooltipBgColor: colorScheme.primary,
@@ -255,7 +241,7 @@ class _CurrencyVsDateTimeBarChartState<T>
         },
       );
 
-  FlTitlesData get titlesData => FlTitlesData(
+  FlTitlesData buildTitlesData(Map<DateTime, double> chartData) => FlTitlesData(
         show: true,
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(

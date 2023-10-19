@@ -50,39 +50,16 @@ class _ReportsPageState extends State<ReportsPage> {
             SliverAppBar(
               title: const Text('Relatórios'),
               actions: [
-                DropdownMenu(
-                  width: 160,
-                  inputDecorationTheme: const InputDecorationTheme(
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  initialSelection: reportType,
-                  dropdownMenuEntries: const [
-                    DropdownMenuEntry(
-                      value: ReportConfigType.today,
-                      label: 'Hoje',
-                    ),
-                    DropdownMenuEntry(
-                      value: ReportConfigType.last24hours,
-                      label: 'Últimas 24 horas',
-                    ),
-                    DropdownMenuEntry(
-                      value: ReportConfigType.last7Days,
-                      label: 'Últimos 7 dias',
-                    ),
-                    DropdownMenuEntry(
-                      value: ReportConfigType.last30Days,
-                      label: 'Últimos 30 dias',
-                    ),
-                  ],
+                ReportPeriodSelector(
                   onSelected: (value) {
-                    reportType = value!;
+                    reportType = value;
                     refresh();
                   },
                 ),
                 IconButton(
                   onPressed: () => context.go('/relatorios/listagens'),
                   icon: const Icon(Icons.list),
-                ),
+                )
               ],
             ),
             if (reportConfig != null)
@@ -139,6 +116,63 @@ class _ReportsPageState extends State<ReportsPage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ReportPeriodSelector extends StatefulWidget {
+  const ReportPeriodSelector({
+    super.key,
+    this.reportType,
+    required this.onSelected,
+  });
+
+  final ReportConfigType? reportType;
+  final void Function(ReportConfigType value) onSelected;
+
+  @override
+  State<ReportPeriodSelector> createState() => _ReportPeriodSelectorState();
+}
+
+class _ReportPeriodSelectorState extends State<ReportPeriodSelector> {
+  late ReportConfigType reportType;
+
+  @override
+  void initState() {
+    reportType = widget.reportType ?? ReportConfigType.today;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownMenu(
+      width: 160,
+      inputDecorationTheme: const InputDecorationTheme(
+        contentPadding: EdgeInsets.zero,
+      ),
+      initialSelection: reportType,
+      dropdownMenuEntries: const [
+        DropdownMenuEntry(
+          value: ReportConfigType.today,
+          label: 'Hoje',
+        ),
+        DropdownMenuEntry(
+          value: ReportConfigType.last24hours,
+          label: 'Últimas 24 horas',
+        ),
+        DropdownMenuEntry(
+          value: ReportConfigType.last7Days,
+          label: 'Últimos 7 dias',
+        ),
+        DropdownMenuEntry(
+          value: ReportConfigType.last30Days,
+          label: 'Últimos 30 dias',
+        ),
+      ],
+      onSelected: (value) {
+        setState(() => reportType = value!);
+        widget.onSelected(value!);
+      },
     );
   }
 }
