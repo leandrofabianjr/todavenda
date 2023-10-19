@@ -67,12 +67,20 @@ class _SellCheckoutViewState extends State<SellCheckoutView> {
             children: [
               SizedBox(
                 width: 160,
-                child: ClientSelector(
-                  clientsRepository: context.read<ClientsRepository>(),
-                  initial: selectedClient,
-                  onChanged: (client) => context
-                      .read<CartBloc>()
-                      .add(CartClientChanged(client: client)),
+                child: BlocBuilder<CartBloc, CartState>(
+                  builder: (context, state) {
+                    selectedClient = state.client;
+                    if (state.status == CartStatus.checkout) {
+                      return ClientSelector(
+                        clientsRepository: context.read<ClientsRepository>(),
+                        initial: selectedClient,
+                        onChanged: (client) => context
+                            .read<CartBloc>()
+                            .add(CartClientChanged(client: client)),
+                      );
+                    }
+                    return const SizedBox();
+                  },
                 ),
               ),
               Column(
@@ -99,11 +107,12 @@ class _SellCheckoutViewState extends State<SellCheckoutView> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         body: BlocConsumer<CartBloc, CartState>(
           listener: (context, state) {
-            setState(() {
-              formattedTotalQuantity = state.formattedTotalQuantity;
-              formattedTotalPrice = state.formattedTotalPrice;
-              selectedClient = state.client;
-            });
+            if (state.status == CartStatus.checkout) {
+              setState(() {
+                formattedTotalQuantity = state.formattedTotalQuantity;
+                formattedTotalPrice = state.formattedTotalPrice;
+              });
+            }
           },
           builder: (context, state) {
             switch (state.status) {

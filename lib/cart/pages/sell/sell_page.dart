@@ -79,12 +79,20 @@ class _SellViewState extends State<SellView> {
           children: [
             SizedBox(
               width: 160,
-              child: ClientSelector(
-                clientsRepository: context.read<ClientsRepository>(),
-                initial: selectedClient,
-                onChanged: (client) => context
-                    .read<CartBloc>()
-                    .add(CartClientChanged(client: client)),
+              child: BlocBuilder<CartBloc, CartState>(
+                builder: (context, state) {
+                  if (state.status == CartStatus.initial) {
+                    selectedClient = state.client;
+                    return ClientSelector(
+                      clientsRepository: context.read<ClientsRepository>(),
+                      initial: selectedClient,
+                      onChanged: (client) => context
+                          .read<CartBloc>()
+                          .add(CartClientChanged(client: client)),
+                    );
+                  }
+                  return const SizedBox();
+                },
               ),
             ),
             if (totalQuantity > 0)
@@ -100,11 +108,12 @@ class _SellViewState extends State<SellView> {
       ),
       body: BlocConsumer<CartBloc, CartState>(
         listener: (context, state) {
-          setState(() {
-            totalQuantity = state.totalQuantity;
-            formattedTotalPrice = state.formattedTotalPrice;
-            selectedClient = state.client;
-          });
+          if (state.status == CartStatus.initial) {
+            setState(() {
+              totalQuantity = state.totalQuantity;
+              formattedTotalPrice = state.formattedTotalPrice;
+            });
+          }
         },
         builder: (context, state) {
           switch (state.status) {
