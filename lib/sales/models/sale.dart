@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/commons/commons.dart';
-import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/models/payment.dart';
+import 'package:todavenda/session/models/models.dart';
 
 import 'sale_item.dart';
 
@@ -16,7 +15,7 @@ class Sale extends Equatable {
     this.client,
     required this.createdAt,
     this.amountPaid = 0,
-    required this.sessionUuid,
+    required this.session,
   });
 
   final String? uuid;
@@ -26,7 +25,7 @@ class Sale extends Equatable {
   final Client? client;
   final DateTime createdAt;
   final double amountPaid;
-  final String sessionUuid;
+  final Session session;
 
   String get formattedCreatedAt => DateTimeFormatter.shortDateTime(createdAt);
 
@@ -57,7 +56,7 @@ class Sale extends Equatable {
   double calculateAmountPaid() =>
       payments.fold(0.0, (total, p) => total + p.amount);
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toFirestore() {
     return {
       'uuid': uuid,
       'items': items.map((e) => e.toJson()).toList(),
@@ -66,31 +65,39 @@ class Sale extends Equatable {
       'clientUuid': client?.uuid,
       'createdAt': createdAt,
       'amountPaid': calculateAmountPaid(),
-      'sessionUuid': sessionUuid,
+      'sessionUuid': session.uuid,
+    };
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'uuid': uuid,
+      'items': items.map((e) => e.toJson()).toList(),
+      'total': total,
+      'payments':
+          payments.map((e) => e.toJson(DateTimeConverterType.string)).toList(),
+      'client': client?.toJson(),
+      'createdAt': createdAt.toString(),
+      'amountPaid': calculateAmountPaid(),
+      'session': session.toJson(DateTimeConverterType.string),
     };
   }
 
   static Sale fromJson(
-    Map<String, dynamic> json,
-    List<Product> products,
-    List<Client> clients,
-    List<Payment> payments,
-  ) {
+      Map<String, dynamic> json, DateTimeConverterType dateTimeType) {
     return Sale(
       uuid: json['uuid'],
       items: (json['items'] as List)
-          .map((e) => SaleItem.fromJson(e, products))
+          .map((e) => SaleItem.fromJson(e, dateTimeType))
           .toList(),
-      payments: ((json['paymentsUuids'] ?? []) as List)
-          .map((e) => payments.firstWhere((c) => c.uuid == e))
+      payments: ((json['payments'] ?? []) as List)
+          .map((e) => Payment.fromJson(e, dateTimeType))
           .toList(),
       total: json['total'],
-      client: json['clientUuid'] == null
-          ? null
-          : clients.firstWhere((c) => c.uuid == json['clientUuid']),
-      createdAt: (json['createdAt'] as Timestamp).toDate(),
+      client: json['client'] == null ? null : Client.fromJson(json['client']),
+      createdAt: DateTimeConverter.parse(dateTimeType, json['createdAt']),
       amountPaid: json['amountPaid'] ?? 0,
-      sessionUuid: json['sessionUuid'],
+      session: Session.fromJson(json['session'], dateTimeType),
     );
   }
 
@@ -106,7 +113,7 @@ class Sale extends Equatable {
       client: client,
       createdAt: createdAt,
       amountPaid: amountPaid ?? this.amountPaid,
-      sessionUuid: sessionUuid,
+      session: session,
     );
   }
 

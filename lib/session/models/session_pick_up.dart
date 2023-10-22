@@ -1,3 +1,4 @@
+import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/session/models/models.dart';
 
 class SessionPickUp extends SessionMovement {
@@ -9,4 +10,21 @@ class SessionPickUp extends SessionMovement {
   }) : super(type: SessionMovementType.pickUp);
 
   final double amount;
+
+  static SessionPickUp fromJson(
+    Map<String, dynamic> json,
+    DateTimeConverterType dateTimeType,
+  ) =>
+      SessionPickUp(
+        uuid: json['uuid'],
+        sessionUuid: json['sessionUuid'],
+        createdAt: DateTimeConverter.parse(dateTimeType, json['createdAt']),
+        amount: json['amount'],
+      );
+
+  @override
+  Map<String, dynamic> toJson(DateTimeConverterType dateTimeType) => {
+        ...super.toJson(dateTimeType),
+        'amount': amount,
+      };
 }

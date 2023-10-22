@@ -25,7 +25,7 @@ class ProductStockFormBloc
   ) async {
     try {
       final product = await productRepository.loadProductByUuid(productUuid);
-      final repository = productRepository.stockRepository(product.uuid!);
+      final repository = productRepository.stockRepository(product.uuid);
       emit(state.copyWith(
         status: ProductStockFormStatus.editing,
         createdAt: DateTime.now(),

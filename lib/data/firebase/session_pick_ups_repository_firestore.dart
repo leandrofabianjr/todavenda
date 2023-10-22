@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/data/firebase/firestore_repository.dart';
 import 'package:todavenda/session/models/models.dart';
 import 'package:todavenda/session/services/services.dart';
@@ -13,18 +13,12 @@ class SessionPickUpsRepositoryFirestore
       : super(companyUuid: companyUuid, resourcePath: 'sessionMovements');
 
   @override
-  SessionPickUp fromJson(Map<String, dynamic> json) => SessionPickUp(
-        uuid: json['uuid'],
-        sessionUuid: json['sessionUuid'],
-        createdAt: (json['createdAt'] as Timestamp).toDate(),
-        amount: json['amount'],
-      );
+  SessionPickUp fromJson(Map<String, dynamic> json) =>
+      SessionPickUp.fromJson(json, DateTimeConverterType.firestore);
 
   @override
-  Map<String, dynamic> toJson(SessionPickUp value) => {
-        ...value.toJson(),
-        'amount': value.amount,
-      };
+  Map<String, dynamic> toJson(SessionPickUp value) =>
+      value.toJson(DateTimeConverterType.firestore);
 
   @override
   Future<SessionPickUp> create({

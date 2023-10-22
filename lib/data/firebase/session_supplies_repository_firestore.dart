@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/data/firebase/firestore_repository.dart';
 import 'package:todavenda/session/models/models.dart';
 import 'package:todavenda/session/services/services.dart';
@@ -22,7 +23,7 @@ class SessionSuppliesRepositoryFirestore
 
   @override
   Map<String, dynamic> toJson(SessionSupply value) => {
-        ...value.toJson(),
+        ...value.toJson(DateTimeConverterType.firestore),
         'amount': value.amount,
       };
 

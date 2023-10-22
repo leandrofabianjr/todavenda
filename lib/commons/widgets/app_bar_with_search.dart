@@ -28,6 +28,7 @@ class _AppBarWithSearchViewState extends State<AppBarWithSearchView> {
 
   @override
   void initState() {
+    showSearchField = widget.initialSearchTerm?.isNotEmpty == true;
     searchTextController =
         TextEditingController(text: widget.initialSearchTerm);
     super.initState();
@@ -50,7 +51,7 @@ class _AppBarWithSearchViewState extends State<AppBarWithSearchView> {
 
   _clearSearch() {
     searchTextController.clear();
-    widget.onSearchChanged(null);
+    _onSearchChanged('');
   }
 
   bool get searchIsEmpty => searchTextController.text.isEmpty;
@@ -59,7 +60,10 @@ class _AppBarWithSearchViewState extends State<AppBarWithSearchView> {
   Widget build(BuildContext context) {
     if (showSearchField) {
       return AppBar(
-        leading: const Icon(Icons.search),
+        leading: IconButton(
+          onPressed: () => setState(() => showSearchField = false),
+          icon: const Icon(Icons.arrow_back),
+        ),
         title: TextField(
           controller: searchTextController,
           focusNode: searchFieldFocusNode,
@@ -75,12 +79,6 @@ class _AppBarWithSearchViewState extends State<AppBarWithSearchView> {
           keyboardType: TextInputType.name,
           onChanged: _onSearchChanged,
         ),
-        actions: [
-          IconButton(
-            onPressed: () => setState(() => showSearchField = false),
-            icon: const Icon(Icons.close),
-          )
-        ],
       );
     }
     return AppBar(

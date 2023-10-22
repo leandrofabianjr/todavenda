@@ -53,7 +53,9 @@ class _SellViewState extends State<SellView> {
 
   @override
   void initState() {
-    context.read<CartBloc>().add(const CartStarted());
+    final cubit = context.read<CartBloc>();
+    final filterTerm = cubit.state.filterTerm;
+    cubit.add(CartRefreshed(filterterm: filterTerm ?? ''));
     super.initState();
   }
 
@@ -122,14 +124,16 @@ class _SellViewState extends State<SellView> {
             case CartStatus.initial:
               return SellSelectorView(
                 items: state.items,
+                products: state.products,
                 onAdded: (product) => context
                     .read<CartBloc>()
                     .add(CartItemAdded(product: product)),
                 onRemoved: (product) => context
                     .read<CartBloc>()
                     .add(CartItemRemoved(product: product)),
-                onSearchChanged: (term) =>
-                    context.read<CartBloc>().add(CartStarted(filterterm: term)),
+                onSearchChanged: (term) => context
+                    .read<CartBloc>()
+                    .add(CartRefreshed(filterterm: term)),
                 initialSearchTerm: state.filterTerm,
               );
             default:
@@ -144,6 +148,7 @@ class _SellViewState extends State<SellView> {
 class SellSelectorView extends StatelessWidget {
   const SellSelectorView({
     super.key,
+    required this.products,
     required this.items,
     required this.onAdded,
     required this.onRemoved,
@@ -151,30 +156,30 @@ class SellSelectorView extends StatelessWidget {
     this.initialSearchTerm,
   });
 
+  final List<Product> products;
   final Map<Product, int> items;
   final void Function(Product product) onAdded;
   final void Function(Product product) onRemoved;
   final void Function(String? term) onSearchChanged;
   final String? initialSearchTerm;
 
-  Map<ProductCategory?, Map<Product, int>> get itemsByCategory {
-    Map<ProductCategory?, Map<Product, int>> itemsByCategory = {};
+  Map<ProductCategory?, List<Product>> get productsByCategory {
+    Map<ProductCategory?, List<Product>> productsByCategory = {};
 
-    for (final item in items.entries) {
-      final categories =
-          item.key.categories != null && item.key.categories!.isNotEmpty
-              ? item.key.categories!
-              : [null];
+    for (final p in products) {
+      final categories = p.categories != null && p.categories!.isNotEmpty
+          ? p.categories!
+          : [null];
       for (final category in categories) {
-        if (!itemsByCategory.containsKey(category)) {
-          itemsByCategory[category] = {};
+        if (!productsByCategory.containsKey(category)) {
+          productsByCategory[category] = [];
         }
-        itemsByCategory[category]!.addEntries([item]);
+        productsByCategory[category]!.add(p);
       }
     }
 
-    final sortedEntries =
-        itemsByCategory.entries.sortedBy((element) => element.key?.name ?? '');
+    final sortedEntries = productsByCategory.entries
+        .sortedBy((element) => element.key?.name ?? '');
 
     return Map.fromEntries(sortedEntries);
   }
@@ -186,33 +191,36 @@ class SellSelectorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: () async => context.read<CartBloc>().add(const CartStarted()),
+      onRefresh: () async =>
+          context.read<CartBloc>().add(const CartRefreshed()),
       child: CustomScrollView(
         slivers: [
-          if (items.isEmpty)
+          if (products.isEmpty)
             const SliverFillRemaining(
               child: Center(child: Text('Nenhum produto encontrado')),
             ),
-          if (items.isNotEmpty)
+          if (products.isNotEmpty)
             SliverList(
               delegate: SliverChildListDelegate([
-                ...itemsByCategory.entries
+                ...productsByCategory.entries
                     .toList()
                     .map(
-                      (itemByCategory) => ExpansionTile(
+                      (productByCategory) => ExpansionTile(
                         initiallyExpanded: isSearching,
                         title: Text(
-                          itemByCategory.key == null
+                          productByCategory.key == null
                               ? 'Não categorizado'
-                              : itemByCategory.key!.name,
+                              : productByCategory.key!.name,
                         ),
-                        children: itemByCategory.value.entries
-                            .map((item) => SellListTile(
-                                  product: item.key,
-                                  quantity: item.value,
-                                  onAdded: () => onAdded(item.key),
-                                  onRemoved: () => onRemoved(item.key),
-                                ))
+                        children: productByCategory.value
+                            .map(
+                              (p) => SellListTile(
+                                product: p,
+                                quantity: items[p] ?? 0,
+                                onAdded: () => onAdded(p),
+                                onRemoved: () => onRemoved(p),
+                              ),
+                            )
                             .toList(),
                       ),
                     )
@@ -238,7 +246,7 @@ class SellPageAppBar extends StatelessWidget implements PreferredSizeWidget {
       builder: (context, state) {
         return AppBarWithSearchView(
           onSearchChanged: (term) =>
-              context.read<CartBloc>().add(CartStarted(filterterm: term)),
+              context.read<CartBloc>().add(CartRefreshed(filterterm: term)),
           initialSearchTerm: state.filterTerm,
           title: const Text('Nova venda'),
           actions: [

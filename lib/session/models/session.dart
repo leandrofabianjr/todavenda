@@ -88,4 +88,29 @@ class Session extends Equatable {
       currentAmount: currentAmount + amount,
     );
   }
+
+  Map<String, dynamic> toJson(DateTimeConverterType dateTimeType) => {
+        'uuid': uuid,
+        'openingAmount': openingAmount,
+        'closingAmount': closingAmount,
+        'currentAmount': currentAmount,
+        'supplyAmount': supplyAmount,
+        'pickUpAmount': pickUpAmount,
+        'createdAt': DateTimeConverter.to(dateTimeType, createdAt),
+        'closedAt': DateTimeConverter.to(dateTimeType, closedAt),
+      };
+
+  static Session fromJson(
+    Map<String, dynamic> json,
+    DateTimeConverterType dateTimeType,
+  ) =>
+      Session(
+        uuid: json['uuid'],
+        currentAmount: double.tryParse(json['currentAmount'].toString()) ?? 0,
+        supplyAmount: double.tryParse(json['supplyAmount'].toString()) ?? 0,
+        pickUpAmount: double.tryParse(json['pickUpAmount'].toString()) ?? 0,
+        closingAmount: double.tryParse(json['closingAmount'].toString()) ?? 0,
+        createdAt: DateTimeConverter.parse(dateTimeType, json['createdAt']),
+        closedAt: DateTimeConverter.tryParse(dateTimeType, json['closedAt']),
+      );
 }

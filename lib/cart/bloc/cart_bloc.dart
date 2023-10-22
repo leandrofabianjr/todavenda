@@ -1,5 +1,7 @@
-import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/products/products.dart';
@@ -10,14 +12,15 @@ import 'package:todavenda/session/services/sessions_repository.dart';
 part 'cart_event.dart';
 part 'cart_state.dart';
 
-class CartBloc extends Bloc<CartEvent, CartState> {
+class CartBloc extends HydratedBloc<CartEvent, CartState> {
   CartBloc({
     required this.sessionsRepository,
     required this.productRepository,
     required this.salesRepository,
   }) : super(const CartState()) {
     on<CartResumed>(_onResumed);
-    on<CartStarted>(_onStarted);
+    on<CartRestarted>(_onStarted);
+    on<CartRefreshed>(_onRefreshed);
     on<CartItemAdded>(_onItemAdded);
     on<CartItemRemoved>(_onItemRemoved);
     on<CartClientChanged>(_onClientChanged);
@@ -42,10 +45,21 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   Future<void> _onStarted(
-    CartStarted event,
+    CartRestarted event,
+    Emitter<CartState> emit,
+  ) async {
+    emit(state.copyWith(status: CartStatus.initial));
+  }
+
+  Future<void> _onRefreshed(
+    CartRefreshed event,
     Emitter<CartState> emit,
   ) async {
     try {
+      final previousStatus = state.status == CartStatus.loading
+          ? CartStatus.initial
+          : state.status;
+
       emit(state.copyWith(status: CartStatus.loading));
 
       final session = await sessionsRepository.current;
@@ -55,15 +69,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
       final products =
           await productRepository.loadProducts(term: event.filterterm);
-      final initialItems = state.items;
-      final items = {
-        for (var product in products)
-          product:
-              initialItems.containsKey(product) ? initialItems[product]! : 0
-      };
+
       emit(state.copyWith(
-        status: CartStatus.initial,
-        items: items,
+        status: previousStatus,
+        products: products,
         session: session,
         filterTerm: event.filterterm ?? '',
       ));
@@ -76,8 +85,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     CartCheckouted event,
     Emitter<CartState> emit,
   ) async {
-    final items = state.selectedItems;
-    emit(state.copyWith(status: CartStatus.checkout, items: items));
+    emit(state.copyWith(status: CartStatus.checkout));
   }
 
   void _onItemAdded(CartItemAdded event, Emitter<CartState> emit) {
@@ -107,13 +115,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     try {
       emit(state.copyWith(status: CartStatus.loading));
 
-      final items = state.selectedItems;
       final sale = await salesRepository.createSale(
         session: state.session!,
-        items: items,
+        items: state.items,
         client: state.client,
       );
-      await _updateStockOfItems(items);
+      await _updateStockOfItems(state.items);
 
       emit(state.copyWith(status: CartStatus.payment, sale: sale));
     } catch (ex) {
@@ -204,6 +211,32 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         product: item.key,
         quantity: -item.value,
       );
+    }
+  }
+
+  @override
+  CartState? fromJson(Map<String, dynamic> json) {
+    try {
+      if (kDebugMode) print('======= Recuperando:\n$json');
+
+      return json.isEmpty ? null : CartState.fromJson(json);
+    } catch (e) {
+      if (kDebugMode) print('Erro: $e');
+      return null;
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson(CartState state) {
+    try {
+      final json = state.toJson();
+      if (kDebugMode) {
+        print('======= Salvando:\n$json');
+      }
+      return json;
+    } catch (e) {
+      if (kDebugMode) print('Erro: $e');
+      return null;
     }
   }
 }

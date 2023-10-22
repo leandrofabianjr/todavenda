@@ -56,4 +56,26 @@ class Payment extends SessionMovement {
   final double amount;
 
   String get formattedValue => CurrencyFormatter().formatPtBr(amount);
+
+  static Payment fromJson(
+    Map<String, dynamic> json,
+    DateTimeConverterType dateTimeType,
+  ) =>
+      Payment(
+        uuid: json['uuid'],
+        type: SessionMovementType.payment,
+        sessionUuid: json['sessionUuid'],
+        createdAt: DateTimeConverter.parse(dateTimeType, json['createdAt']),
+        saleUuid: json['saleUuid'],
+        paymentType: PaymenTypeX.fromValue(json['paymentType']),
+        amount: json['amount'],
+      );
+
+  @override
+  Map<String, dynamic> toJson(DateTimeConverterType dateTimeType) => {
+        ...super.toJson(dateTimeType),
+        'saleUuid': saleUuid,
+        'paymentType': paymentType.value,
+        'amount': amount,
+      };
 }

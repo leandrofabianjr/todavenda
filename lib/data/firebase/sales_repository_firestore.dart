@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todavenda/clients/clients.dart';
+import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/data/firebase/firestore_repository.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/sales.dart';
 import 'package:todavenda/session/models/models.dart';
 import 'package:todavenda/session/services/payments_repository.dart';
+import 'package:todavenda/session/services/sessions_repository.dart';
 import 'package:uuid/uuid.dart';
 
 const _uuid = Uuid();
@@ -14,52 +16,57 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
   var _products = <Product>[];
   var _clients = <Client>[];
   var _payments = <Payment>[];
+  var _sessions = <Session>[];
 
   SalesRepositoryFirestore(
     String companyUuid, {
     required this.productsRepository,
     required this.clientsRepository,
     required this.paymentsRepository,
+    required this.sessionsRepository,
   }) : super(companyUuid: companyUuid, resourcePath: 'sales');
 
   final ProductsRepository productsRepository;
   final ClientsRepository clientsRepository;
   final PaymentsRepository paymentsRepository;
+  final SessionsRepository sessionsRepository;
 
   @override
-  fromJson(Map<String, dynamic> json) => Sale(
-        uuid: json['uuid'],
-        items: (json['items'] as List)
-            .map((e) => SaleItem.fromJson(e, _products))
-            .toList(),
-        payments: ((json['paymentsUuids'] ?? []) as List)
-            .map((e) => _payments.firstWhere((c) => c.uuid == e))
-            .toList(),
-        total: json['total'],
-        client: json['clientUuid'] == null
-            ? null
-            : _clients.firstWhere((c) => c.uuid == json['clientUuid']),
-        createdAt: (json['createdAt'] as Timestamp).toDate(),
-        amountPaid: json['amountPaid'] ?? 0,
-        sessionUuid: json['sessionUuid'],
-      );
+  fromJson(Map<String, dynamic> json) {
+    json['items'] = (json['items'] as List).map((e) {
+      e['product'] = _products
+          .firstWhere((c) => c.uuid == e['productUuid'])
+          .toJson(DateTimeConverterType.firestore);
+      return e;
+    }).toList();
+
+    json['payments'] = ((json['paymentsUuids'] ?? []) as List)
+        .map(
+          (e) => _payments
+              .firstWhere((c) => c.uuid == e)
+              .toJson(DateTimeConverterType.firestore),
+        )
+        .toList();
+
+    json['client'] = json['clientUuid'] == null
+        ? null
+        : _clients.firstWhere((c) => c.uuid == json['clientUuid']).toJson();
+
+    json['session'] = _sessions
+        .firstWhere((c) => c.uuid == json['sessionUuid'])
+        .toJson(DateTimeConverterType.firestore);
+
+    return Sale.fromJson(json, DateTimeConverterType.firestore);
+  }
 
   @override
-  Map<String, dynamic> toJson(value) => {
-        'uuid': value.uuid,
-        'items': value.items.map((e) => e.toJson()).toList(),
-        'total': value.total,
-        'paymentsUuids': value.payments.map((e) => e.uuid).toList(),
-        'clientUuid': value.client?.uuid,
-        'createdAt': value.createdAt,
-        'amountPaid': value.calculateAmountPaid(),
-        'sessionUuid': value.sessionUuid,
-      };
+  Map<String, dynamic> toJson(value) => value.toFirestore();
 
   Future<void> _updateDependencies() async {
     _products = await productsRepository.loadProducts();
     _clients = await clientsRepository.loadClients();
     _payments = await paymentsRepository.list();
+    _sessions = await sessionsRepository.list();
   }
 
   @override
@@ -89,7 +96,7 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
       total: saleItems.fold(0, (total, i) => total + i.unitPrice * i.quantity),
       client: client,
       createdAt: DateTime.now(),
-      sessionUuid: session.uuid,
+      session: session,
     );
     await collection.doc(sale.uuid).set(sale);
     return sale;
@@ -133,7 +140,7 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
       sale: sale,
       paymentType: type,
       amount: amount,
-      sessionUuid: sale.sessionUuid,
+      sessionUuid: sale.session.uuid,
     );
     _payments.add(payment);
     final newSale = sale.copyWith(

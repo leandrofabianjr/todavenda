@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:todavenda/commons/commons.dart';
 
 enum SessionMovementType {
   payment,
@@ -40,12 +41,12 @@ abstract class SessionMovement extends Equatable {
   final String sessionUuid;
   final DateTime createdAt;
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson(DateTimeConverterType dateTimeType) {
     return {
       'uuid': uuid,
       'type': type.value,
       'sessionUuid': sessionUuid,
-      'createdAt': createdAt,
+      'createdAt': DateTimeConverter.to(dateTimeType, createdAt),
     };
   }
 

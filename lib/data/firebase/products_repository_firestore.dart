@@ -22,11 +22,20 @@ class ProductsRepositoryFirestore extends FirestoreRepository<Product>
   final ProductCategoriesRepository productCategoriesRepository;
 
   @override
-  Product fromJson(Map<String, dynamic> json) =>
-      Product.fromJson(json, _productCategories);
+  Product fromJson(Map<String, dynamic> json) {
+    json['categories'] = json['categoriesUuids'] == null
+        ? []
+        : (json['categoriesUuids'] as List)
+            .map(
+              (e) => _productCategories.firstWhere((c) => c.uuid == e).toJson(),
+            )
+            .toList();
+    return Product.fromJson(json, DateTimeConverterType.firestore);
+  }
 
   @override
-  Map<String, dynamic> toJson(Product value) => value.toJson();
+  Map<String, dynamic> toJson(Product value) =>
+      value.toJson(DateTimeConverterType.firestore);
 
   @override
   Future<Product> saveProduct({

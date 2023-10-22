@@ -47,6 +47,7 @@ firebaseRepositoryProviders(String companyUuid) {
     productsRepository: productsRepository,
     clientsRepository: clientsRepository,
     paymentsRepository: paymentsRepository,
+    sessionsRepository: sessionsRepository,
   );
 
   return [

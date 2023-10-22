@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:todavenda/commons/commons.dart';
 
@@ -6,7 +5,7 @@ import 'product_category.dart';
 
 class Product extends Equatable {
   const Product({
-    this.uuid,
+    required this.uuid,
     required this.description,
     required this.price,
     this.categories,
@@ -16,7 +15,7 @@ class Product extends Equatable {
     required this.createdAt,
   });
 
-  final String? uuid;
+  final String uuid;
   final String description;
   final double price;
   final List<ProductCategory>? categories;
@@ -30,35 +29,36 @@ class Product extends Equatable {
   @override
   List<Object?> get props => [uuid];
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson(DateTimeConverterType dateTimeType) {
     return {
-      if (uuid != null) 'uuid': uuid,
+      'uuid': uuid,
       'description': description,
       'price': price,
-      if (categories != null && categories!.isNotEmpty)
-        'categoriesUuids': (categories ?? []).map((e) => e.uuid).toList(),
+      'categoriesUuids': (categories ?? []).map((e) => e.uuid).toList(),
+      'categories': (categories ?? []).map((e) => e.toJson()).toList(),
       'active': active,
       'currentStock': currentStock,
       'hasStockControl': hasStockControl,
-      'createdAt': createdAt,
+      'createdAt': DateTimeConverter.to(dateTimeType, createdAt),
     };
   }
 
   static Product fromJson(
-      Map<String, dynamic> json, List<ProductCategory> categories) {
+    Map<String, dynamic> json,
+    DateTimeConverterType dateTimeType,
+  ) {
     return Product(
       uuid: json['uuid'],
       description: json['description'],
       price: json['price'],
-      categories: json['categoriesUuids'] == null
-          ? null
-          : (json['categoriesUuids'] as List)
-              .map((e) => categories.firstWhere((c) => c.uuid == e))
-              .toList(),
+      categories: (json['categories'] as List)
+          .map((e) => ProductCategory.fromJson(e))
+          .toList(),
       active: json['active'],
       currentStock: json['currentStock'] ?? 0,
       hasStockControl: json['hasStockControl'] ?? false,
-      createdAt: (json['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      createdAt: DateTimeConverter.tryParse(dateTimeType, json['createdAt']) ??
+          DateTime.now(),
     );
   }
 

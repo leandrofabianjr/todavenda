@@ -28,9 +28,12 @@ class SaleItem extends Equatable {
     };
   }
 
-  static SaleItem fromJson(Map<String, dynamic> json, List<Product> products) {
+  static SaleItem fromJson(
+    Map<String, dynamic> json,
+    DateTimeConverterType dateTimeType,
+  ) {
     return SaleItem(
-      product: products.firstWhere((c) => c.uuid == json['productUuid']),
+      product: Product.fromJson(json['product'], dateTimeType),
       quantity: json['quantity'],
       unitPrice: json['unitPrice'],
     );

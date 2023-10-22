@@ -53,6 +53,8 @@ dependencies:
   package_info_plus: ^4.1.0
   pix_flutter: ^2.2.0
   qr_flutter: ^4.1.0
+  hydrated_bloc: ^9.1.2
+  path_provider: ^2.1.1
   
 
 dev_dependencies:

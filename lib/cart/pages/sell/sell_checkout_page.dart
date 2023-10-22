@@ -51,8 +51,7 @@ class _SellCheckoutViewState extends State<SellCheckoutView> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        context.read<CartBloc>().add(const CartStarted());
-        context.go('/vender');
+        context.read<CartBloc>().add(const CartRestarted());
         return false;
       },
       child: Scaffold(

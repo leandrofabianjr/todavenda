@@ -219,7 +219,7 @@ class SaleItemsReport extends StatelessWidget {
                               context: context,
                               builder: (context) => Dialog(
                                 child: ProductPage(
-                                  uuid: i.product.uuid!,
+                                  uuid: i.product.uuid,
                                 ),
                               ),
                             ),

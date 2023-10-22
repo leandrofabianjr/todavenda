@@ -41,10 +41,16 @@ class SalesListView extends StatelessWidget {
                   : ListView(
                       children: sales
                           .expand((sale) => [
-                                SaleListTile(sale: sale),
+                                SaleListTile(
+                                  sale: sale,
+                                  onBackFromDetailPage: () => context
+                                      .read<SalesListBloc>()
+                                      .add(const SalesListRefreshed()),
+                                ),
                                 const Divider(),
                               ])
-                          .toList()),
+                          .toList(),
+                    ),
             );
           }
 
@@ -61,9 +67,11 @@ class SaleListTile extends StatelessWidget {
   const SaleListTile({
     super.key,
     required this.sale,
+    this.onBackFromDetailPage,
   });
 
   final Sale sale;
+  final void Function()? onBackFromDetailPage;
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +113,13 @@ class SaleListTile extends StatelessWidget {
       subtitle: sale.client == null
           ? null
           : Text(sale.client!.name, style: theme.textTheme.titleMedium),
-      onTap: () => context.go('/relatorios/vendas/${sale.uuid}'),
+      onTap: () => context.push('/relatorios/vendas/${sale.uuid}').then(
+        (value) {
+          if (onBackFromDetailPage != null) {
+            onBackFromDetailPage!();
+          }
+        },
+      ),
     );
   }
 }

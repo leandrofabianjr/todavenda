@@ -7,8 +7,12 @@ sealed class CartEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-final class CartStarted extends CartEvent {
-  const CartStarted({this.filterterm});
+final class CartRestarted extends CartEvent {
+  const CartRestarted();
+}
+
+final class CartRefreshed extends CartEvent {
+  const CartRefreshed({this.filterterm});
 
   final String? filterterm;
 
