@@ -111,6 +111,9 @@ class _SellCheckoutViewState extends State<SellCheckoutView> {
                 formattedTotalQuantity = state.formattedTotalQuantity;
                 formattedTotalPrice = state.formattedTotalPrice;
               });
+              if (state.items.isEmpty) {
+                context.read<CartBloc>().add(const CartRestarted());
+              }
             }
           },
           builder: (context, state) {

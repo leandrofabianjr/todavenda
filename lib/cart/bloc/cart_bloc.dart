@@ -101,6 +101,9 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
     if (itemQuantity > 0) {
       items[event.product] = itemQuantity - 1;
     }
+    if (items[event.product] == 0 && items.containsKey(event.product)) {
+      items.remove(event.product);
+    }
     emit(state.copyWith(items: items));
   }
 
@@ -218,7 +221,6 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
   CartState? fromJson(Map<String, dynamic> json) {
     try {
       if (kDebugMode) print('======= Recuperando:\n$json');
-
       return json.isEmpty ? null : CartState.fromJson(json);
     } catch (e) {
       if (kDebugMode) print('Erro: $e');

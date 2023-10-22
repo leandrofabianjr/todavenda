@@ -20,7 +20,7 @@ class SellListTile extends StatelessWidget {
     return ListTile(
       leading: IconButton(
         onPressed: quantity > 0 ? onRemoved : null,
-        icon: const Icon(Icons.remove),
+        icon: Icon(quantity == 1 ? Icons.delete : Icons.remove),
         color: Colors.red,
       ),
       trailing: IconButton(
