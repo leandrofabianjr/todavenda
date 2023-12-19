@@ -133,8 +133,9 @@ class _SellPaymentViewState extends State<SellPaymentView> {
                     if (state.sale!.isNotFullyPaid)
                       ...PaymentType.values
                           .where((type) {
-                            if (type == PaymentType.onCredit &&
-                                state.client == null) {
+                            if (type == PaymentType.onCredit
+                                // && state.client == null && // TODO reabilitar venda fiada
+                                ) {
                               // Se não foi selecionado cliente, não pode pagar fiado
                               return false;
                             }
