@@ -132,6 +132,14 @@ class _SellPaymentViewState extends State<SellPaymentView> {
                       ),
                     if (state.sale!.isNotFullyPaid)
                       ...PaymentType.values
+                          .where((type) {
+                            if (type == PaymentType.onCredit &&
+                                state.client == null) {
+                              // Se não foi selecionado cliente, não pode pagar fiado
+                              return false;
+                            }
+                            return true;
+                          })
                           .map(
                             (type) => ListTile(
                               onTap: () => onPaymentSelected(
