@@ -9,7 +9,7 @@ abstract class FlowAccountsRepository {
     String? uuid,
     required String name,
     String? description,
-    required double currentValue,
+    required double currentAmount,
   });
 
   Future<void> remove(String uuid);

@@ -5,6 +5,7 @@ import 'package:todavenda/auth/auth.dart';
 import 'package:todavenda/cart/cart.dart';
 import 'package:todavenda/cart/pages/pages.dart';
 import 'package:todavenda/clients/pages/pages.dart';
+import 'package:todavenda/flow/pages/flow_account_form/flow_account_form_page.dart';
 import 'package:todavenda/flow/pages/flow_account_list/flow_account_list_page.dart';
 import 'package:todavenda/products/pages/pages.dart';
 import 'package:todavenda/products/pages/product_category/product_category_page.dart';
@@ -177,9 +178,21 @@ final appRouterConfig = GoRouter(
                 builder: (context, state) => const RegistersMenuPage(),
                 routes: [
                   GoRoute(
-                    path: 'contas',
-                    builder: (context, state) => const FlowAccountListPage(),
-                  ),
+                      path: 'contas',
+                      builder: (context, state) => const FlowAccountListPage(),
+                      routes: [
+                        GoRoute(
+                          path: 'cadastrar',
+                          builder: (context, state) =>
+                              const FlowAccountFormPage(),
+                        ),
+                        GoRoute(
+                          path: ':uuid/editar',
+                          builder: (context, state) => FlowAccountFormPage(
+                            uuid: state.pathParameters['uuid']!,
+                          ),
+                        ),
+                      ]),
                 ]),
           ],
         ),
