@@ -22,6 +22,7 @@ class PaymentsByTypePieChart extends StatelessWidget {
       PaymentType.pix: Colors.blue.withOpacity(.7),
       PaymentType.debit: Colors.yellow.withOpacity(.7),
       PaymentType.credit: Colors.red.withOpacity(.7),
+      PaymentType.onCredit: Colors.purple.withOpacity(.7),
     };
 
     return totalsByPaymentType.entries

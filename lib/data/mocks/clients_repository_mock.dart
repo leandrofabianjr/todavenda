@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:todavenda/clients/services/client_on_credit_owings_repository.dart';
 import 'package:todavenda/sales/models/payment.dart';
 import 'package:uuid/uuid.dart';
 
@@ -91,13 +90,5 @@ class ClientsRepositoryMock implements ClientsRepository {
     final paymentUuids = [...(client.owing ?? []), relativeTo.uuid];
     final updatedClient = client.copyWith(owing: paymentUuids);
     return saveClientInstance(updatedClient);
-  }
-
-  @override
-  ClientOnCreditOwingsRepository owingsRepository(
-    Client client,
-    String productUuid,
-  ) {
-    throw UnimplementedError();
   }
 }

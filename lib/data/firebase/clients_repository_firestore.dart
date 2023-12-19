@@ -1,7 +1,5 @@
 import 'package:collection/collection.dart';
 import 'package:todavenda/clients/clients.dart';
-import 'package:todavenda/clients/services/client_on_credit_owings_repository.dart';
-import 'package:todavenda/data/firebase/client_on_credit_owings_repository_firestore.dart';
 import 'package:todavenda/data/firebase/firestore_repository.dart';
 import 'package:todavenda/sales/models/payment.dart';
 import 'package:todavenda/session/services/services.dart';
@@ -85,20 +83,9 @@ class ClientsRepositoryFirestore extends FirestoreRepository<Client>
       .toList();
 
   @override
-  Future<Client> addOwing(Client client, Payment relativeTo) {
-    final paymentUuids = <String>[...(client.owing ?? []), relativeTo.uuid];
-    final updatedClient = client.copyWith(owing: paymentUuids);
-    return saveClientInstance(updatedClient);
+  Future<Client> addOwing(Client client, Payment payment) async {
+    final paymentsUuids = <String>[...(client.owing ?? []), payment.uuid];
+    final updatedClient = client.copyWith(owing: paymentsUuids);
+    return await saveClientInstance(updatedClient);
   }
-
-  @override
-  ClientOnCreditOwingsRepository owingsRepository(
-    Client client,
-    String productUuid,
-  ) =>
-      ClientOnCreditOwingsRepositoryFirestore(
-        companyUuid,
-        client: client,
-        sessionsRepository: sessionsRepository,
-      );
 }

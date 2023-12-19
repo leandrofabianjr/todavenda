@@ -148,6 +148,11 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
       amountPaid: sale.calculateAmountPaid(),
     );
     await collection.doc(sale.uuid).set(newSale);
+
+    if (payment.paymentType == PaymentType.onCredit) {
+      await clientsRepository.addOwing(sale.client!, payment);
+    }
+
     return newSale;
   }
 
