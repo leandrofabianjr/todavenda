@@ -63,6 +63,7 @@ class ClientView extends StatelessWidget {
 
             if (state is ClientReady) {
               final client = state.client;
+              final owings = state.owings;
 
               return Column(
                 children: [
@@ -97,6 +98,10 @@ class ClientView extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ),
+                  // if (owings.isNotEmpty)
+                  //   {
+                  //     // TODO mostrar dívidas fiadas
+                  //   }
                 ],
               );
             }

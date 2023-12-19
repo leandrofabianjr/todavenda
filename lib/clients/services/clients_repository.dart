@@ -19,4 +19,6 @@ abstract class ClientsRepository {
   Future<void> removeClient(String uuid);
 
   Future<Client> addOwing(Client client, Payment payment);
+
+  Future<List<Payment>> loadOwings(Client client);
 }

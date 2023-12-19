@@ -91,4 +91,9 @@ class ClientsRepositoryMock implements ClientsRepository {
     final updatedClient = client.copyWith(owing: paymentUuids);
     return saveClientInstance(updatedClient);
   }
+
+  @override
+  Future<List<Payment>> loadOwings(Client client) {
+    throw UnimplementedError();
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:todavenda/sales/models/payment.dart';
 
 import '../../../clients.dart';
 
@@ -22,7 +23,8 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
     emit(ClientLoading());
     try {
       final client = await clientsRepository.loadClientByUuid(uuid);
-      emit(ClientReady(client: client));
+      final owings = await clientsRepository.loadOwings(client);
+      emit(ClientReady(client: client, owings: owings));
     } catch (ex) {
       emit(ClientException(ex));
     }

@@ -11,6 +11,7 @@ abstract interface class PaymentsRepository {
   });
 
   Future<List<Payment>> list({
+    List<String>? uuids,
     String? sessionUuid,
     String? saleUuid,
   });

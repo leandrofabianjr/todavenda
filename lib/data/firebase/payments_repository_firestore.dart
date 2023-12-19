@@ -60,6 +60,7 @@ class PaymentsRepositoryFirestore extends FirestoreRepository<Payment>
 
   @override
   Future<List<Payment>> list({
+    List<String>? uuids,
     String? sessionUuid,
     String? saleUuid,
   }) async {
@@ -67,6 +68,9 @@ class PaymentsRepositoryFirestore extends FirestoreRepository<Payment>
       'type',
       isEqualTo: SessionMovementType.payment.name,
     );
+    if (uuids != null && uuids.isNotEmpty) {
+      query.where('uuid', whereIn: uuids);
+    }
     if (sessionUuid != null) {
       query.where('sessionUuid', isEqualTo: sessionUuid);
     }

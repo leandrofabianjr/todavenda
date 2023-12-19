@@ -36,13 +36,14 @@ firebaseRepositoryProviders(String companyUuid) {
     sessionSuppliesRepository: sessionSuppliesRepository,
     sessionPickUpsRepository: sessionPickUpsRepository,
   );
-  final clientsRepository = ClientsRepositoryFirestore(
-    companyUuid,
-    sessionsRepository: sessionsRepository,
-  );
   final paymentsRepository = PaymentsRepositoryFirestore(
     companyUuid,
     sessionsRepository: sessionsRepository,
+  );
+  final clientsRepository = ClientsRepositoryFirestore(
+    companyUuid,
+    sessionsRepository: sessionsRepository,
+    paymentsRepository: paymentsRepository,
   );
   final salesRepository = SalesRepositoryFirestore(
     companyUuid,

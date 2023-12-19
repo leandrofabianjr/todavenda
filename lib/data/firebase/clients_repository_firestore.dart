@@ -12,9 +12,11 @@ class ClientsRepositoryFirestore extends FirestoreRepository<Client>
   ClientsRepositoryFirestore(
     String companyUuid, {
     required this.sessionsRepository,
+    required this.paymentsRepository,
   }) : super(companyUuid: companyUuid, resourcePath: 'clients');
 
   final SessionsRepository sessionsRepository;
+  final PaymentsRepository paymentsRepository;
 
   List<Client> _clients = [];
 
@@ -87,5 +89,13 @@ class ClientsRepositoryFirestore extends FirestoreRepository<Client>
     final paymentsUuids = <String>[...(client.owing ?? []), payment.uuid];
     final updatedClient = client.copyWith(owing: paymentsUuids);
     return await saveClientInstance(updatedClient);
+  }
+
+  @override
+  Future<List<Payment>> loadOwings(Client client) async {
+    if (client.owing != null && client.owing!.isNotEmpty) {
+      return paymentsRepository.list(uuids: client.owing);
+    }
+    return [];
   }
 }

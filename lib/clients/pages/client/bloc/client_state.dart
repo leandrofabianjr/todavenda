@@ -10,12 +10,16 @@ final class ClientLoading extends ClientState {
 }
 
 final class ClientReady extends ClientState {
-  const ClientReady({required this.client});
+  const ClientReady({
+    required this.client,
+    required this.owings,
+  });
 
   final Client client;
+  final List<Payment> owings;
 
   @override
-  List<Object> get props => [client];
+  List<Object> get props => [client, owings];
 }
 
 final class ClientException extends ClientState {
