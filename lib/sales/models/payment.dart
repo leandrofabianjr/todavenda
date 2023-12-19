@@ -32,7 +32,7 @@ extension PaymenTypeX on PaymentType {
         'pix' => PaymentType.pix,
         'credit' => PaymentType.credit,
         'debit' => PaymentType.debit,
-        'onCredit' => PaymentType.credit,
+        'onCredit' => PaymentType.onCredit,
         _ => PaymentType.cash,
       };
 
