@@ -5,6 +5,7 @@ import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/companies/companies.dart';
 import 'package:todavenda/data/firebase/clients_repository_firestore.dart';
 import 'package:todavenda/data/firebase/companies_repository_firestore.dart';
+import 'package:todavenda/data/firebase/flow_accounts_repository_firestore.dart';
 import 'package:todavenda/data/firebase/payments_repository_firestore.dart';
 import 'package:todavenda/data/firebase/product_categories_repository_firestore.dart';
 import 'package:todavenda/data/firebase/products_repository_firestore.dart';
@@ -12,6 +13,7 @@ import 'package:todavenda/data/firebase/sales_repository_firestore.dart';
 import 'package:todavenda/data/firebase/session_pick_ups_repository_firestore.dart';
 import 'package:todavenda/data/firebase/session_supplies_repository_firestore.dart';
 import 'package:todavenda/data/firebase/sessions_repository_firestore.dart';
+import 'package:todavenda/flow/services/flow_accounts_service.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/sales.dart';
 import 'package:todavenda/session/services/services.dart';
@@ -52,6 +54,9 @@ firebaseRepositoryProviders(String companyUuid) {
     paymentsRepository: paymentsRepository,
     sessionsRepository: sessionsRepository,
   );
+  final flowAccountsRepository = FlowAccountsRepositoryFirestore(
+    companyUuid,
+  );
 
   return [
     RepositoryProvider.value(
@@ -71,5 +76,8 @@ firebaseRepositoryProviders(String companyUuid) {
     RepositoryProvider.value(value: productsRepository as ProductsRepository),
     RepositoryProvider.value(value: salesRepository as SalesRepository),
     RepositoryProvider.value(value: clientsRepository as ClientsRepository),
+    RepositoryProvider.value(
+      value: flowAccountsRepository as FlowAccountsRepository,
+    ),
   ];
 }

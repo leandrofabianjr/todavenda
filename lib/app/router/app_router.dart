@@ -5,6 +5,7 @@ import 'package:todavenda/auth/auth.dart';
 import 'package:todavenda/cart/cart.dart';
 import 'package:todavenda/cart/pages/pages.dart';
 import 'package:todavenda/clients/pages/pages.dart';
+import 'package:todavenda/flow/pages/flow_account_list/flow_account_list_page.dart';
 import 'package:todavenda/products/pages/pages.dart';
 import 'package:todavenda/products/pages/product_category/product_category_page.dart';
 import 'package:todavenda/registers/pages/pages.dart';
@@ -171,6 +172,15 @@ final appRouterConfig = GoRouter(
                 ),
               ],
             ),
+            GoRoute(
+                path: '/fluxo',
+                builder: (context, state) => const RegistersMenuPage(),
+                routes: [
+                  GoRoute(
+                    path: 'contas',
+                    builder: (context, state) => const FlowAccountListPage(),
+                  ),
+                ]),
           ],
         ),
         StatefulShellBranch(

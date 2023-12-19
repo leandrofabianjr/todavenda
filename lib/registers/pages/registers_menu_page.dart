@@ -29,6 +29,12 @@ class RegistersMenuPage extends StatelessWidget {
                   leading: const Icon(Icons.person),
                   title: const Text('Clientes'),
                   onTap: () => context.go('/cadastros/clientes'),
+                ),
+                const ListSubtitle(title: 'Fluxo de caixa'),
+                ListTile(
+                  leading: const Icon(Icons.account_balance),
+                  title: const Text('Contas'),
+                  onTap: () => context.go('/fluxo/contas'),
                 )
               ],
             ),
