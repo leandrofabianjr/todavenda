@@ -63,7 +63,6 @@ class ClientView extends StatelessWidget {
 
             if (state is ClientReady) {
               final client = state.client;
-              final owings = state.owings;
 
               return Column(
                 children: [
