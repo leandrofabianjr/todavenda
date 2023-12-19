@@ -25,8 +25,6 @@ firebaseRepositoryProviders(String companyUuid) {
     companyUuid,
     productCategoriesRepository: productCategoriesRepository,
   );
-  final clientsRepository = ClientsRepositoryFirestore(companyUuid);
-
   final sessionSuppliesRepository = SessionSuppliesRepositoryFirestore(
     companyUuid,
   );
@@ -37,6 +35,10 @@ firebaseRepositoryProviders(String companyUuid) {
     companyUuid,
     sessionSuppliesRepository: sessionSuppliesRepository,
     sessionPickUpsRepository: sessionPickUpsRepository,
+  );
+  final clientsRepository = ClientsRepositoryFirestore(
+    companyUuid,
+    sessionsRepository: sessionsRepository,
   );
   final paymentsRepository = PaymentsRepositoryFirestore(
     companyUuid,

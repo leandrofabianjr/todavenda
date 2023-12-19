@@ -105,7 +105,7 @@ class SaleView extends StatelessWidget {
                           onPressed: () => showDialog(
                             context: context,
                             builder: (context) => Dialog(
-                              child: ClientPage(uuid: sale.client!.uuid!),
+                              child: ClientPage(uuid: sale.client!.uuid),
                             ),
                           ),
                         ),

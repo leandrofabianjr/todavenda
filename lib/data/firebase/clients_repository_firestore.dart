@@ -1,14 +1,22 @@
 import 'package:collection/collection.dart';
 import 'package:todavenda/clients/clients.dart';
+import 'package:todavenda/clients/services/client_on_credit_owings_repository.dart';
+import 'package:todavenda/data/firebase/client_on_credit_owings_repository_firestore.dart';
 import 'package:todavenda/data/firebase/firestore_repository.dart';
+import 'package:todavenda/sales/models/payment.dart';
+import 'package:todavenda/session/services/services.dart';
 import 'package:uuid/uuid.dart';
 
 const _uuid = Uuid();
 
 class ClientsRepositoryFirestore extends FirestoreRepository<Client>
     implements ClientsRepository {
-  ClientsRepositoryFirestore(String companyUuid)
-      : super(companyUuid: companyUuid, resourcePath: 'clients');
+  ClientsRepositoryFirestore(
+    String companyUuid, {
+    required this.sessionsRepository,
+  }) : super(companyUuid: companyUuid, resourcePath: 'clients');
+
+  final SessionsRepository sessionsRepository;
 
   List<Client> _clients = [];
 
@@ -33,6 +41,10 @@ class ClientsRepositoryFirestore extends FirestoreRepository<Client>
       address: address,
       observation: observation,
     );
+    return saveClientInstance(client);
+  }
+
+  Future<Client> saveClientInstance(Client client) async {
     await collection.doc(client.uuid).set(client);
 
     final index = _clients.indexOf(client);
@@ -71,4 +83,22 @@ class ClientsRepositoryFirestore extends FirestoreRepository<Client>
   Future<List<Client>> searchClients({required String term}) async => _clients
       .where((p) => p.name.contains(RegExp(term, caseSensitive: false)))
       .toList();
+
+  @override
+  Future<Client> addOwing(Client client, Payment relativeTo) {
+    final paymentUuids = <String>[...(client.owing ?? []), relativeTo.uuid];
+    final updatedClient = client.copyWith(owing: paymentUuids);
+    return saveClientInstance(updatedClient);
+  }
+
+  @override
+  ClientOnCreditOwingsRepository owingsRepository(
+    Client client,
+    String productUuid,
+  ) =>
+      ClientOnCreditOwingsRepositoryFirestore(
+        companyUuid,
+        client: client,
+        sessionsRepository: sessionsRepository,
+      );
 }

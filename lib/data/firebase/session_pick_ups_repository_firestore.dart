@@ -48,7 +48,7 @@ class SessionPickUpsRepositoryFirestore
   }) async {
     final query = collection.where(
       'type',
-      isEqualTo: SessionMovementType.payment.value,
+      isEqualTo: SessionMovementType.payment.name,
     );
     if (sessionUuid != null) {
       query.where('sessionUuid', isEqualTo: sessionUuid);

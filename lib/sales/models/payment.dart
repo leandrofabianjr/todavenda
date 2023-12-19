@@ -7,6 +7,7 @@ enum PaymentType {
   pix,
   credit,
   debit,
+  onCredit,
 }
 
 extension PaymenTypeX on PaymentType {
@@ -15,6 +16,7 @@ extension PaymenTypeX on PaymentType {
         PaymentType.pix => 'PIX',
         PaymentType.credit => 'Crédito',
         PaymentType.debit => 'Débito',
+        PaymentType.onCredit => 'Fiado',
       };
 
   String get value => switch (this) {
@@ -22,6 +24,7 @@ extension PaymenTypeX on PaymentType {
         PaymentType.pix => 'pix',
         PaymentType.credit => 'credit',
         PaymentType.debit => 'debit',
+        PaymentType.onCredit => 'onCredit',
       };
 
   static PaymentType fromValue(String value) => switch (value) {
@@ -29,6 +32,7 @@ extension PaymenTypeX on PaymentType {
         'pix' => PaymentType.pix,
         'credit' => PaymentType.credit,
         'debit' => PaymentType.debit,
+        'onCredit' => PaymentType.credit,
         _ => PaymentType.cash,
       };
 
@@ -37,12 +41,13 @@ extension PaymenTypeX on PaymentType {
         PaymentType.credit => const Icon(Icons.credit_card),
         PaymentType.debit => const Icon(Icons.credit_card),
         PaymentType.pix => const Icon(Icons.pix),
+        PaymentType.onCredit => const Icon(Icons.push_pin),
       };
 }
 
 class Payment extends SessionMovement {
   const Payment({
-    super.uuid,
+    required super.uuid,
     required super.type,
     required super.sessionUuid,
     required super.createdAt,

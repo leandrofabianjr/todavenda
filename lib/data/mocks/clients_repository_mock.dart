@@ -1,4 +1,6 @@
 import 'package:collection/collection.dart';
+import 'package:todavenda/clients/services/client_on_credit_owings_repository.dart';
+import 'package:todavenda/sales/models/payment.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../clients/models/client.dart';
@@ -65,6 +67,10 @@ class ClientsRepositoryMock implements ClientsRepository {
       observation: observation,
     );
 
+    return saveClientInstance(client);
+  }
+
+  Future<Client> saveClientInstance(Client client) async {
     final index = _clients.indexOf(client);
     if (index == -1) {
       _clients.add(client);
@@ -79,4 +85,19 @@ class ClientsRepositoryMock implements ClientsRepository {
   @override
   Future<void> removeClient(String uuid) async =>
       _delayed(() => _clients.removeWhere((p) => p.uuid == uuid));
+
+  @override
+  Future<Client> addOwing(Client client, Payment relativeTo) {
+    final paymentUuids = [...(client.owing ?? []), relativeTo.uuid];
+    final updatedClient = client.copyWith(owing: paymentUuids);
+    return saveClientInstance(updatedClient);
+  }
+
+  @override
+  ClientOnCreditOwingsRepository owingsRepository(
+    Client client,
+    String productUuid,
+  ) {
+    throw UnimplementedError();
+  }
 }
