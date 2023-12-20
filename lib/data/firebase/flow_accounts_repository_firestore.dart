@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:todavenda/data/firebase/firestore_repository.dart';
 import 'package:todavenda/flow/models/flow_account.dart';
-import 'package:todavenda/flow/services/flow_accounts_service.dart';
+import 'package:todavenda/flow/services/flow_accounts_repository.dart';
 import 'package:uuid/uuid.dart';
 
 const _uuid = Uuid();
@@ -14,7 +14,12 @@ class FlowAccountsRepositoryFirestore extends FirestoreRepository<FlowAccount>
       : super(companyUuid: companyUuid, resourcePath: 'flowAccounts');
 
   @override
-  FlowAccount fromJson(Map<String, dynamic> json) => FlowAccount.fromJson(json);
+  FlowAccount fromJson(Map<String, dynamic> json) => FlowAccount(
+        uuid: json['uuid'],
+        name: json['name'],
+        description: json['description'],
+        currentAmount: (json['currentAmount'] ?? 0).toDouble(),
+      );
 
   @override
   Map<String, dynamic> toJson(FlowAccount value) => value.toJson();

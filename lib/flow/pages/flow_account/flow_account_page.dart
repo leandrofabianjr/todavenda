@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/flow/pages/flow_account/bloc/flow_account_bloc.dart';
-import 'package:todavenda/flow/services/flow_accounts_service.dart';
+import 'package:todavenda/flow/services/flow_accounts_repository.dart';
 
 class FlowAccountPage extends StatelessWidget {
   const FlowAccountPage({super.key, required this.uuid});

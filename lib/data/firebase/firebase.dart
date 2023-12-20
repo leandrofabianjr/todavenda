@@ -13,7 +13,7 @@ import 'package:todavenda/data/firebase/sales_repository_firestore.dart';
 import 'package:todavenda/data/firebase/session_pick_ups_repository_firestore.dart';
 import 'package:todavenda/data/firebase/session_supplies_repository_firestore.dart';
 import 'package:todavenda/data/firebase/sessions_repository_firestore.dart';
-import 'package:todavenda/flow/services/flow_accounts_service.dart';
+import 'package:todavenda/flow/services/flow_accounts_repository.dart';
 import 'package:todavenda/products/products.dart';
 import 'package:todavenda/sales/sales.dart';
 import 'package:todavenda/session/services/services.dart';

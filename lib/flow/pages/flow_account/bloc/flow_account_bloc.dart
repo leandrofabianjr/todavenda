@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:todavenda/flow/models/flow_account.dart';
-import 'package:todavenda/flow/services/flow_accounts_service.dart';
+import 'package:todavenda/flow/services/flow_accounts_repository.dart';
 
 part 'flow_account_event.dart';
 part 'flow_account_state.dart';

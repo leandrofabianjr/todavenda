@@ -25,13 +25,4 @@ class FlowAccount extends Equatable {
       'currentAmount': currentAmount,
     };
   }
-
-  static FlowAccount fromJson(Map<String, dynamic> json) {
-    return FlowAccount(
-      uuid: json['uuid'],
-      name: json['name'],
-      description: json['description'],
-      currentAmount: json['currentAmount'],
-    );
-  }
 }

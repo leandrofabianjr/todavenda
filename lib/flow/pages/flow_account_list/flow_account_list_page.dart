@@ -5,7 +5,7 @@ import 'package:todavenda/commons/widgets/exception_widget.dart';
 import 'package:todavenda/commons/widgets/loading_widget.dart';
 import 'package:todavenda/flow/models/flow_account.dart';
 import 'package:todavenda/flow/pages/flow_account_list/bloc/flow_account_list_bloc.dart';
-import 'package:todavenda/flow/services/flow_accounts_service.dart';
+import 'package:todavenda/flow/services/flow_accounts_repository.dart';
 
 class FlowAccountListPage extends StatelessWidget {
   const FlowAccountListPage({super.key});
