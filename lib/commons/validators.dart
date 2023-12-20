@@ -5,7 +5,7 @@ class Validators {
     return null;
   }
 
-  static String? greaterThanZero(int? value) {
+  static String? greaterThanZero(value) {
     if (value == null || value <= 0) return 'Deve ser maior que zero';
 
     return null;

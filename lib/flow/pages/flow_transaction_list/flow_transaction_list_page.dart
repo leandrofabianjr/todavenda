@@ -65,12 +65,13 @@ class FlowTransactionListView extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () =>
-            context.push('/fluxo/transacoes/cadastrar').then((value) {
-          context
-              .read<FlowTransactionListBloc>()
-              .add(const FlowTransactionListStarted());
-        }),
+        onPressed: () => context.push('/fluxo/transacoes/cadastrar').then(
+          (value) {
+            context
+                .read<FlowTransactionListBloc>()
+                .add(const FlowTransactionListStarted());
+          },
+        ),
         child: const Icon(Icons.add),
       ),
     );
@@ -97,6 +98,7 @@ class FlowTransactionListViewTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      leading: Icon(transaction.type.icon, color: transaction.type.color),
       title: Text(transaction.description),
       subtitle: transaction.observation != null
           ? Text(transaction.observation!)

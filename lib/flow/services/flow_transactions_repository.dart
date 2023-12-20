@@ -7,6 +7,7 @@ abstract class FlowTransactionsRepository {
 
   Future<FlowTransaction> save({
     String? uuid,
+    required FlowTransactionType type,
     required String description,
     String? observation,
     required double amount,

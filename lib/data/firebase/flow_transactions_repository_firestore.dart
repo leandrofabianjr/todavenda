@@ -18,6 +18,7 @@ class FlowTransactionsRepositoryFirestore
   @override
   FlowTransaction fromJson(Map<String, dynamic> json) => FlowTransaction(
         uuid: json['uuid'],
+        type: FlowTransactionTypeX.parse(json['type']),
         description: json['description'],
         observation: json['observation'],
         amount: (json['amount'] ?? 0).toDouble(),
@@ -28,6 +29,7 @@ class FlowTransactionsRepositoryFirestore
   @override
   Map<String, dynamic> toJson(FlowTransaction value) => {
         'uuid': value.uuid,
+        'type': value.type.name,
         'description': value.description,
         if (value.observation != null && value.observation!.isNotEmpty)
           'observation': value.observation,
@@ -39,6 +41,7 @@ class FlowTransactionsRepositoryFirestore
   @override
   Future<FlowTransaction> save({
     String? uuid,
+    required FlowTransactionType type,
     required String description,
     String? observation,
     required double amount,
@@ -46,6 +49,7 @@ class FlowTransactionsRepositoryFirestore
   }) async {
     final account = FlowTransaction(
       uuid: uuid ?? _uuid.v4(),
+      type: type,
       description: description,
       observation: observation,
       amount: amount,
