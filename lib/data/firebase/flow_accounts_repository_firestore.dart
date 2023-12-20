@@ -30,7 +30,7 @@ class FlowAccountsRepositoryFirestore extends FirestoreRepository<FlowAccount>
       uuid: uuid ?? _uuid.v4(),
       name: name,
       description: description,
-      currentValue: currentAmount,
+      currentAmount: currentAmount,
     );
     await collection.doc(account.uuid).set(account);
     final index = _accounts.indexOf(account);

@@ -8,7 +8,7 @@ final class FlowAccountFormEditing extends FlowAccountFormState {
   const FlowAccountFormEditing({
     this.uuid,
     this.name = '',
-    this.description = '',
+    this.description,
     this.nameError,
     this.currentAmount = 0,
   });

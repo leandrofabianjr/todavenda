@@ -31,6 +31,7 @@ class FlowAccountFormBloc
         uuid: account.uuid,
         name: account.name,
         description: account.description,
+        currentAmount: account.currentAmount,
       ));
     } catch (ex) {
       emit(FlowAccountFormException(ex));
@@ -55,6 +56,7 @@ class FlowAccountFormBloc
 
     try {
       await flowAccountsRepository.save(
+        uuid: event.uuid,
         name: event.name,
         description: event.description,
         currentAmount: event.currentAmount,

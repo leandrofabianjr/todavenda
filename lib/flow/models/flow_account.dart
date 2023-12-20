@@ -4,13 +4,13 @@ class FlowAccount extends Equatable {
   final String? uuid;
   final String name;
   final String? description;
-  final double? currentValue;
+  final double currentAmount;
 
   const FlowAccount({
     this.uuid,
     required this.name,
     this.description,
-    required this.currentValue,
+    required this.currentAmount,
   });
 
   @override
@@ -20,8 +20,9 @@ class FlowAccount extends Equatable {
     return {
       'uuid': uuid,
       'name': name,
-      'description': description,
-      'currentValue': currentValue,
+      if (description != null && description!.isNotEmpty)
+        'description': description,
+      'currentAmount': currentAmount,
     };
   }
 
@@ -30,7 +31,7 @@ class FlowAccount extends Equatable {
       uuid: json['uuid'],
       name: json['name'],
       description: json['description'],
-      currentValue: json['currentValue'],
+      currentAmount: json['currentAmount'],
     );
   }
 }
