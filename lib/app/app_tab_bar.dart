@@ -36,6 +36,10 @@ class AppTabBar extends StatelessWidget {
       iconData: Icons.query_stats,
       label: 'Relatórios',
     ),
+    const AppTabBarTabData(
+      iconData: Icons.account_balance,
+      label: 'Fluxo de Caixa',
+    ),
   ];
 
   List<Tab> get tabs => tabsData

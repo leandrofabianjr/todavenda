@@ -8,6 +8,7 @@ import 'package:todavenda/clients/pages/pages.dart';
 import 'package:todavenda/flow/pages/flow_account/flow_account_page.dart';
 import 'package:todavenda/flow/pages/flow_account_form/flow_account_form_page.dart';
 import 'package:todavenda/flow/pages/flow_account_list/flow_account_list_page.dart';
+import 'package:todavenda/flow/pages/flow_page.dart';
 import 'package:todavenda/flow/pages/flow_transaction_list/flow_transaction_list_page.dart';
 import 'package:todavenda/products/pages/pages.dart';
 import 'package:todavenda/products/pages/product_category/product_category_page.dart';
@@ -23,6 +24,7 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _cartNavigatorKey = GlobalKey<NavigatorState>();
 final _reportsNavigatorKey = GlobalKey<NavigatorState>();
 final _registersNavigatorKey = GlobalKey<NavigatorState>();
+final _flowNavigatorKey = GlobalKey<NavigatorState>();
 
 final appRouterConfig = GoRouter(
   navigatorKey: _rootNavigatorKey,
@@ -175,58 +177,6 @@ final appRouterConfig = GoRouter(
                 ),
               ],
             ),
-            GoRoute(
-                path: '/fluxo',
-                builder: (context, state) => const RegistersMenuPage(),
-                routes: [
-                  GoRoute(
-                    path: 'contas',
-                    builder: (context, state) => const FlowAccountListPage(),
-                    routes: [
-                      GoRoute(
-                        path: 'cadastrar',
-                        builder: (context, state) =>
-                            const FlowAccountFormPage(),
-                      ),
-                      GoRoute(
-                        path: ':uuid',
-                        builder: (context, state) => FlowAccountPage(
-                          uuid: state.pathParameters['uuid']!,
-                        ),
-                      ),
-                      GoRoute(
-                        path: ':uuid/editar',
-                        builder: (context, state) => FlowAccountFormPage(
-                          uuid: state.pathParameters['uuid']!,
-                        ),
-                      ),
-                    ],
-                  ),
-                  GoRoute(
-                    path: 'transacoes',
-                    builder: (context, state) =>
-                        const FlowTransactionListPage(),
-                    routes: [
-                      GoRoute(
-                        path: 'cadastrar',
-                        builder: (context, state) =>
-                            const FlowAccountFormPage(),
-                      ),
-                      GoRoute(
-                        path: ':uuid',
-                        builder: (context, state) => FlowAccountPage(
-                          uuid: state.pathParameters['uuid']!,
-                        ),
-                      ),
-                      GoRoute(
-                        path: ':uuid/editar',
-                        builder: (context, state) => FlowAccountFormPage(
-                          uuid: state.pathParameters['uuid']!,
-                        ),
-                      ),
-                    ],
-                  ),
-                ]),
           ],
         ),
         StatefulShellBranch(
@@ -259,6 +209,61 @@ final appRouterConfig = GoRouter(
                     GoRoute(
                       path: ':uuid',
                       builder: (context, state) => SessionPage(
+                        uuid: state.pathParameters['uuid']!,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          navigatorKey: _flowNavigatorKey,
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/fluxo',
+              builder: (context, state) => const FlowPage(),
+              routes: [
+                GoRoute(
+                  path: 'contas',
+                  builder: (context, state) => const FlowAccountListPage(),
+                  routes: [
+                    GoRoute(
+                      path: 'cadastrar',
+                      builder: (context, state) => const FlowAccountFormPage(),
+                    ),
+                    GoRoute(
+                      path: ':uuid',
+                      builder: (context, state) => FlowAccountPage(
+                        uuid: state.pathParameters['uuid']!,
+                      ),
+                    ),
+                    GoRoute(
+                      path: ':uuid/editar',
+                      builder: (context, state) => FlowAccountFormPage(
+                        uuid: state.pathParameters['uuid']!,
+                      ),
+                    ),
+                  ],
+                ),
+                GoRoute(
+                  path: 'transacoes',
+                  builder: (context, state) => const FlowTransactionListPage(),
+                  routes: [
+                    GoRoute(
+                      path: 'cadastrar',
+                      builder: (context, state) => const FlowAccountFormPage(),
+                    ),
+                    GoRoute(
+                      path: ':uuid',
+                      builder: (context, state) => FlowAccountPage(
+                        uuid: state.pathParameters['uuid']!,
+                      ),
+                    ),
+                    GoRoute(
+                      path: ':uuid/editar',
+                      builder: (context, state) => FlowAccountFormPage(
                         uuid: state.pathParameters['uuid']!,
                       ),
                     ),
