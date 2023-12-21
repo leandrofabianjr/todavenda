@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
+import 'package:todavenda/flow/models/flow_account.dart';
 import 'package:todavenda/flow/models/flow_transaction.dart';
 import 'package:todavenda/flow/pages/flow_transaction_form/bloc/flow_transaction_form_bloc.dart';
+import 'package:todavenda/flow/services/flow_accounts_repository.dart';
 import 'package:todavenda/flow/services/flow_transactions_repository.dart';
 
 class FlowTransactionFormPage extends StatelessWidget {
@@ -15,8 +17,9 @@ class FlowTransactionFormPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => FlowTransactionFormBloc(
-        context.read<FlowTransactionsRepository>(),
         uuid: uuid,
+        flowTransactionsRepository: context.read<FlowTransactionsRepository>(),
+        flowAccountsRepository: context.read<FlowAccountsRepository>(),
       )..add(FlowTransactionFormStarted(uuid: uuid)),
       child: const FlowTransactionFormView(),
     );
@@ -44,6 +47,7 @@ class FlowTransactionFormView extends StatelessWidget {
 
           if (state is FlowTransactionFormEditing) {
             var type = state.type;
+            var account = state.account;
             var description = state.description;
             var observation = state.observation;
             var amount = state.amount;
@@ -55,6 +59,23 @@ class FlowTransactionFormView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    DropdownButtonFormField<FlowAccount>(
+                      decoration: InputDecoration(
+                        labelText: 'Conta',
+                        errorText: state.accountError,
+                      ),
+                      value: account,
+                      items: (state.accounts ?? [])
+                          .map<DropdownMenuItem<FlowAccount>>(
+                            (a) => DropdownMenuItem(
+                              value: a,
+                              child: Text(a.name),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) => account = value,
+                    ),
+                    const SizedBox(height: 8),
                     FlowTransactionTypeSelector(
                       initialValue: type,
                       onChanged: (value) => type = value,
@@ -92,6 +113,7 @@ class FlowTransactionFormView extends StatelessWidget {
                           observation: observation,
                           amount: amount,
                           createdAt: createdAt,
+                          account: account,
                         );
                         context.read<FlowTransactionFormBloc>().add(event);
                       },

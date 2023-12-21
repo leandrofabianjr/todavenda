@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:todavenda/flow/models/flow_account.dart';
 
 enum FlowTransactionType {
   incoming,
@@ -37,6 +38,7 @@ class FlowTransaction extends Equatable {
   final String? observation;
   final double amount;
   final DateTime createdAt;
+  final FlowAccount account;
 
   const FlowTransaction({
     this.uuid,
@@ -45,8 +47,29 @@ class FlowTransaction extends Equatable {
     this.observation,
     required this.amount,
     required this.createdAt,
+    required this.account,
   });
 
   @override
   List<Object?> get props => [uuid];
+
+  FlowTransaction copyWith({
+    String? uuid,
+    FlowTransactionType? type,
+    String? description,
+    String? observation,
+    double? amount,
+    DateTime? createdAt,
+    FlowAccount? account,
+  }) {
+    return FlowTransaction(
+      uuid: uuid ?? this.uuid,
+      type: type ?? this.type,
+      description: description ?? this.description,
+      observation: observation ?? this.observation,
+      amount: amount ?? this.amount,
+      createdAt: createdAt ?? this.createdAt,
+      account: account ?? this.account,
+    );
+  }
 }

@@ -16,6 +16,20 @@ class FlowAccount extends Equatable {
   @override
   List<Object?> get props => [uuid];
 
+  FlowAccount copyWith({
+    String? uuid,
+    String? name,
+    String? description,
+    double? currentAmount,
+  }) {
+    return FlowAccount(
+      uuid: uuid ?? this.uuid,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      currentAmount: currentAmount ?? this.currentAmount,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'uuid': uuid,

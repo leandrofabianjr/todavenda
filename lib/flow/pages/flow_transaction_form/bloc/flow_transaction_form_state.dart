@@ -12,8 +12,11 @@ final class FlowTransactionFormEditing extends FlowTransactionFormState {
     this.observation,
     this.amount = 0,
     this.createdAt,
+    this.account,
     this.descriptionError,
     this.amountError,
+    this.accounts,
+    this.accountError,
   });
 
   final String? uuid;
@@ -22,8 +25,11 @@ final class FlowTransactionFormEditing extends FlowTransactionFormState {
   final String? observation;
   final double amount;
   final DateTime? createdAt;
+  final FlowAccount? account;
   final String? descriptionError;
   final String? amountError;
+  final List<FlowAccount>? accounts;
+  final String? accountError;
 
   @override
   List<Object?> get props => [
@@ -33,8 +39,11 @@ final class FlowTransactionFormEditing extends FlowTransactionFormState {
         observation,
         amount,
         createdAt,
+        account,
         descriptionError,
         amountError,
+        accountError,
+        accounts,
       ];
 
   FlowTransactionFormEditing copyWith({
@@ -45,8 +54,11 @@ final class FlowTransactionFormEditing extends FlowTransactionFormState {
     String? observation,
     double? amount,
     DateTime? createdAt,
+    FlowAccount? account,
     String? descriptionError,
     String? amountError,
+    String? accountError,
+    List<FlowAccount>? accounts,
   }) {
     return FlowTransactionFormEditing(
       uuid: uuid ?? this.uuid,
@@ -55,8 +67,11 @@ final class FlowTransactionFormEditing extends FlowTransactionFormState {
       observation: observation ?? this.observation,
       amount: amount ?? this.amount,
       createdAt: createdAt ?? this.createdAt,
-      descriptionError: descriptionError ?? this.descriptionError,
-      amountError: amountError ?? this.amountError,
+      account: account ?? this.account,
+      descriptionError: descriptionError,
+      amountError: amountError,
+      accountError: accountError,
+      accounts: accounts ?? this.accounts,
     );
   }
 }

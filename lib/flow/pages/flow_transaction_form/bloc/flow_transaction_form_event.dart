@@ -21,6 +21,7 @@ final class FlowTransactionFormSubmitted extends FlowTransactionFormEvent {
     this.observation,
     required this.amount,
     required this.createdAt,
+    required this.account,
   });
 
   final String? uuid;
@@ -29,6 +30,7 @@ final class FlowTransactionFormSubmitted extends FlowTransactionFormEvent {
   final String? observation;
   final double amount;
   final DateTime? createdAt;
+  final FlowAccount? account;
 
   @override
   List<Object?> get props => [
@@ -38,5 +40,6 @@ final class FlowTransactionFormSubmitted extends FlowTransactionFormEvent {
         observation,
         amount,
         createdAt,
+        account,
       ];
 }

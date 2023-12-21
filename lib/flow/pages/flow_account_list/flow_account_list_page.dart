@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:todavenda/commons/widgets/exception_widget.dart';
-import 'package:todavenda/commons/widgets/loading_widget.dart';
+import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/flow/models/flow_account.dart';
 import 'package:todavenda/flow/pages/flow_account_list/bloc/flow_account_list_bloc.dart';
 import 'package:todavenda/flow/services/flow_accounts_repository.dart';
@@ -99,6 +98,7 @@ class FlowAccountListViewTile extends StatelessWidget {
     return ListTile(
       title: Text(account.name),
       subtitle: account.description != null ? Text(account.description!) : null,
+      trailing: Text(account.currentAmount.toCurrency()),
       onTap: () => context.go('/fluxo/contas/${account.uuid}'),
     );
   }

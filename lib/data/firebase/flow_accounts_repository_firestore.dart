@@ -37,15 +37,7 @@ class FlowAccountsRepositoryFirestore extends FirestoreRepository<FlowAccount>
       description: description,
       currentAmount: currentAmount,
     );
-    await collection.doc(account.uuid).set(account);
-    final index = _accounts.indexOf(account);
-    if (index == -1) {
-      _accounts.add(account);
-      _accounts.sortBy((e) => e.name);
-    } else {
-      _accounts[index] = account;
-    }
-    return account;
+    return saveInstance(account);
   }
 
   @override
@@ -68,5 +60,17 @@ class FlowAccountsRepositoryFirestore extends FirestoreRepository<FlowAccount>
   Future<void> remove(String uuid) async {
     await collection.doc(uuid).delete();
     _accounts.removeWhere((e) => e.uuid == uuid);
+  }
+
+  Future<FlowAccount> saveInstance(FlowAccount account) async {
+    await collection.doc(account.uuid).set(account);
+    final index = _accounts.indexOf(account);
+    if (index == -1) {
+      _accounts.add(account);
+      _accounts.sortBy((e) => e.name);
+    } else {
+      _accounts[index] = account;
+    }
+    return account;
   }
 }

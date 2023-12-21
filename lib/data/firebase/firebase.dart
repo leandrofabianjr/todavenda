@@ -62,6 +62,7 @@ firebaseRepositoryProviders(String companyUuid) {
 
   final flowTransactionsRepository = FlowTransactionsRepositoryFirestore(
     companyUuid,
+    accountsRepository: flowAccountsRepository,
   );
 
   return [
