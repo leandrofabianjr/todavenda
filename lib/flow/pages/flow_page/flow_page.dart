@@ -38,7 +38,8 @@ class _FlowViewState extends State<FlowView> {
       onRefresh: () async =>
           context.read<FlowBloc>().add(const FlowRefreshed()),
       child: Scaffold(
-        appBar: const FlowAppBar(),
+        // appBar: const FlowAppBar(),
+        appBar: AppBar(title: const Text('Transações')),
         body: BlocBuilder<FlowBloc, FlowState>(
           builder: (context, state) {
             switch (state.status) {
