@@ -11,12 +11,14 @@ class FlowState extends Equatable {
     this.status = FlowStatus.loading,
     this.accounts = const [],
     this.transactionsReport,
+    this.filter = const FlowFilter(),
     this.ex,
   });
 
   final FlowStatus status;
   final List<FlowAccount> accounts;
   final FlowTransactionReport? transactionsReport;
+  final FlowFilter filter;
   final Object? ex;
 
   @override

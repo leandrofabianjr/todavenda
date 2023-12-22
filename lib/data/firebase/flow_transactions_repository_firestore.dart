@@ -94,11 +94,11 @@ class FlowTransactionsRepositoryFirestore
   @override
   Future<List<FlowTransaction>> load() async {
     _accounts = await accountsRepository.load();
-    if (_transactions.isEmpty) {
-      final snapshot = await collection.get();
-      _transactions = snapshot.docs.map((e) => e.data()).toList();
-      _transactions.sortBy((e) => e.createdAt);
-    }
+
+    final snapshot = await collection.get();
+    _transactions = snapshot.docs.map((e) => e.data()).toList();
+    _transactions.sortBy((e) => e.createdAt);
+
     return _transactions;
   }
 

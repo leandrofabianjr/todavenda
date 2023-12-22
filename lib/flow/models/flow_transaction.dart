@@ -76,6 +76,18 @@ class FlowTransaction extends Equatable {
   }
 }
 
+class FlowTransactionReportPeriod {
+  const FlowTransactionReportPeriod({
+    required this.from,
+    required this.to,
+    required this.label,
+  });
+
+  final DateTime from;
+  final DateTime to;
+  final String label;
+}
+
 class FlowTransactionReport {
   const FlowTransactionReport({
     required this.transactions,
@@ -83,7 +95,7 @@ class FlowTransactionReport {
 
   final List<FlowTransaction> transactions;
 
-  List<FlowTransactitonReportByDay> get byDay {
+  List<FlowTransactionReportByDay> get byDay {
     final transactionsByDay = <DateTime, List<FlowTransaction>>{};
 
     final sortedList = transactions.sortedBy((t) => t.createdAt);
@@ -98,7 +110,7 @@ class FlowTransactionReport {
     }
 
     final reportsByDay = transactionsByDay.entries
-        .map((e) => FlowTransactitonReportByDay(
+        .map((e) => FlowTransactionReportByDay(
               date: e.key,
               transactions: e.value,
             ))
@@ -106,10 +118,33 @@ class FlowTransactionReport {
 
     return reportsByDay;
   }
+
+  List<FlowTransactionReportPeriod> get availablePeriods {
+    final periods = <DateTime, dynamic>{};
+
+    final sortedList = transactions.sortedBy((t) => t.createdAt);
+
+    for (final transaction in sortedList) {
+      periods.putIfAbsent(
+        transaction.createdAt.firstInstantOfTheMonth,
+        () => [],
+      );
+    }
+
+    final reportsByDay = periods.keys
+        .map((date) => FlowTransactionReportPeriod(
+              from: date,
+              to: date.lastInstantOfTheMonth,
+              label: date.monthName,
+            ))
+        .toList();
+
+    return reportsByDay;
+  }
 }
 
-class FlowTransactitonReportByDay {
-  const FlowTransactitonReportByDay({
+class FlowTransactionReportByDay {
+  const FlowTransactionReportByDay({
     required this.date,
     required this.transactions,
   });

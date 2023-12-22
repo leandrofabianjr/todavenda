@@ -5,7 +5,9 @@ sealed class FlowEvent extends Equatable {
 }
 
 class FlowRefreshed extends FlowEvent {
-  const FlowRefreshed();
+  const FlowRefreshed({this.filter});
+
+  final FlowFilter? filter;
 
   @override
   List<Object?> get props => [];

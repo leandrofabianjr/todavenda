@@ -9,12 +9,14 @@ class AppBarWithSearchView extends StatefulWidget {
     this.initialSearchTerm,
     required this.title,
     this.actions,
+    this.bottom,
   });
 
   final void Function(String? term) onSearchChanged;
   final String? initialSearchTerm;
   final Widget title;
   final List<Widget>? actions;
+  final PreferredSizeWidget? bottom;
 
   @override
   State<AppBarWithSearchView> createState() => _AppBarWithSearchViewState();
@@ -93,6 +95,7 @@ class _AppBarWithSearchViewState extends State<AppBarWithSearchView> {
         ),
         ...(widget.actions ?? []),
       ],
+      bottom: widget.bottom,
     );
   }
 }

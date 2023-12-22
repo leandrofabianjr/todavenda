@@ -38,9 +38,7 @@ class _FlowViewState extends State<FlowView> {
       onRefresh: () async =>
           context.read<FlowBloc>().add(const FlowRefreshed()),
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Transações'),
-        ),
+        appBar: const FlowAppBar(),
         body: BlocBuilder<FlowBloc, FlowState>(
           builder: (context, state) {
             switch (state.status) {
@@ -131,6 +129,58 @@ class FlowTransactionListTile extends StatelessWidget {
         ),
         onTap: () => context.go('/fluxo/transacoes/${transaction.uuid}'),
       ),
+    );
+  }
+}
+
+class FlowAppBar extends StatefulWidget implements PreferredSizeWidget {
+  const FlowAppBar({super.key});
+
+  @override
+  State<FlowAppBar> createState() => _FlowAppBarState();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight * 2);
+}
+
+class _FlowAppBarState extends State<FlowAppBar> with TickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FlowBloc, FlowState>(
+      builder: (context, state) {
+        if (state.status == FlowStatus.loaded) {
+          final availablePeriods = state.transactionsReport!.availablePeriods;
+          _tabController = TabController(
+            length: availablePeriods.length,
+            vsync: this,
+          );
+          return AppBarWithSearchView(
+            onSearchChanged: (term) {
+              final filter = state.filter.copyWith(searchTerm: term);
+              context.read<FlowBloc>().add(FlowRefreshed(filter: filter));
+            },
+            initialSearchTerm: state.filter.searchTerm,
+            title: const Text('Transações'),
+            bottom: TabBar(
+              controller: _tabController,
+              tabs: availablePeriods
+                  .map(
+                    (period) => Tab(child: Text(period.label)),
+                  )
+                  .toList(),
+            ),
+          );
+        }
+        return const SizedBox();
+      },
     );
   }
 }
