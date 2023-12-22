@@ -1,5 +1,7 @@
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/flow/models/flow_account.dart';
 
 enum FlowTransactionType {
@@ -71,5 +73,65 @@ class FlowTransaction extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       account: account ?? this.account,
     );
+  }
+}
+
+class FlowTransactionReport {
+  const FlowTransactionReport({
+    required this.transactions,
+  });
+
+  final List<FlowTransaction> transactions;
+
+  List<FlowTransactitonReportByDay> get byDay {
+    final transactionsByDay = <DateTime, List<FlowTransaction>>{};
+
+    final sortedList = transactions.sortedBy((t) => t.createdAt);
+
+    for (final transaction in sortedList) {
+      transactionsByDay
+          .putIfAbsent(
+            transaction.createdAt.firstInstantOfTheDay,
+            () => [],
+          )
+          .add(transaction);
+    }
+
+    final reportsByDay = transactionsByDay.entries
+        .map((e) => FlowTransactitonReportByDay(
+              date: e.key,
+              transactions: e.value,
+            ))
+        .toList();
+
+    return reportsByDay;
+  }
+}
+
+class FlowTransactitonReportByDay {
+  const FlowTransactitonReportByDay({
+    required this.date,
+    required this.transactions,
+  });
+
+  final DateTime date;
+  final List<FlowTransaction> transactions;
+
+  double get totalIncoming {
+    return transactions.fold(0.0, (total, t) {
+      if (t.type == FlowTransactionType.incoming) {
+        return total + t.amount;
+      }
+      return total;
+    });
+  }
+
+  double get totalOutgoing {
+    return transactions.fold(0.0, (total, t) {
+      if (t.type == FlowTransactionType.outgoing) {
+        return total + t.amount;
+      }
+      return total;
+    });
   }
 }

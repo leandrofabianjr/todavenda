@@ -5,15 +5,9 @@ import 'package:todavenda/auth/auth.dart';
 import 'package:todavenda/cart/cart.dart';
 import 'package:todavenda/cart/pages/pages.dart';
 import 'package:todavenda/clients/pages/pages.dart';
-import 'package:todavenda/flow/pages/flow_account/flow_account_page.dart';
-import 'package:todavenda/flow/pages/flow_account_form/flow_account_form_page.dart';
-import 'package:todavenda/flow/pages/flow_account_list/flow_account_list_page.dart';
 import 'package:todavenda/flow/pages/flow_page.dart';
-import 'package:todavenda/flow/pages/flow_transaction/flow_transaction_page.dart';
-import 'package:todavenda/flow/pages/flow_transaction_form/flow_transaction_form_page.dart';
-import 'package:todavenda/flow/pages/flow_transaction_list/flow_transaction_list_page.dart';
+import 'package:todavenda/flow/pages/pages.dart';
 import 'package:todavenda/products/pages/pages.dart';
-import 'package:todavenda/products/pages/product_category/product_category_page.dart';
 import 'package:todavenda/registers/pages/pages.dart';
 import 'package:todavenda/reports/pages/pages.dart';
 import 'package:todavenda/sales/pages/pages.dart';
@@ -225,7 +219,7 @@ final appRouterConfig = GoRouter(
           routes: <RouteBase>[
             GoRoute(
               path: '/fluxo',
-              builder: (context, state) => const FlowPage(),
+              builder: (context, state) => const FlowDashboardPage(),
               routes: [
                 GoRoute(
                   path: 'contas',
@@ -251,7 +245,7 @@ final appRouterConfig = GoRouter(
                 ),
                 GoRoute(
                   path: 'transacoes',
-                  builder: (context, state) => const FlowTransactionListPage(),
+                  builder: (context, state) => const FlowPage(),
                   routes: [
                     GoRoute(
                       path: 'cadastrar',
