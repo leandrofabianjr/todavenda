@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:todavenda/flow/models/flow_account.dart';
-import 'package:todavenda/flow/models/flow_transaction.dart';
+import 'package:todavenda/flow/models/models.dart';
 import 'package:todavenda/flow/pages/flow_page/flow_filter.dart';
 import 'package:todavenda/flow/services/flow_accounts_repository.dart';
 import 'package:todavenda/flow/services/flow_transactions_repository.dart';

@@ -111,11 +111,7 @@ class FlowTransactionListTile extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
-      decoration: BoxDecoration(
-        border: Border(
-          left: BorderSide(color: transaction.type.color, width: 8.0),
-        ),
-      ),
+      color: transaction.type.color.withOpacity(0.3),
       child: ListTile(
         title: Text(transaction.description),
         subtitle: transaction.observation != null
@@ -124,9 +120,7 @@ class FlowTransactionListTile extends StatelessWidget {
         trailing: Text(
           (transaction.type == FlowTransactionType.outgoing ? '- ' : '') +
               transaction.amount.toCurrency(),
-          style: textTheme.titleLarge?.copyWith(
-            color: transaction.type.color,
-          ),
+          style: textTheme.titleLarge,
         ),
         onTap: () => context.go('/fluxo/transacoes/${transaction.uuid}'),
       ),
