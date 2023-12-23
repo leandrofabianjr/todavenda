@@ -53,4 +53,9 @@ extension DateTimeX on DateTime {
         12 => 'Dezembro',
         _ => 'Mês',
       };
+
+  bool get isToday {
+    final now = DateTime.now();
+    return year == now.year && month == now.month && day == now.day;
+  }
 }

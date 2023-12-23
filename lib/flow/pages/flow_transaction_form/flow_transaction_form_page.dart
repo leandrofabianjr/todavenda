@@ -103,6 +103,12 @@ class FlowTransactionFormView extends StatelessWidget {
                       initialValue: amount,
                       onChanged: (value) => amount = value,
                     ),
+                    DateTimeField(
+                      fieldType: DateTimeFieldType.date,
+                      decoration: const InputDecoration(labelText: 'Data'),
+                      initialValue: createdAt,
+                      onChanged: (value) => createdAt = value,
+                    ),
                     const SizedBox(height: 16.0),
                     ElevatedButton(
                       onPressed: () {

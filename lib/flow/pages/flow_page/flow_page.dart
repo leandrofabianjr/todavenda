@@ -51,7 +51,6 @@ class _FlowViewState extends State<FlowView> {
                     ...state.transactionsReport!.byDay.map<Widget>(
                       (dayReport) {
                         return ExpansionTile(
-                            initiallyExpanded: true,
                             title: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -66,7 +65,7 @@ class _FlowViewState extends State<FlowView> {
                                   ),
                                 ),
                                 Text(
-                                  dayReport.totalOutgoing.toCurrency(),
+                                  '- ${dayReport.totalOutgoing.toCurrency()}',
                                   style: TextStyle(
                                     color: FlowTransactionType.outgoing.color,
                                   ),
