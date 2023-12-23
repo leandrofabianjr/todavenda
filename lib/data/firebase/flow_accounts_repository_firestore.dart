@@ -42,11 +42,9 @@ class FlowAccountsRepositoryFirestore extends FirestoreRepository<FlowAccount>
 
   @override
   Future<List<FlowAccount>> load() async {
-    if (_accounts.isEmpty) {
-      final snapshot = await collection.get();
-      _accounts = snapshot.docs.map((e) => e.data()).toList();
-      _accounts.sortBy((e) => e.name);
-    }
+    final snapshot = await collection.get();
+    _accounts = snapshot.docs.map((e) => e.data()).toList();
+    _accounts.sortBy((e) => e.name);
     return _accounts;
   }
 

@@ -78,7 +78,7 @@ class FlowTransactionsRepositoryFirestore
       _transactions[index] = transaction;
     }
 
-    final multiplier = type == FlowTransactionType.incoming ? -1 : 1;
+    final multiplier = type == FlowTransactionType.incoming ? 1 : -1;
 
     account = account.copyWith(
       currentAmount: account.currentAmount + (amount * multiplier),
