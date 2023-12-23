@@ -30,29 +30,30 @@ class FlowTransactionView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: BlocBuilder<FlowTransactionBloc, FlowTransactionState>(
-            builder: (context, state) {
-              if (state is FlowTransactionReady) {
-                return Text(state.transaction.description);
-              }
-              return const SizedBox();
-            },
-          ),
-          actions: [
-            BlocBuilder<FlowTransactionBloc, FlowTransactionState>(
-              builder: (context, state) {
-                if (state is FlowTransactionReady) {
-                  return IconButton(
-                    onPressed: () => context.go(
-                      '/fluxo/contas/${state.transaction.uuid}/editar',
-                    ),
-                    icon: const Icon(Icons.edit),
-                  );
-                }
-                return const SizedBox();
-              },
-            ),
-          ]),
+        title: BlocBuilder<FlowTransactionBloc, FlowTransactionState>(
+          builder: (context, state) {
+            if (state is FlowTransactionReady) {
+              return Text(state.transaction.description);
+            }
+            return const SizedBox();
+          },
+        ),
+        // actions: [
+        //   BlocBuilder<FlowTransactionBloc, FlowTransactionState>(
+        //     builder: (context, state) {
+        //       if (state is FlowTransactionReady) {
+        //         return IconButton(
+        //           onPressed: () => context.go(
+        //             '/fluxo/contas/${state.transaction.uuid}/editar',
+        //           ),
+        //           icon: const Icon(Icons.edit),
+        //         );
+        //       }
+        //       return const SizedBox();
+        //     },
+        //   ),
+        // ],
+      ),
       body: BlocBuilder<FlowTransactionBloc, FlowTransactionState>(
         builder: (context, state) {
           if (state is FlowTransactionLoading) {

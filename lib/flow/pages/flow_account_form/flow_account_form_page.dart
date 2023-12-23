@@ -67,13 +67,14 @@ class FlowAccountFormView extends StatelessWidget {
                       controller: TextEditingController(text: description),
                       onChanged: (value) => description = value,
                     ),
-                    CurrencyField(
-                      decoration: const InputDecoration(
-                        labelText: 'Saldo atual',
+                    if (state.uuid == null)
+                      CurrencyField(
+                        decoration: const InputDecoration(
+                          labelText: 'Saldo atual',
+                        ),
+                        initialValue: currentAmount,
+                        onChanged: (value) => currentAmount = value,
                       ),
-                      initialValue: currentAmount,
-                      onChanged: (value) => currentAmount = value,
-                    ),
                     const SizedBox(height: 16.0),
                     ElevatedButton(
                       onPressed: () {
