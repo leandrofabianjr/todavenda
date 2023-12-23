@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/flow/models/flow_transaction.dart';
 import 'package:todavenda/flow/pages/flow_transaction/bloc/flow_transaction_bloc.dart';
