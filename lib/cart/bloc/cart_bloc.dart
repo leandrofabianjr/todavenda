@@ -19,7 +19,7 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
     required this.salesRepository,
   }) : super(const CartState()) {
     on<CartResumed>(_onResumed);
-    on<CartRestarted>(_onStarted);
+    on<CartRestarted>(_onRestarted);
     on<CartRefreshed>(_onRefreshed);
     on<CartItemAdded>(_onItemAdded);
     on<CartItemRemoved>(_onItemRemoved);
@@ -44,7 +44,7 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
     emit(state.copyWith());
   }
 
-  Future<void> _onStarted(
+  Future<void> _onRestarted(
     CartRestarted event,
     Emitter<CartState> emit,
   ) async {

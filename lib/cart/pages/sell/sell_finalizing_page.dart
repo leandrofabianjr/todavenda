@@ -51,7 +51,7 @@ class SellFinalizingView extends StatelessWidget {
         const SizedBox(height: 40),
         ElevatedButton(
           onPressed: () {
-            context.read<CartBloc>().add(const CartRestarted());
+            context.read<CartBloc>().add(const CartRefreshed());
             context.go('/vender');
           },
           child: const Text('Iniciar nova venda'),
