@@ -5,7 +5,6 @@ import 'package:todavenda/auth/auth.dart';
 import 'package:todavenda/cart/cart.dart';
 import 'package:todavenda/cart/pages/pages.dart';
 import 'package:todavenda/clients/pages/pages.dart';
-import 'package:todavenda/flow/pages/flow_page.dart';
 import 'package:todavenda/flow/pages/pages.dart';
 import 'package:todavenda/products/pages/pages.dart';
 import 'package:todavenda/registers/pages/pages.dart';
@@ -219,7 +218,7 @@ final appRouterConfig = GoRouter(
           routes: <RouteBase>[
             GoRoute(
               path: '/fluxo',
-              builder: (context, state) => const FlowDashboardPage(),
+              builder: (context, state) => const FlowPage(),
               routes: [
                 GoRoute(
                   path: 'contas',

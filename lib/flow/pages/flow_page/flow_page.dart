@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
+import 'package:todavenda/flow/models/flow_account.dart';
 import 'package:todavenda/flow/models/flow_transaction.dart';
 import 'package:todavenda/flow/pages/flow_page/bloc/flow_bloc.dart';
 import 'package:todavenda/flow/services/flow_accounts_repository.dart';
@@ -39,49 +40,78 @@ class _FlowViewState extends State<FlowView> {
           context.read<FlowBloc>().add(const FlowRefreshed()),
       child: Scaffold(
         // appBar: const FlowAppBar(),
-        appBar: AppBar(title: const Text('Transações')),
         body: BlocBuilder<FlowBloc, FlowState>(
           builder: (context, state) {
             switch (state.status) {
               case FlowStatus.loading:
                 return const LoadingWidget();
               case FlowStatus.loaded:
-                return ListView(
-                  children: [
-                    ...state.transactionsReport!.byDay.map<Widget>(
-                      (dayReport) {
-                        return ExpansionTile(
-                            title: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  DateTimeFormatter.shortDate(dayReport.date),
-                                  style: TextStyle(color: colorScheme.primary),
-                                ),
-                                Text(
-                                  dayReport.totalIncoming.toCurrency(),
-                                  style: TextStyle(
-                                    color: FlowTransactionType.incoming.color,
-                                  ),
-                                ),
-                                Text(
-                                  '- ${dayReport.totalOutgoing.toCurrency()}',
-                                  style: TextStyle(
-                                    color: FlowTransactionType.outgoing.color,
-                                  ),
-                                ),
-                              ],
+                final reports = state.transactionsReport!.byDay;
+                return CustomScrollView(
+                  slivers: [
+                    SliverAppBar(
+                      pinned: true,
+                      title: const Text('Fluxo de caixa'),
+                      expandedHeight: 200,
+                      flexibleSpace: FlexibleSpaceBar(
+                        background: Padding(
+                          padding: const EdgeInsets.only(top: kToolbarHeight),
+                          child: FlowAccountsDashboardWidget(
+                            accounts: state.accounts,
+                          ),
+                        ),
+                      ),
+                      actions: [
+                        PopupMenuButton(
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              child: ListTile(
+                                leading: const Icon(Icons.account_balance),
+                                title: const Text('Contas'),
+                                onTap: () => context.go('/fluxo/contas'),
+                              ),
                             ),
-                            children: dayReport.transactions
-                                .map(
-                                  (transaction) => FlowTransactionListTile(
-                                    transaction,
-                                  ),
-                                )
-                                .toList());
+                          ],
+                        )
+                      ],
+                    ),
+                    SliverList.builder(
+                      itemCount: reports.length,
+                      itemBuilder: (context, index) {
+                        final dayReport = reports[index];
+                        return ExpansionTile(
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                DateTimeFormatter.shortDate(dayReport.date),
+                                style: TextStyle(color: colorScheme.primary),
+                              ),
+                              Text(
+                                dayReport.totalIncoming.toCurrency(),
+                                style: TextStyle(
+                                  color: FlowTransactionType.incoming.color,
+                                ),
+                              ),
+                              Text(
+                                '- ${dayReport.totalOutgoing.toCurrency()}',
+                                style: TextStyle(
+                                  color: FlowTransactionType.outgoing.color,
+                                ),
+                              ),
+                            ],
+                          ),
+                          children: dayReport.transactions
+                              .map(
+                                (transaction) => FlowTransactionListTile(
+                                  transaction,
+                                ),
+                              )
+                              .toList(),
+                        );
                       },
-                    ).toList(),
-                    const SizedBox(height: 80),
+                    ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 80)),
                   ],
                 );
               case FlowStatus.failure:
@@ -175,6 +205,60 @@ class _FlowAppBarState extends State<FlowAppBar> with TickerProviderStateMixin {
         }
         return const SizedBox();
       },
+    );
+  }
+}
+
+class FlowAccountsDashboardWidget extends StatelessWidget {
+  const FlowAccountsDashboardWidget({super.key, required this.accounts});
+
+  final List<FlowAccount> accounts;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+    if (accounts.isEmpty) {
+      return const Center(child: Text('Nenhuma conta encontrada'));
+    }
+    return SizedBox(
+      height: 120,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.all(8),
+        itemCount: accounts.length,
+        itemBuilder: (context, index) {
+          final account = accounts[index];
+
+          return SizedBox(
+            width: 200,
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      account.name,
+                      softWrap: false,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.titleMedium?.copyWith(
+                        color: colorScheme.primary,
+                      ),
+                    ),
+                    Text(
+                      account.currentAmount.toCurrency(),
+                      softWrap: true,
+                      style: textTheme.headlineSmall,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
