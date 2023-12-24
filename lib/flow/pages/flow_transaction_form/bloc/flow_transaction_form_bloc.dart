@@ -39,6 +39,7 @@ class FlowTransactionFormBloc
           await flowTransactionsRepository.loadByUuid(event.uuid!);
       emit(FlowTransactionFormEditing(
         uuid: transaction.uuid,
+        account: transaction.account,
         type: transaction.type,
         description: transaction.description,
         observation: transaction.observation,

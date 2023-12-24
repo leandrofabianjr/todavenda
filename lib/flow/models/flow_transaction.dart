@@ -29,6 +29,7 @@ extension FlowTransactionTypeX on FlowTransactionType {
       FlowTransactionType.values.firstWhere(
         (e) => e.name == value,
       );
+  int get multiplier => this == FlowTransactionType.incoming ? 1 : -1;
 }
 
 class FlowTransaction extends Equatable {

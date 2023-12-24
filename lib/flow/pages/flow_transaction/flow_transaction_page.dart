@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/flow/models/flow_transaction.dart';
 import 'package:todavenda/flow/pages/flow_transaction/bloc/flow_transaction_bloc.dart';
@@ -37,21 +38,21 @@ class FlowTransactionView extends StatelessWidget {
             return const SizedBox();
           },
         ),
-        // actions: [
-        //   BlocBuilder<FlowTransactionBloc, FlowTransactionState>(
-        //     builder: (context, state) {
-        //       if (state is FlowTransactionReady) {
-        //         return IconButton(
-        //           onPressed: () => context.go(
-        //             '/fluxo/contas/${state.transaction.uuid}/editar',
-        //           ),
-        //           icon: const Icon(Icons.edit),
-        //         );
-        //       }
-        //       return const SizedBox();
-        //     },
-        //   ),
-        // ],
+        actions: [
+          BlocBuilder<FlowTransactionBloc, FlowTransactionState>(
+            builder: (context, state) {
+              if (state is FlowTransactionReady) {
+                return IconButton(
+                  onPressed: () => context.go(
+                    '/fluxo/transacoes/${state.transaction.uuid}/editar',
+                  ),
+                  icon: const Icon(Icons.edit),
+                );
+              }
+              return const SizedBox();
+            },
+          ),
+        ],
       ),
       body: BlocBuilder<FlowTransactionBloc, FlowTransactionState>(
         builder: (context, state) {

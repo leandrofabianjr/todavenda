@@ -69,6 +69,14 @@ class FlowTransactionsRepositoryFirestore
       createdAt: createdAt,
       account: account,
     );
+    double newAccoutAmount = account.currentAmount + (amount * type.multiplier);
+
+    if (uuid != null) {
+      // Remove o valor antigo da conta ao editar uma transação existente
+      final current = await loadByUuid(uuid);
+      newAccoutAmount -= current.amount * current.type.multiplier;
+    }
+
     await collection.doc(transaction.uuid).set(transaction);
     final index = _transactions.indexOf(transaction);
     if (index == -1) {
@@ -78,11 +86,7 @@ class FlowTransactionsRepositoryFirestore
       _transactions[index] = transaction;
     }
 
-    final multiplier = type == FlowTransactionType.incoming ? 1 : -1;
-
-    account = account.copyWith(
-      currentAmount: account.currentAmount + (amount * multiplier),
-    );
+    account = account.copyWith(currentAmount: newAccoutAmount);
 
     await accountsRepository.saveInstance(account);
 
