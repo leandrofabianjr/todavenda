@@ -25,9 +25,7 @@ class FlowTransactionReport {
   List<FlowTransactionReportByDay> get byDay {
     final transactionsByDay = <DateTime, List<FlowTransaction>>{};
 
-    final sortedList = transactions.sortedBy((t) => t.createdAt);
-
-    for (final transaction in sortedList) {
+    for (final transaction in transactions) {
       transactionsByDay
           .putIfAbsent(
             transaction.createdAt.firstInstantOfTheDay,
@@ -45,6 +43,29 @@ class FlowTransactionReport {
         .toList();
 
     return reportsByDay;
+  }
+
+  List<FlowTransactionReportByMonth> get byMonth {
+    final reportsByMonth = <DateTime, List<FlowTransactionReportByDay>>{};
+
+    for (var byDayReport in byDay) {
+      reportsByMonth
+          .putIfAbsent(
+            byDayReport.date.firstInstantOfTheMonth,
+            () => [],
+          )
+          .add(byDayReport);
+    }
+
+    final reportsByMonthList = reportsByMonth.entries
+        .sorted((a, b) => -a.key.compareTo(b.key))
+        .map((e) => FlowTransactionReportByMonth(
+              date: e.key,
+              byDayReports: e.value,
+            ))
+        .toList();
+
+    return reportsByMonthList;
   }
 
   List<FlowTransactionReportPeriod> get availablePeriods {
@@ -95,6 +116,28 @@ class FlowTransactionReportByDay {
         return total + t.amount;
       }
       return total;
+    });
+  }
+}
+
+class FlowTransactionReportByMonth {
+  const FlowTransactionReportByMonth({
+    required this.date,
+    required this.byDayReports,
+  });
+
+  final DateTime date;
+  final List<FlowTransactionReportByDay> byDayReports;
+
+  double get totalIncoming {
+    return byDayReports.fold(0.0, (total, t) {
+      return total + t.totalIncoming;
+    });
+  }
+
+  double get totalOutgoing {
+    return byDayReports.fold(0.0, (total, t) {
+      return total + t.totalOutgoing;
     });
   }
 }

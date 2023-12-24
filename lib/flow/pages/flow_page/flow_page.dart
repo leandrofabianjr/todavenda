@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/flow/models/flow_account.dart';
 import 'package:todavenda/flow/models/flow_transaction.dart';
+import 'package:todavenda/flow/models/flow_transaction_report.dart';
 import 'package:todavenda/flow/pages/flow_page/bloc/flow_bloc.dart';
 import 'package:todavenda/flow/services/flow_accounts_repository.dart';
 import 'package:todavenda/flow/services/flow_transactions_repository.dart';
@@ -33,8 +34,6 @@ class FlowView extends StatefulWidget {
 class _FlowViewState extends State<FlowView> {
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return RefreshIndicator(
       onRefresh: () async =>
           context.read<FlowBloc>().add(const FlowRefreshed()),
@@ -46,7 +45,7 @@ class _FlowViewState extends State<FlowView> {
               case FlowStatus.loading:
                 return const LoadingWidget();
               case FlowStatus.loaded:
-                final reports = state.transactionsReport!.byDay;
+                final reports = state.transactionsReport!.byMonth;
                 return CustomScrollView(
                   slivers: [
                     SliverAppBar(
@@ -78,36 +77,9 @@ class _FlowViewState extends State<FlowView> {
                     SliverList.builder(
                       itemCount: reports.length,
                       itemBuilder: (context, index) {
-                        final dayReport = reports[index];
-                        return ExpansionTile(
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                DateTimeFormatter.shortDate(dayReport.date),
-                                style: TextStyle(color: colorScheme.primary),
-                              ),
-                              Text(
-                                dayReport.totalIncoming.toCurrency(),
-                                style: TextStyle(
-                                  color: FlowTransactionType.incoming.color,
-                                ),
-                              ),
-                              Text(
-                                '- ${dayReport.totalOutgoing.toCurrency()}',
-                                style: TextStyle(
-                                  color: FlowTransactionType.outgoing.color,
-                                ),
-                              ),
-                            ],
-                          ),
-                          children: dayReport.transactions
-                              .map(
-                                (transaction) => FlowTransactionListTile(
-                                  transaction,
-                                ),
-                              )
-                              .toList(),
+                        final monthReport = reports[index];
+                        return FlowTransactionsByMonthListTile(
+                          monthReport: monthReport,
                         );
                       },
                     ),
@@ -126,6 +98,96 @@ class _FlowViewState extends State<FlowView> {
           child: const Icon(Icons.add),
         ),
       ),
+    );
+  }
+}
+
+class FlowTransactionsByMonthListTile extends StatelessWidget {
+  const FlowTransactionsByMonthListTile({
+    super.key,
+    required this.monthReport,
+  });
+
+  final FlowTransactionReportByMonth monthReport;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return ExpansionTile(
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            monthReport.date.monthNameWithYear,
+            style: TextStyle(color: colorScheme.primary),
+          ),
+          Text(
+            monthReport.totalIncoming.toCurrency(),
+            style: TextStyle(
+              color: FlowTransactionType.incoming.color,
+            ),
+          ),
+          Text(
+            '- ${monthReport.totalOutgoing.toCurrency()}',
+            style: TextStyle(
+              color: FlowTransactionType.outgoing.color,
+            ),
+          ),
+        ],
+      ),
+      children: monthReport.byDayReports
+          .map(
+            (report) => FlowTransactionsByDayListTile(
+              dayReport: report,
+            ),
+          )
+          .toList(),
+    );
+  }
+}
+
+class FlowTransactionsByDayListTile extends StatelessWidget {
+  const FlowTransactionsByDayListTile({
+    super.key,
+    required this.dayReport,
+  });
+
+  final FlowTransactionReportByDay dayReport;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return ExpansionTile(
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            dayReport.date.dayLabel,
+            style: TextStyle(color: colorScheme.primary),
+          ),
+          Text(
+            dayReport.totalIncoming.toCurrency(),
+            style: TextStyle(
+              color: FlowTransactionType.incoming.color,
+            ),
+          ),
+          Text(
+            '- ${dayReport.totalOutgoing.toCurrency()}',
+            style: TextStyle(
+              color: FlowTransactionType.outgoing.color,
+            ),
+          ),
+        ],
+      ),
+      children: dayReport.transactions
+          .map(
+            (transaction) => FlowTransactionListTile(
+              transaction,
+            ),
+          )
+          .toList(),
     );
   }
 }

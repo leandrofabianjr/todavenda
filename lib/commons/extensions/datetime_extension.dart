@@ -1,3 +1,5 @@
+import 'package:todavenda/commons/commons.dart';
+
 extension DateTimeX on DateTime {
   DateTime get lastFullHour => copyWith(
         minute: 0,
@@ -53,6 +55,10 @@ extension DateTimeX on DateTime {
         12 => 'Dezembro',
         _ => 'Mês',
       };
+
+  String get monthNameWithYear => '$monthName/$year';
+
+  String get dayLabel => 'Dia ${day.withLeftZero(2)}';
 
   bool get isToday {
     final now = DateTime.now();
