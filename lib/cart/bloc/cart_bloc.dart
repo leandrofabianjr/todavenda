@@ -56,9 +56,10 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
     Emitter<CartState> emit,
   ) async {
     try {
-      final previousStatus = state.status == CartStatus.loading
-          ? CartStatus.initial
-          : state.status;
+      final previousStatus =
+          [CartStatus.loading, CartStatus.closedSession].contains(state.status)
+              ? CartStatus.initial
+              : state.status;
 
       emit(state.copyWith(status: CartStatus.loading));
 
