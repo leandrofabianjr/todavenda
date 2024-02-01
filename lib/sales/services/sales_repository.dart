@@ -8,7 +8,7 @@ abstract class SalesRepository {
 
   Future<List<Sale>> list({
     String? sessionUuid,
-    List<DateTime>? createdBetween,
+    List<DateTime?>? createdBetween,
   });
 
   Future<Sale> createSale({

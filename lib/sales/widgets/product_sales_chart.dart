@@ -90,9 +90,11 @@ class _RankingBarChartState<T> extends State<RankingBarChart<T>> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            widget.getLabel(e.key),
-                            style: textTheme.titleMedium,
+                          Flexible(
+                            child: Text(
+                              widget.getLabel(e.key),
+                              style: textTheme.titleMedium,
+                            ),
                           ),
                           Text(
                             '${e.value} un',

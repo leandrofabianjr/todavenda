@@ -157,16 +157,20 @@ class _ReportPeriodSelectorState extends State<ReportPeriodSelector> {
           label: 'Hoje',
         ),
         DropdownMenuEntry(
-          value: ReportConfigType.last24hours,
-          label: 'Últimas 24 horas',
-        ),
-        DropdownMenuEntry(
           value: ReportConfigType.last7Days,
           label: 'Últimos 7 dias',
         ),
         DropdownMenuEntry(
           value: ReportConfigType.last30Days,
           label: 'Últimos 30 dias',
+        ),
+        DropdownMenuEntry(
+          value: ReportConfigType.currentMonth,
+          label: 'Este mês',
+        ),
+        DropdownMenuEntry(
+          value: ReportConfigType.monthToMonth,
+          label: 'Mês a mês',
         ),
       ],
       onSelected: (value) {

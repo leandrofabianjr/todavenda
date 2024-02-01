@@ -110,7 +110,7 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
 
   @override
   Future<List<Sale>> list(
-      {String? sessionUuid, List<DateTime>? createdBetween}) async {
+      {String? sessionUuid, List<DateTime?>? createdBetween}) async {
     await _updateDependencies();
 
     Query<Sale>? query;
@@ -122,8 +122,8 @@ class SalesRepositoryFirestore extends FirestoreRepository<Sale>
     if (createdBetween != null) {
       query = (query ?? collection).where(
         'createdAt',
-        isGreaterThanOrEqualTo: (createdBetween[0]),
-        isLessThanOrEqualTo: (createdBetween[1]),
+        isGreaterThanOrEqualTo: createdBetween.elementAtOrNull(0),
+        isLessThanOrEqualTo: createdBetween.elementAtOrNull(1),
       );
     }
     final snapshot = await (query ?? collection).get();

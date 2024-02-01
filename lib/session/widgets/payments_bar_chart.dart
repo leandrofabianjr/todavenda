@@ -3,14 +3,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/reports/reports.dart';
-import 'package:todavenda/sales/sales.dart';
-
-class TestChartClass {
-  final DateTime dateTime;
-  final double amount;
-
-  TestChartClass({required this.dateTime, required this.amount});
-}
 
 class PaymentsBarChart extends StatelessWidget {
   const PaymentsBarChart({
@@ -24,140 +16,198 @@ class PaymentsBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CurrencyVsDateTimeBarChart<Sale>(
-      data: config.data,
-      getDateTime: (obj) => obj.createdAt,
-      getAmount: (obj) => obj.total,
-      emptyDataWidget: const Center(
+    if (config.data.isEmpty) {
+      return const Center(
         child: Text('Não há vendas realizadas no período'),
-      ),
-      start: config.start,
-      end: config.end,
-      barDuration: config.barDuration,
-      barTitleBuilder: (dateTime, amount, index, lastBarIndex) => index == 0 ||
-              index % config.showBarTitleEach == 0 ||
-              index == lastBarIndex
-          ? Text(
-              config.barTitleBuilder(dateTime, amount),
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-            )
-          : const SizedBox(),
-    );
+      );
+    }
+
+    return LfjBarChart(data: buildBarChartDataList(config));
   }
-}
 
-class CurrencyVsDateTimeBarChart<T> extends StatefulWidget {
-  const CurrencyVsDateTimeBarChart({
-    super.key,
-    required this.data,
-    required this.getDateTime,
-    required this.getAmount,
-    required this.emptyDataWidget,
-    this.showReloadButton = false,
-    required this.start,
-    required this.end,
-    required this.barDuration,
-    required this.barTitleBuilder,
-  });
+  List<LfjBarChartData> buildBarChartDataList(ReportConfig config) {
+    List<LfjBarChartData> chartData = [];
 
-  final List<T> data;
-  final DateTime Function(T obj) getDateTime;
-  final double Function(T obj) getAmount;
-  final bool showReloadButton;
-  final Widget emptyDataWidget;
-  final DateTime start;
-  final DateTime end;
-  final Duration barDuration;
-  final Widget Function(
-          DateTime dateTime, double amount, int index, int lastBarIndex)
-      barTitleBuilder;
+    // Cria a lista dos valores de cada barra
+    Map<DateTime, double> values =
+        buildBarValuesMap(config.type, config.start, config.end);
 
-  @override
-  State<CurrencyVsDateTimeBarChart<T>> createState() =>
-      _CurrencyVsDateTimeBarChartState<T>();
-}
-
-class _CurrencyVsDateTimeBarChartState<T>
-    extends State<CurrencyVsDateTimeBarChart<T>> {
-  late ColorScheme colorScheme;
-
-  double greatestAmount = 0;
-  int numBars = 0;
-
-  int touchedIndex = -1;
-
-  Map<DateTime, double> buildChartData() {
-    Map<DateTime, double> chartData = {};
-    final data = widget.data;
-
-    if (data.isEmpty) return chartData;
-
-    data.sortBy(widget.getDateTime);
-
-    greatestAmount = 0;
-    chartData.clear();
-
-    var nextBarDate = widget.start.add(widget.barDuration);
-    while (!nextBarDate.isAfter(widget.end)) {
-      chartData[nextBarDate] = 0;
-      nextBarDate = nextBarDate.add(widget.barDuration);
-    }
-
-    final barDurationisFullDays = widget.barDuration.isFullDays;
-
-    final barDates = chartData.keys.toList();
-
-    for (final obj in data) {
-      final dateTime = widget.getDateTime(obj);
-      final amount = widget.getAmount(obj);
-
-      if (barDurationisFullDays) {
-        for (final barDate in barDates.reversed) {
-          if (dateTime.isAtSameMomentAs(barDate) || dateTime.isAfter(barDate)) {
-            chartData[barDate] = chartData[barDate]! + amount;
-            break;
-          }
-        }
-      } else {
-        for (final barDate in barDates) {
-          if (!dateTime.isAfter(barDate)) {
-            chartData[barDate] = chartData[barDate]! + amount;
-            break;
-          }
-        }
+    // Soma os valores totais de cada barra
+    for (final obj in config.data) {
+      final dateTime = obj.createdAt;
+      if (dateTime.isAtSameMomentAs(config.start) ||
+          (dateTime.isAfter(config.start) && dateTime.isBefore(config.end))) {
+        final barKey = _buildBarKeyValue(type: config.type, keyValue: dateTime);
+        values[barKey] = values[barKey]! + obj.total;
       }
     }
 
-    for (var amount in chartData.values) {
-      if (amount > greatestAmount) {
-        greatestAmount = amount;
-      }
+    // Cria as barras
+    for (final value in values.entries) {
+      // Apenas a primeira e a última barra exibem label
+      final isFirst = values.entries.first.key == value.key;
+      final isLast = values.entries.last.key == value.key;
+      chartData.add(
+        LfjBarChartData(
+          label: isFirst
+              ? _buildLabel(type: config.type, keyValue: value.key)
+              : isLast
+                  ? _buildLabel(
+                      type: config.type,
+                      keyValue: value.key.add(const Duration(hours: 1)),
+                    )
+                  : null,
+          value: value.value,
+          onTouchLabel: _buildOnTouchLabel(
+            type: config.type,
+            keyValue: value.key,
+          ),
+        ),
+      );
     }
-
-    numBars = chartData.length;
 
     return chartData;
   }
 
+  // Cria uma função que formata o label de cada barra
+  String _buildOnTouchLabel({
+    required ReportConfigType type,
+    required DateTime keyValue,
+  }) {
+    switch (type) {
+      case ReportConfigType.today:
+        return '${keyValue.hour}h';
+      case ReportConfigType.last7Days:
+      case ReportConfigType.last30Days:
+      case ReportConfigType.currentMonth:
+        return DateTimeFormatter.shortDate(keyValue);
+      case ReportConfigType.monthToMonth:
+        return keyValue.monthName;
+    }
+  }
+
+  /// Cria o label de cada barra
+  String _buildLabel({
+    required ReportConfigType type,
+    required DateTime keyValue,
+  }) {
+    switch (type) {
+      case ReportConfigType.today:
+        return '${keyValue.hour}h';
+      case ReportConfigType.last7Days:
+      case ReportConfigType.last30Days:
+      case ReportConfigType.currentMonth:
+        return DateTimeFormatter.shortDate(keyValue);
+      case ReportConfigType.monthToMonth:
+        return keyValue.monthName;
+    }
+  }
+
+  /// Cria um Map para os valores de cada barra de acordo com o horário
+  Map<DateTime, double> buildBarValuesMap(
+      ReportConfigType type, DateTime start, DateTime end) {
+    Map<DateTime, double> values = {};
+
+    switch (type) {
+      case ReportConfigType.today:
+        values = {
+          for (var i = start;
+              i.isBefore(end);
+              i = i.add(const Duration(hours: 1)))
+            i: 0.0
+        };
+        break;
+      case ReportConfigType.last7Days:
+      case ReportConfigType.last30Days:
+      case ReportConfigType.currentMonth:
+        values = {
+          for (var i = start;
+              i.isBefore(end);
+              i = i.add(const Duration(days: 1)))
+            i: 0.0
+        };
+        break;
+      case ReportConfigType.monthToMonth:
+        values = {
+          for (var i = start;
+              i.isBefore(end);
+              i = i.add(const Duration(days: 33)).firstInstantOfTheMonth)
+            i: 0.0
+        };
+    }
+    return values;
+  }
+
+  DateTime _buildBarKeyValue({
+    required ReportConfigType type,
+    required DateTime keyValue,
+  }) {
+    switch (type) {
+      case ReportConfigType.today:
+        return keyValue.firstInstantOfTheHour;
+      case ReportConfigType.last7Days:
+      case ReportConfigType.last30Days:
+      case ReportConfigType.currentMonth:
+        return keyValue.firstInstantOfTheDay;
+      case ReportConfigType.monthToMonth:
+        return keyValue.firstInstantOfTheMonth;
+    }
+  }
+}
+
+class LfjBarChartData {
+  final double value;
+  final String? label;
+  final String? onTouchLabel;
+
+  LfjBarChartData({
+    required this.value,
+    this.label,
+    this.onTouchLabel,
+  });
+}
+
+class LfjBarChart extends StatefulWidget {
+  const LfjBarChart({super.key, required this.data});
+
+  final List<LfjBarChartData> data;
+
+  @override
+  State<LfjBarChart> createState() => _LfjBarChartState();
+}
+
+class _LfjBarChartState extends State<LfjBarChart> {
+  late ColorScheme colorScheme;
+  late double greatestBarValue;
+  late int numBars;
+  int touchedIndex = -1;
+
+  double _findGreatestBarValue() {
+    double greatest = 0;
+    for (var bar in widget.data) {
+      if (bar.value > greatest) {
+        greatest = bar.value;
+      }
+    }
+    return greatest;
+  }
+
+  @override
+  void initState() {
+    numBars = widget.data.length;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final chartData = buildChartData();
-
-    if (chartData.isEmpty) {
-      return widget.emptyDataWidget;
-    }
-
     colorScheme = Theme.of(context).colorScheme;
+    greatestBarValue = _findGreatestBarValue();
     return BarChart(
       BarChartData(
-        barTouchData: buildBarTouchData(chartData),
-        titlesData: buildTitlesData(chartData),
+        barTouchData: buildBarTouchData(),
+        titlesData: buildTitlesData(),
         borderData: FlBorderData(show: false),
-        barGroups: chartData.entries
+        barGroups: widget.data
             .mapIndexed(
               (index, element) => BarChartGroupData(
                 x: index,
@@ -184,13 +234,12 @@ class _CurrencyVsDateTimeBarChartState<T>
             )
             .toList(),
         gridData: const FlGridData(show: false),
-        maxY: greatestAmount,
+        maxY: greatestBarValue,
       ),
     );
   }
 
-  BarTouchData buildBarTouchData(Map<DateTime, double> chartData) =>
-      BarTouchData(
+  BarTouchData buildBarTouchData() => BarTouchData(
         enabled: true,
         touchTooltipData: BarTouchTooltipData(
           tooltipBgColor: colorScheme.primary,
@@ -215,12 +264,10 @@ class _CurrencyVsDateTimeBarChartState<T>
               children: [
                 const TextSpan(text: '\n'),
                 TextSpan(
-                  text: DateTimeFormatter.shortDateTime(
-                    chartData.entries.elementAt(groupIndex).key,
-                  ),
+                  text: widget.data.elementAt(groupIndex).onTouchLabel,
                   style: TextStyle(
                     color: colorScheme.onPrimary,
-                    fontSize: 10,
+                    fontSize: 12,
                     overflow: TextOverflow.visible,
                   ),
                 ),
@@ -241,7 +288,7 @@ class _CurrencyVsDateTimeBarChartState<T>
         },
       );
 
-  FlTitlesData buildTitlesData(Map<DateTime, double> chartData) => FlTitlesData(
+  FlTitlesData buildTitlesData() => FlTitlesData(
         show: true,
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
@@ -249,16 +296,20 @@ class _CurrencyVsDateTimeBarChartState<T>
             reservedSize: 30,
             getTitlesWidget: (value, _) {
               final index = value.toInt();
-              final data = chartData.entries.elementAt(index);
+              final label = widget.data.elementAt(index).label;
               return SideTitleWidget(
                 axisSide: AxisSide.bottom,
                 space: 4,
-                child: widget.barTitleBuilder(
-                  data.key,
-                  data.value,
-                  index,
-                  numBars - 1,
-                ),
+                child: label != null
+                    ? Text(
+                        label,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      )
+                    : const SizedBox(),
               );
             },
           ),
