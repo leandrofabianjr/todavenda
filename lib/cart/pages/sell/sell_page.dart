@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:todavenda/clients/clients.dart';
 import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/products/products.dart';
+import 'package:upgrader/upgrader.dart';
 
 import '../../cart.dart';
 import '../../widgets/cart_list_tile.dart';
@@ -61,85 +62,88 @@ class _SellViewState extends State<SellView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const SellPageAppBar(),
-      floatingActionButton: totalQuantity > 0
-          ? Badge(
-              label: Text(totalQuantity.toString()),
-              child: FloatingActionButton(
-                onPressed: () =>
-                    context.read<CartBloc>().add(const CartCheckouted()),
-                child: const Icon(Icons.shopping_cart),
-              ),
-            )
-          : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(
-              width: 160,
-              child: BlocBuilder<CartBloc, CartState>(
-                builder: (context, state) {
-                  if (state.status == CartStatus.initial) {
-                    selectedClient = state.client;
-                    return ClientSelector(
-                      clientsRepository: context.read<ClientsRepository>(),
-                      initial: selectedClient,
-                      onChanged: (client) => context
-                          .read<CartBloc>()
-                          .add(CartClientChanged(client: client)),
-                    );
-                  }
-                  return const SizedBox();
-                },
-              ),
-            ),
-            if (totalQuantity > 0)
-              Padding(
-                padding: const EdgeInsets.only(right: 64),
-                child: Text(
-                  formattedTotalPrice,
-                  style: Theme.of(context).textTheme.titleMedium,
+    return UpgradeAlert(
+      upgrader: Upgrader(languageCode: 'pt'),
+      child: Scaffold(
+        appBar: const SellPageAppBar(),
+        floatingActionButton: totalQuantity > 0
+            ? Badge(
+                label: Text(totalQuantity.toString()),
+                child: FloatingActionButton(
+                  onPressed: () =>
+                      context.read<CartBloc>().add(const CartCheckouted()),
+                  child: const Icon(Icons.shopping_cart),
+                ),
+              )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        bottomNavigationBar: BottomAppBar(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: 160,
+                child: BlocBuilder<CartBloc, CartState>(
+                  builder: (context, state) {
+                    if (state.status == CartStatus.initial) {
+                      selectedClient = state.client;
+                      return ClientSelector(
+                        clientsRepository: context.read<ClientsRepository>(),
+                        initial: selectedClient,
+                        onChanged: (client) => context
+                            .read<CartBloc>()
+                            .add(CartClientChanged(client: client)),
+                      );
+                    }
+                    return const SizedBox();
+                  },
                 ),
               ),
-          ],
+              if (totalQuantity > 0)
+                Padding(
+                  padding: const EdgeInsets.only(right: 64),
+                  child: Text(
+                    formattedTotalPrice,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+            ],
+          ),
         ),
-      ),
-      body: BlocConsumer<CartBloc, CartState>(
-        listener: (context, state) {
-          if (state.status == CartStatus.initial) {
-            setState(() {
-              totalQuantity = state.totalQuantity;
-              formattedTotalPrice = state.formattedTotalPrice;
-            });
-          }
-        },
-        builder: (context, state) {
-          switch (state.status) {
-            case CartStatus.failure:
-              return ExceptionWidget(exception: state.exception);
-            case CartStatus.initial:
-              return SellSelectorView(
-                items: state.items,
-                products: state.products,
-                onAdded: (product) => context
-                    .read<CartBloc>()
-                    .add(CartItemAdded(product: product)),
-                onRemoved: (product) => context
-                    .read<CartBloc>()
-                    .add(CartItemRemoved(product: product)),
-                onSearchChanged: (term) => context
-                    .read<CartBloc>()
-                    .add(CartRefreshed(filterterm: term)),
-                initialSearchTerm: state.filterTerm,
-              );
-            default:
-              return const LoadingWidget();
-          }
-        },
+        body: BlocConsumer<CartBloc, CartState>(
+          listener: (context, state) {
+            if (state.status == CartStatus.initial) {
+              setState(() {
+                totalQuantity = state.totalQuantity;
+                formattedTotalPrice = state.formattedTotalPrice;
+              });
+            }
+          },
+          builder: (context, state) {
+            switch (state.status) {
+              case CartStatus.failure:
+                return ExceptionWidget(exception: state.exception);
+              case CartStatus.initial:
+                return SellSelectorView(
+                  items: state.items,
+                  products: state.products,
+                  onAdded: (product) => context
+                      .read<CartBloc>()
+                      .add(CartItemAdded(product: product)),
+                  onRemoved: (product) => context
+                      .read<CartBloc>()
+                      .add(CartItemRemoved(product: product)),
+                  onSearchChanged: (term) => context
+                      .read<CartBloc>()
+                      .add(CartRefreshed(filterterm: term)),
+                  initialSearchTerm: state.filterTerm,
+                );
+              default:
+                return const LoadingWidget();
+            }
+          },
+        ),
       ),
     );
   }
