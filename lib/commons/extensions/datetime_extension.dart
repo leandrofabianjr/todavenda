@@ -38,7 +38,10 @@ extension DateTimeX on DateTime {
         microsecond: 0,
       );
 
-  DateTime get lastInstantOfTheMonth => copyWith(month: month + 1, day: 0);
+  DateTime get lastInstantOfTheMonth => copyWith(
+        month: month + 1,
+        day: 0,
+      ).lastInstantOfTheDay;
 
   String get monthName => switch (month) {
         1 => 'Janeiro',

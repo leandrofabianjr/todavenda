@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:todavenda/commons/commons.dart';
 import 'package:todavenda/reports/reports.dart';
 import 'package:todavenda/sales/sales.dart';
 import 'package:todavenda/session/widgets/payments_bar_chart.dart';
@@ -31,6 +32,7 @@ class _ReportsPageState extends State<ReportsPage> {
     reportConfig = await ReportConfig.fromType(
       salesRepository: salesRepository,
       reportType: reportType,
+      dateTimeRange: reportConfig?.dateTimeRange,
     );
     setState(() {});
   }
@@ -49,13 +51,18 @@ class _ReportsPageState extends State<ReportsPage> {
           slivers: [
             SliverAppBar(
               title: const Text('Relatórios'),
+              bottom: reportConfig == null
+                  ? null
+                  : AppBar(
+                      title: ReportPeriodSelector(
+                      reportConfig: reportConfig!,
+                      onSelected: (value) {
+                        reportConfig = value;
+                        reportType = value.type;
+                        refresh();
+                      },
+                    )),
               actions: [
-                ReportPeriodSelector(
-                  onSelected: (value) {
-                    reportType = value;
-                    refresh();
-                  },
-                ),
                 IconButton(
                   onPressed: () => context.go('/relatorios/listagens'),
                   icon: const Icon(Icons.list),
@@ -120,62 +127,76 @@ class _ReportsPageState extends State<ReportsPage> {
   }
 }
 
-class ReportPeriodSelector extends StatefulWidget {
+class ReportPeriodSelector extends StatelessWidget {
   const ReportPeriodSelector({
     super.key,
-    this.reportType,
+    required this.reportConfig,
     required this.onSelected,
   });
 
-  final ReportConfigType? reportType;
-  final void Function(ReportConfigType value) onSelected;
+  final ReportConfig reportConfig;
+  final void Function(ReportConfig config) onSelected;
 
-  @override
-  State<ReportPeriodSelector> createState() => _ReportPeriodSelectorState();
-}
+  List<DropdownMenuItem<ReportConfigType>> get selectedItems =>
+      ReportConfigType.values
+          .map(
+            (t) => DropdownMenuItem(
+              value: t,
+              child: Text(
+                t == ReportConfigType.custom &&
+                        reportConfig.type == ReportConfigType.custom
+                    ? reportConfig.periodFormatted
+                    : t.label,
+              ),
+            ),
+          )
+          .toList();
 
-class _ReportPeriodSelectorState extends State<ReportPeriodSelector> {
-  late ReportConfigType reportType;
-
-  @override
-  void initState() {
-    reportType = widget.reportType ?? ReportConfigType.today;
-    super.initState();
-  }
+  List<DropdownMenuItem<ReportConfigType>> get items => ReportConfigType.values
+      .map(
+        (t) => DropdownMenuItem(
+          value: t,
+          child: Text(t.label),
+        ),
+      )
+      .toList();
 
   @override
   Widget build(BuildContext context) {
-    return DropdownMenu(
-      width: 160,
-      inputDecorationTheme: const InputDecorationTheme(
-        contentPadding: EdgeInsets.zero,
+    return DropdownButtonFormField(
+      value: reportConfig.type,
+      decoration: const InputDecoration(
+        prefixIcon: Icon(Icons.date_range),
+        labelText: 'Período',
       ),
-      initialSelection: reportType,
-      dropdownMenuEntries: const [
-        DropdownMenuEntry(
-          value: ReportConfigType.today,
-          label: 'Hoje',
-        ),
-        DropdownMenuEntry(
-          value: ReportConfigType.last7Days,
-          label: 'Últimos 7 dias',
-        ),
-        DropdownMenuEntry(
-          value: ReportConfigType.last30Days,
-          label: 'Últimos 30 dias',
-        ),
-        DropdownMenuEntry(
-          value: ReportConfigType.currentMonth,
-          label: 'Este mês',
-        ),
-        DropdownMenuEntry(
-          value: ReportConfigType.monthToMonth,
-          label: 'Mês a mês',
-        ),
-      ],
-      onSelected: (value) {
-        setState(() => reportType = value!);
-        widget.onSelected(value!);
+      selectedItemBuilder: (context) => selectedItems,
+      items: items,
+      onChanged: (value) async {
+        if (value != null &&
+            (value != reportConfig.type || value == ReportConfigType.custom)) {
+          final newReportType = value;
+          DateTimeRange? newDateTimeRange;
+          if (value == ReportConfigType.custom) {
+            final last = DateTime.now().lastInstantOfTheDay;
+            newDateTimeRange = await showDateRangePicker(
+              context: context,
+              firstDate: DateTime(2023),
+              lastDate: last,
+              initialDateRange: reportConfig.dateTimeRange,
+            );
+            if (newDateTimeRange != null) {
+              newDateTimeRange = DateTimeRange(
+                start: newDateTimeRange.start,
+                end: newDateTimeRange.end.lastInstantOfTheDay,
+              );
+            }
+          }
+
+          onSelected(reportConfig.copyWith(
+            type: newReportType,
+            dateTimeRange: newDateTimeRange,
+          ));
+        }
       },
     );
   }

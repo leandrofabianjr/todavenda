@@ -1,7 +1,6 @@
-import 'package:collection/collection.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:todavenda/commons/commons.dart';
+import 'package:todavenda/commons/widgets/lfj/lfj_bar_chart.dart';
 import 'package:todavenda/reports/reports.dart';
 
 class PaymentsBarChart extends StatelessWidget {
@@ -22,46 +21,46 @@ class PaymentsBarChart extends StatelessWidget {
       );
     }
 
-    return LfjBarChart(data: buildBarChartDataList(config));
-  }
+    final amountByDateTimeBarChartConfig =
+        LfjAmountByDateTimeBarChartConfig.fromReportConfig(config);
 
-  List<LfjBarChartData> buildBarChartDataList(ReportConfig config) {
+    return LfjBarChart(data: amountByDateTimeBarChartConfig.barChartDataList);
+  }
+}
+
+class LfjAmountByDateTimeBarChartConfig extends ReportConfig {
+  const LfjAmountByDateTimeBarChartConfig({
+    super.type = ReportConfigType.today,
+    required super.dateTimeRange,
+    required super.data,
+  });
+
+  List<LfjBarChartData> get barChartDataList {
     List<LfjBarChartData> chartData = [];
 
     // Cria a lista dos valores de cada barra
-    Map<DateTime, double> values =
-        buildBarValuesMap(config.type, config.start, config.end);
+    final values = {
+      for (var i = barValueOf(dateTimeRange.start);
+          i.isBefore(dateTimeRange.end);
+          i = barRange.call(i))
+        i: 0.0
+    };
 
     // Soma os valores totais de cada barra
-    for (final obj in config.data) {
+    for (final obj in data) {
       final dateTime = obj.createdAt;
-      if (dateTime.isAtSameMomentAs(config.start) ||
-          (dateTime.isAfter(config.start) && dateTime.isBefore(config.end))) {
-        final barKey = _buildBarKeyValue(type: config.type, keyValue: dateTime);
-        values[barKey] = values[barKey]! + obj.total;
-      }
+      final barKey = barValueOf(dateTime);
+      values[barKey] = values[barKey]! + obj.total;
     }
 
     // Cria as barras
     for (final value in values.entries) {
-      // Apenas a primeira e a última barra exibem label
-      final isFirst = values.entries.first.key == value.key;
-      final isLast = values.entries.last.key == value.key;
       chartData.add(
         LfjBarChartData(
-          label: isFirst
-              ? _buildLabel(type: config.type, keyValue: value.key)
-              : isLast
-                  ? _buildLabel(
-                      type: config.type,
-                      keyValue: value.key.add(const Duration(hours: 1)),
-                    )
-                  : null,
+          label: barLabelOf(value.key),
           value: value.value,
-          onTouchLabel: _buildOnTouchLabel(
-            type: config.type,
-            keyValue: value.key,
-          ),
+          onTouchLabel: onTouchBarLabelOf(value.key),
+          formatValue: (value) => CurrencyFormatter().formatPtBr(value),
         ),
       );
     }
@@ -69,79 +68,60 @@ class PaymentsBarChart extends StatelessWidget {
     return chartData;
   }
 
-  // Cria uma função que formata o label de cada barra
-  String _buildOnTouchLabel({
-    required ReportConfigType type,
-    required DateTime keyValue,
-  }) {
+  static LfjAmountByDateTimeBarChartConfig fromReportConfig(
+      ReportConfig reportConfig) {
+    return LfjAmountByDateTimeBarChartConfig(
+      type: reportConfig.type,
+      dateTimeRange: reportConfig.dateTimeRange,
+      data: reportConfig.data,
+    );
+  }
+
+  DateTime Function(DateTime) get barRange {
+    hourly(DateTime dt) => dt.add(const Duration(hours: 1));
+    daily(DateTime dt) => dt.add(const Duration(days: 1));
+    monthly(DateTime dt) =>
+        dt.add(const Duration(days: 32)).firstInstantOfTheMonth;
+
     switch (type) {
       case ReportConfigType.today:
-        return '${keyValue.hour}h';
+        return hourly;
       case ReportConfigType.last7Days:
       case ReportConfigType.last30Days:
       case ReportConfigType.currentMonth:
-        return DateTimeFormatter.shortDate(keyValue);
+        return daily;
+      case ReportConfigType.monthToMonth:
+        return monthly;
+      case ReportConfigType.custom:
+        final duration = dateTimeRange.duration;
+        if (duration < const Duration(days: 1)) return hourly;
+        if (duration < const Duration(days: 31)) return daily;
+        return monthly;
+    }
+  }
+
+  String onTouchBarLabelOf(DateTime keyValue) {
+    final hourly = 'Entre ${keyValue.hour}h e ${keyValue.hour + 1}h';
+    final daily = DateTimeFormatter.shortDate(keyValue);
+    final monthly = keyValue.monthName;
+    switch (type) {
+      case ReportConfigType.today:
+        return hourly;
+      case ReportConfigType.last7Days:
+      case ReportConfigType.last30Days:
+      case ReportConfigType.currentMonth:
+        return daily;
       case ReportConfigType.monthToMonth:
         return keyValue.monthName;
+      case ReportConfigType.custom:
+        final duration = dateTimeRange.duration;
+        if (duration < const Duration(days: 1)) return hourly;
+        if (duration < const Duration(days: 31)) return daily;
+        return monthly;
     }
   }
 
-  /// Cria o label de cada barra
-  String _buildLabel({
-    required ReportConfigType type,
-    required DateTime keyValue,
-  }) {
-    switch (type) {
-      case ReportConfigType.today:
-        return '${keyValue.hour}h';
-      case ReportConfigType.last7Days:
-      case ReportConfigType.last30Days:
-      case ReportConfigType.currentMonth:
-        return DateTimeFormatter.shortDate(keyValue);
-      case ReportConfigType.monthToMonth:
-        return keyValue.monthName;
-    }
-  }
-
-  /// Cria um Map para os valores de cada barra de acordo com o horário
-  Map<DateTime, double> buildBarValuesMap(
-      ReportConfigType type, DateTime start, DateTime end) {
-    Map<DateTime, double> values = {};
-
-    switch (type) {
-      case ReportConfigType.today:
-        values = {
-          for (var i = start;
-              i.isBefore(end);
-              i = i.add(const Duration(hours: 1)))
-            i: 0.0
-        };
-        break;
-      case ReportConfigType.last7Days:
-      case ReportConfigType.last30Days:
-      case ReportConfigType.currentMonth:
-        values = {
-          for (var i = start;
-              i.isBefore(end);
-              i = i.add(const Duration(days: 1)))
-            i: 0.0
-        };
-        break;
-      case ReportConfigType.monthToMonth:
-        values = {
-          for (var i = start;
-              i.isBefore(end);
-              i = i.add(const Duration(days: 33)).firstInstantOfTheMonth)
-            i: 0.0
-        };
-    }
-    return values;
-  }
-
-  DateTime _buildBarKeyValue({
-    required ReportConfigType type,
-    required DateTime keyValue,
-  }) {
+  DateTime barValueOf(DateTime keyValue) {
     switch (type) {
       case ReportConfigType.today:
         return keyValue.firstInstantOfTheHour;
@@ -151,177 +131,37 @@ class PaymentsBarChart extends StatelessWidget {
         return keyValue.firstInstantOfTheDay;
       case ReportConfigType.monthToMonth:
         return keyValue.firstInstantOfTheMonth;
+      case ReportConfigType.custom:
+        final duration = dateTimeRange.duration;
+        if (duration < const Duration(days: 1)) {
+          return keyValue.firstInstantOfTheHour;
+        }
+        if (duration < const Duration(days: 31)) {
+          return keyValue.firstInstantOfTheDay;
+        }
+        return keyValue.firstInstantOfTheMonth;
     }
   }
-}
 
-class LfjBarChartData {
-  final double value;
-  final String? label;
-  final String? onTouchLabel;
-
-  LfjBarChartData({
-    required this.value,
-    this.label,
-    this.onTouchLabel,
-  });
-}
-
-class LfjBarChart extends StatefulWidget {
-  const LfjBarChart({super.key, required this.data});
-
-  final List<LfjBarChartData> data;
-
-  @override
-  State<LfjBarChart> createState() => _LfjBarChartState();
-}
-
-class _LfjBarChartState extends State<LfjBarChart> {
-  late ColorScheme colorScheme;
-  late double greatestBarValue;
-  late int numBars;
-  int touchedIndex = -1;
-
-  double _findGreatestBarValue() {
-    double greatest = 0;
-    for (var bar in widget.data) {
-      if (bar.value > greatest) {
-        greatest = bar.value;
-      }
+  /// Cria o label de cada barra
+  String barLabelOf(DateTime keyValue) {
+    final hourly = '${keyValue.hour}h';
+    final daily = DateTimeFormatter.shortDate(keyValue);
+    final monthly = keyValue.monthName;
+    switch (type) {
+      case ReportConfigType.today:
+        return hourly;
+      case ReportConfigType.last7Days:
+      case ReportConfigType.last30Days:
+      case ReportConfigType.currentMonth:
+        return daily;
+      case ReportConfigType.monthToMonth:
+        return keyValue.monthName;
+      case ReportConfigType.custom:
+        final duration = dateTimeRange.duration;
+        if (duration < const Duration(days: 1)) return hourly;
+        if (duration < const Duration(days: 31)) return daily;
+        return monthly;
     }
-    return greatest;
   }
-
-  @override
-  void initState() {
-    numBars = widget.data.length;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    colorScheme = Theme.of(context).colorScheme;
-    greatestBarValue = _findGreatestBarValue();
-    return BarChart(
-      BarChartData(
-        barTouchData: buildBarTouchData(),
-        titlesData: buildTitlesData(),
-        borderData: FlBorderData(show: false),
-        barGroups: widget.data
-            .mapIndexed(
-              (index, element) => BarChartGroupData(
-                x: index,
-                barRods: [
-                  BarChartRodData(
-                    toY: element.value,
-                    gradient: LinearGradient(
-                      colors: touchedIndex == index
-                          ? [
-                              colorScheme.primary,
-                              colorScheme.primary,
-                            ]
-                          : [
-                              colorScheme.primary.withOpacity(.3),
-                              colorScheme.primary.withOpacity(.8),
-                            ],
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                    ),
-                  )
-                ],
-                showingTooltipIndicators: [0],
-              ),
-            )
-            .toList(),
-        gridData: const FlGridData(show: false),
-        maxY: greatestBarValue,
-      ),
-    );
-  }
-
-  BarTouchData buildBarTouchData() => BarTouchData(
-        enabled: true,
-        touchTooltipData: BarTouchTooltipData(
-          tooltipBgColor: colorScheme.primary,
-          tooltipPadding: EdgeInsets.zero,
-          tooltipMargin: 0,
-          getTooltipItem: (
-            BarChartGroupData group,
-            int groupIndex,
-            BarChartRodData rod,
-            int rodIndex,
-          ) {
-            if (groupIndex != touchedIndex) {
-              return null;
-            }
-            return BarTooltipItem(
-              CurrencyFormatter().formatPtBr(rod.toY),
-              TextStyle(
-                color: colorScheme.onPrimary,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
-              children: [
-                const TextSpan(text: '\n'),
-                TextSpan(
-                  text: widget.data.elementAt(groupIndex).onTouchLabel,
-                  style: TextStyle(
-                    color: colorScheme.onPrimary,
-                    fontSize: 12,
-                    overflow: TextOverflow.visible,
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-        touchCallback: (FlTouchEvent event, barTouchResponse) {
-          setState(() {
-            if (!event.isInterestedForInteractions ||
-                barTouchResponse == null ||
-                barTouchResponse.spot == null) {
-              touchedIndex = -1;
-              return;
-            }
-            touchedIndex = barTouchResponse.spot!.touchedBarGroupIndex;
-          });
-        },
-      );
-
-  FlTitlesData buildTitlesData() => FlTitlesData(
-        show: true,
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 30,
-            getTitlesWidget: (value, _) {
-              final index = value.toInt();
-              final label = widget.data.elementAt(index).label;
-              return SideTitleWidget(
-                axisSide: AxisSide.bottom,
-                space: 4,
-                child: label != null
-                    ? Text(
-                        label,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      )
-                    : const SizedBox(),
-              );
-            },
-          ),
-        ),
-        leftTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        rightTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-      );
 }
