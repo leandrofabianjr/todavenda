@@ -6,23 +6,21 @@ import 'package:todavenda/reports/reports.dart';
 import 'package:todavenda/sales/sales.dart';
 
 class PaymentsByTypePieChart extends StatelessWidget {
-  const PaymentsByTypePieChart({
-    super.key,
-    required this.config,
-  });
+  const PaymentsByTypePieChart({super.key, required this.config});
 
   final ReportConfig config;
 
   List<PieChartData> get data {
-    Map<PaymentType, double> totalsByPaymentType =
-        Sale.totalsByPaymentType(config.data);
+    Map<PaymentType, double> totalsByPaymentType = Sale.totalsByPaymentType(
+      config.data,
+    );
 
     final colors = {
-      PaymentType.cash: Colors.green.withOpacity(.7),
-      PaymentType.pix: Colors.blue.withOpacity(.7),
-      PaymentType.debit: Colors.yellow.withOpacity(.7),
-      PaymentType.credit: Colors.red.withOpacity(.7),
-      PaymentType.onCredit: Colors.purple.withOpacity(.7),
+      PaymentType.cash: Colors.green.withValues(alpha: .7),
+      PaymentType.pix: Colors.blue.withValues(alpha: .7),
+      PaymentType.debit: Colors.yellow.withValues(alpha: .7),
+      PaymentType.credit: Colors.red.withValues(alpha: .7),
+      PaymentType.onCredit: Colors.purple.withValues(alpha: .7),
     };
 
     return totalsByPaymentType.entries
@@ -97,9 +95,7 @@ class _PieChartState<T> extends State<PieChart<T>> {
                   });
                 },
               ),
-              borderData: fl.FlBorderData(
-                show: false,
-              ),
+              borderData: fl.FlBorderData(show: false),
               sectionsSpace: 0,
               centerSpaceRadius: 0,
               sections: showingSections(),
@@ -125,7 +121,7 @@ class _PieChartState<T> extends State<PieChart<T>> {
                 )
                 .toList(),
           ),
-        )
+        ),
       ],
     );
   }
@@ -140,10 +136,7 @@ class _PieChartState<T> extends State<PieChart<T>> {
         value: d.value,
         title: '${d.label}\n${isTouched ? d.value.toCurrency() : ''}',
         radius: radius,
-        titleStyle: TextStyle(
-          fontSize: fontSize,
-          fontWeight: FontWeight.bold,
-        ),
+        titleStyle: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
       );
     }).toList();
   }
@@ -185,10 +178,7 @@ class Indicator extends StatelessWidget {
             Text(text),
           ],
         ),
-        Text(
-          value.toCurrency(),
-          style: Theme.of(context).textTheme.titleSmall,
-        )
+        Text(value.toCurrency(), style: Theme.of(context).textTheme.titleSmall),
       ],
     );
   }

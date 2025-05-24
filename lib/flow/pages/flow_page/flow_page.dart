@@ -71,7 +71,7 @@ class _FlowViewState extends State<FlowView> {
                               ),
                             ),
                           ],
-                        )
+                        ),
                       ],
                     ),
                     SliverList.builder(
@@ -92,7 +92,9 @@ class _FlowViewState extends State<FlowView> {
           },
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => context.push('/fluxo/transacoes/cadastrar').then(
+          onPressed: () => context
+              .push('/fluxo/transacoes/cadastrar')
+              .then(
                 (value) => context.read<FlowBloc>().add(const FlowRefreshed()),
               ),
           child: const Icon(Icons.add),
@@ -103,10 +105,7 @@ class _FlowViewState extends State<FlowView> {
 }
 
 class FlowTransactionsByMonthListTile extends StatelessWidget {
-  const FlowTransactionsByMonthListTile({
-    super.key,
-    required this.monthReport,
-  });
+  const FlowTransactionsByMonthListTile({super.key, required this.monthReport});
 
   final FlowTransactionReportByMonth monthReport;
 
@@ -124,34 +123,23 @@ class FlowTransactionsByMonthListTile extends StatelessWidget {
           ),
           Text(
             monthReport.totalIncoming.toCurrency(),
-            style: TextStyle(
-              color: FlowTransactionType.incoming.color,
-            ),
+            style: TextStyle(color: FlowTransactionType.incoming.color),
           ),
           Text(
             '- ${monthReport.totalOutgoing.toCurrency()}',
-            style: TextStyle(
-              color: FlowTransactionType.outgoing.color,
-            ),
+            style: TextStyle(color: FlowTransactionType.outgoing.color),
           ),
         ],
       ),
       children: monthReport.byDayReports
-          .map(
-            (report) => FlowTransactionsByDayListTile(
-              dayReport: report,
-            ),
-          )
+          .map((report) => FlowTransactionsByDayListTile(dayReport: report))
           .toList(),
     );
   }
 }
 
 class FlowTransactionsByDayListTile extends StatelessWidget {
-  const FlowTransactionsByDayListTile({
-    super.key,
-    required this.dayReport,
-  });
+  const FlowTransactionsByDayListTile({super.key, required this.dayReport});
 
   final FlowTransactionReportByDay dayReport;
 
@@ -169,24 +157,16 @@ class FlowTransactionsByDayListTile extends StatelessWidget {
           ),
           Text(
             dayReport.totalIncoming.toCurrency(),
-            style: TextStyle(
-              color: FlowTransactionType.incoming.color,
-            ),
+            style: TextStyle(color: FlowTransactionType.incoming.color),
           ),
           Text(
             '- ${dayReport.totalOutgoing.toCurrency()}',
-            style: TextStyle(
-              color: FlowTransactionType.outgoing.color,
-            ),
+            style: TextStyle(color: FlowTransactionType.outgoing.color),
           ),
         ],
       ),
       children: dayReport.transactions
-          .map(
-            (transaction) => FlowTransactionListTile(
-              transaction,
-            ),
-          )
+          .map((transaction) => FlowTransactionListTile(transaction))
           .toList(),
     );
   }
@@ -202,7 +182,7 @@ class FlowTransactionListTile extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
-      color: transaction.type.color.withOpacity(0.3),
+      color: transaction.type.color.withValues(alpha: .3),
       child: ListTile(
         title: Text(transaction.description),
         subtitle: transaction.observation != null
@@ -258,9 +238,7 @@ class _FlowAppBarState extends State<FlowAppBar> with TickerProviderStateMixin {
             bottom: TabBar(
               controller: _tabController,
               tabs: availablePeriods
-                  .map(
-                    (period) => Tab(child: Text(period.label)),
-                  )
+                  .map((period) => Tab(child: Text(period.label)))
                   .toList(),
             ),
           );

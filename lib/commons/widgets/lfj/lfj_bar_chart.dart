@@ -60,18 +60,15 @@ class _LfjBarChartState extends State<LfjBarChart> {
                     toY: element.value,
                     gradient: LinearGradient(
                       colors: touchedIndex == index
-                          ? [
-                              colorScheme.primary,
-                              colorScheme.primary,
-                            ]
+                          ? [colorScheme.primary, colorScheme.primary]
                           : [
-                              colorScheme.primary.withOpacity(.3),
-                              colorScheme.primary.withOpacity(.8),
+                              colorScheme.primary.withValues(alpha: .3),
+                              colorScheme.primary.withValues(alpha: .8),
                             ],
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,
                     ),
-                  )
+                  ),
                 ],
                 showingTooltipIndicators: [0],
               ),
@@ -84,12 +81,13 @@ class _LfjBarChartState extends State<LfjBarChart> {
   }
 
   BarTouchData buildBarTouchData() => BarTouchData(
-        enabled: true,
-        touchTooltipData: BarTouchTooltipData(
-          tooltipBgColor: colorScheme.primary,
-          tooltipPadding: EdgeInsets.zero,
-          tooltipMargin: 0,
-          getTooltipItem: (
+    enabled: true,
+    touchTooltipData: BarTouchTooltipData(
+      getTooltipColor: (BarChartGroupData group) => colorScheme.primary,
+      tooltipPadding: EdgeInsets.zero,
+      tooltipMargin: 0,
+      getTooltipItem:
+          (
             BarChartGroupData group,
             int groupIndex,
             BarChartRodData rod,
@@ -119,55 +117,49 @@ class _LfjBarChartState extends State<LfjBarChart> {
               ],
             );
           },
-        ),
-        touchCallback: (FlTouchEvent event, barTouchResponse) {
-          setState(() {
-            if (!event.isInterestedForInteractions ||
-                barTouchResponse == null ||
-                barTouchResponse.spot == null) {
-              touchedIndex = -1;
-              return;
-            }
-            touchedIndex = barTouchResponse.spot!.touchedBarGroupIndex;
-          });
-        },
-      );
+    ),
+    touchCallback: (FlTouchEvent event, barTouchResponse) {
+      setState(() {
+        if (!event.isInterestedForInteractions ||
+            barTouchResponse == null ||
+            barTouchResponse.spot == null) {
+          touchedIndex = -1;
+          return;
+        }
+        touchedIndex = barTouchResponse.spot!.touchedBarGroupIndex;
+      });
+    },
+  );
 
   FlTitlesData buildTitlesData() => FlTitlesData(
-        show: true,
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 30,
-            getTitlesWidget: (value, _) {
-              final index = value.toInt();
-              final label = widget.data.elementAt(index).label;
-              return SideTitleWidget(
-                axisSide: AxisSide.bottom,
-                space: 4,
-                // Apenas a primeira e a última barra exibem label
-                child: label != null && (index == 0 || index == numBars - 1)
-                    ? Text(
-                        label,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      )
-                    : const SizedBox(),
-              );
-            },
-          ),
-        ),
-        leftTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        rightTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-      );
+    show: true,
+    bottomTitles: AxisTitles(
+      sideTitles: SideTitles(
+        showTitles: true,
+        reservedSize: 30,
+        getTitlesWidget: (value, meta) {
+          final index = value.toInt();
+          final label = widget.data.elementAt(index).label;
+          return SideTitleWidget(
+            meta: meta,
+            space: 4,
+            // Apenas a primeira e a última barra exibem label
+            child: label != null && (index == 0 || index == numBars - 1)
+                ? Text(
+                    label,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  )
+                : const SizedBox(),
+          );
+        },
+      ),
+    ),
+    leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+    topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+  );
 }

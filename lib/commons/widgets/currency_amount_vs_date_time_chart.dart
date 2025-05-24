@@ -83,10 +83,7 @@ class _CurrencyAmountVsDateTimeChartState<T>
   @override
   Widget build(BuildContext context) {
     colorScheme = Theme.of(context).colorScheme;
-    gradientColors = [
-      colorScheme.primary,
-      colorScheme.secondary,
-    ];
+    gradientColors = [colorScheme.primary, colorScheme.secondary];
 
     return FutureBuilder(
       future: updateData(),
@@ -127,7 +124,7 @@ class _CurrencyAmountVsDateTimeChartState<T>
     final dt = DateTime.fromMillisecondsSinceEpoch(value.toInt());
 
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       child: Text(
         DateTimeFormatter.hourMinute(dt),
         style: TextStyle(color: colorScheme.primary, fontSize: 10),
@@ -171,9 +168,7 @@ class _CurrencyAmountVsDateTimeChartState<T>
         rightTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
+        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
@@ -190,9 +185,7 @@ class _CurrencyAmountVsDateTimeChartState<T>
           ),
         ),
       ),
-      borderData: FlBorderData(
-        show: false,
-      ),
+      borderData: FlBorderData(show: false),
       minX: minX,
       maxX: maxX,
       minY: minY,
@@ -206,23 +199,24 @@ class _CurrencyAmountVsDateTimeChartState<T>
           isStrokeCapRound: true,
           dotData: FlDotData(
             show: true,
-            getDotPainter: (
-              FlSpot spot,
-              double xPercentage,
-              LineChartBarData bar,
-              int index, {
-              double? size,
-            }) {
-              return FlDotCirclePainter(
-                radius: 1.5,
-                color: colorScheme.primary,
-                strokeColor: colorScheme.primary,
-              );
-            },
+            getDotPainter:
+                (
+                  FlSpot spot,
+                  double xPercentage,
+                  LineChartBarData bar,
+                  int index, {
+                  double? size,
+                }) {
+                  return FlDotCirclePainter(
+                    radius: 1.5,
+                    color: colorScheme.primary,
+                    strokeColor: colorScheme.primary,
+                  );
+                },
           ),
           belowBarData: BarAreaData(
             show: true,
-            color: colorScheme.primary.withOpacity(.2),
+            color: colorScheme.primary.withValues(alpha: .2),
           ),
         ),
       ],

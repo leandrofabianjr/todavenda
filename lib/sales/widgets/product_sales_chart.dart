@@ -6,10 +6,7 @@ import 'package:todavenda/products/products.dart';
 import 'package:todavenda/reports/reports.dart';
 
 class ProductSalesChart extends StatelessWidget {
-  const ProductSalesChart({
-    super.key,
-    required this.config,
-  });
+  const ProductSalesChart({super.key, required this.config});
 
   final ReportConfig config;
 
@@ -81,12 +78,14 @@ class _RankingBarChartState<T> extends State<RankingBarChart<T>> {
         final textTheme = Theme.of(context).textTheme;
         final greatestValue = data.values.first;
 
-        return LayoutBuilder(builder: (context, constraints) {
-          final maxBarLength = constraints.maxWidth;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: data.entries
-                .expand((e) => [
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final maxBarLength = constraints.maxWidth;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: data.entries
+                  .expand(
+                    (e) => [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -98,8 +97,9 @@ class _RankingBarChartState<T> extends State<RankingBarChart<T>> {
                           ),
                           Text(
                             '${e.value} un',
-                            style: textTheme.titleSmall!
-                                .copyWith(color: colorScheme.secondary),
+                            style: textTheme.titleSmall!.copyWith(
+                              color: colorScheme.secondary,
+                            ),
                           ),
                         ],
                       ),
@@ -110,7 +110,7 @@ class _RankingBarChartState<T> extends State<RankingBarChart<T>> {
                           borderRadius: BorderRadius.circular(20),
                           gradient: LinearGradient(
                             colors: [
-                              colorScheme.primary.withOpacity(.5),
+                              colorScheme.primary.withValues(alpha: .5),
                               colorScheme.primary,
                             ],
                             begin: Alignment.centerLeft,
@@ -119,10 +119,12 @@ class _RankingBarChartState<T> extends State<RankingBarChart<T>> {
                         ),
                       ),
                       const SizedBox(height: 16.0),
-                    ])
-                .toList(),
-          );
-        });
+                    ],
+                  )
+                  .toList(),
+            );
+          },
+        );
       },
     );
   }

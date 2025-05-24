@@ -1,25 +1,18 @@
-/// Baseado em https://medium.com/@antonio.tioypedro1234/flutter-go-router-the-essential-guide-349ef39ec5b3
-///
+// Baseado em https://medium.com/@antonio.tioypedro1234/flutter-go-router-the-essential-guide-349ef39ec5b3
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todavenda/companies/widgets/company_app_bar.dart';
 
 class AppTabBarTabData {
-  const AppTabBarTabData({
-    required this.iconData,
-    required this.label,
-  });
+  const AppTabBarTabData({required this.iconData, required this.label});
 
   final IconData iconData;
   final String label;
 }
 
 class AppTabBar extends StatelessWidget {
-  AppTabBar({
-    super.key,
-    required this.navigationShell,
-  });
+  AppTabBar({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
@@ -32,10 +25,7 @@ class AppTabBar extends StatelessWidget {
       iconData: Icons.app_registration,
       label: 'Cadastros',
     ),
-    const AppTabBarTabData(
-      iconData: Icons.query_stats,
-      label: 'Relatórios',
-    ),
+    const AppTabBarTabData(iconData: Icons.query_stats, label: 'Relatórios'),
     const AppTabBarTabData(
       iconData: Icons.account_balance,
       label: 'Fluxo de Caixa',

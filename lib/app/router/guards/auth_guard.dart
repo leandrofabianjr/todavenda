@@ -9,8 +9,9 @@ Future<String?> authGuard(BuildContext context) {
   final authState = authBloc.state;
 
   if (authState is AuthInitial) {
-    return authBloc.stream.first
-        .then((value) => checkAuthState(value, context));
+    return authBloc.stream.first.then(
+      (value) => checkAuthState(value, context),
+    );
   }
 
   final route = checkAuthState(authState, context);
@@ -20,7 +21,9 @@ Future<String?> authGuard(BuildContext context) {
 
 String? checkAuthState(AuthState authState, BuildContext context) {
   if (authState is! AuthSuccess) {
-    BlocProvider.of<CartBloc>(context).add(const CartCleaned());
+    try {
+      BlocProvider.of<CartBloc>(context).add(const CartCleaned());
+    } catch (e) {}
     return '/login';
   }
   return null;

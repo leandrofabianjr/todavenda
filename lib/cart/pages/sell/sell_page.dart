@@ -91,9 +91,9 @@ class _SellViewState extends State<SellView> {
                       return ClientSelector(
                         clientsRepository: context.read<ClientsRepository>(),
                         initial: selectedClient,
-                        onChanged: (client) => context
-                            .read<CartBloc>()
-                            .add(CartClientChanged(client: client)),
+                        onChanged: (client) => context.read<CartBloc>().add(
+                          CartClientChanged(client: client),
+                        ),
                       );
                     }
                     return const SizedBox();
@@ -128,15 +128,15 @@ class _SellViewState extends State<SellView> {
                 return SellSelectorView(
                   items: state.items,
                   products: state.products,
-                  onAdded: (product) => context
-                      .read<CartBloc>()
-                      .add(CartItemAdded(product: product)),
-                  onRemoved: (product) => context
-                      .read<CartBloc>()
-                      .add(CartItemRemoved(product: product)),
-                  onSearchChanged: (term) => context
-                      .read<CartBloc>()
-                      .add(CartRefreshed(filterterm: term)),
+                  onAdded: (product) => context.read<CartBloc>().add(
+                    CartItemAdded(product: product),
+                  ),
+                  onRemoved: (product) => context.read<CartBloc>().add(
+                    CartItemRemoved(product: product),
+                  ),
+                  onSearchChanged: (term) => context.read<CartBloc>().add(
+                    CartRefreshed(filterterm: term),
+                  ),
                   initialSearchTerm: state.filterTerm,
                 );
               default:
@@ -182,8 +182,9 @@ class SellSelectorView extends StatelessWidget {
       }
     }
 
-    final sortedEntries = productsByCategory.entries
-        .sortedBy((element) => element.key?.name ?? '');
+    final sortedEntries = productsByCategory.entries.sortedBy(
+      (element) => element.key?.name ?? '',
+    );
 
     return Map.fromEntries(sortedEntries);
   }
@@ -206,29 +207,26 @@ class SellSelectorView extends StatelessWidget {
           if (products.isNotEmpty)
             SliverList(
               delegate: SliverChildListDelegate([
-                ...productsByCategory.entries
-                    .toList()
-                    .map(
-                      (productByCategory) => ExpansionTile(
-                        initiallyExpanded: isSearching,
-                        title: Text(
-                          productByCategory.key == null
-                              ? 'Não categorizado'
-                              : productByCategory.key!.name,
-                        ),
-                        children: productByCategory.value
-                            .map(
-                              (p) => SellListTile(
-                                product: p,
-                                quantity: items[p] ?? 0,
-                                onAdded: () => onAdded(p),
-                                onRemoved: () => onRemoved(p),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                    )
-                    .toList(),
+                ...productsByCategory.entries.toList().map(
+                  (productByCategory) => ExpansionTile(
+                    initiallyExpanded: isSearching,
+                    title: Text(
+                      productByCategory.key == null
+                          ? 'Não categorizado'
+                          : productByCategory.key!.name,
+                    ),
+                    children: productByCategory.value
+                        .map(
+                          (p) => SellListTile(
+                            product: p,
+                            quantity: items[p] ?? 0,
+                            onAdded: () => onAdded(p),
+                            onRemoved: () => onRemoved(p),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
               ]),
             ),
           const SliverToBoxAdapter(child: SizedBox(height: 80)),

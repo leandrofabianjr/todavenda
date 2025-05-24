@@ -62,9 +62,7 @@ class ProductStockFormView extends StatelessWidget {
                       ),
                       controller: quantity == null
                           ? null
-                          : TextEditingController(
-                              text: quantity.toString(),
-                            ),
+                          : TextEditingController(text: quantity.toString()),
                       onChanged: (value) => quantity = int.tryParse(value) ?? 0,
                     ),
                     DateTimeFormField(
@@ -78,12 +76,12 @@ class ProductStockFormView extends StatelessWidget {
                       validator: (value) => value == null
                           ? 'Informe a data de atualização do estoque'
                           : null,
-                      onDateSelected: (DateTime value) => createdAt = value,
-                      use24hFormat: true,
+                      onChanged: (DateTime? value) => createdAt = value,
                     ),
                     TextField(
-                      decoration:
-                          const InputDecoration(labelText: 'Observação'),
+                      decoration: const InputDecoration(
+                        labelText: 'Observação',
+                      ),
                       controller: TextEditingController(text: observation),
                       onChanged: (value) => observation = value,
                     ),

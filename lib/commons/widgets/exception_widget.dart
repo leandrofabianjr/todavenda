@@ -56,7 +56,7 @@ class ExceptionDataWidget extends StatelessWidget {
     return Column(
       children: [
         Text(exception.toString()),
-        ...stackFrames.map((e) => Text(e.toString())).toList(),
+        ...stackFrames.map((e) => Text(e.toString())),
       ],
     );
   }
