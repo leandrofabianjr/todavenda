@@ -2,27 +2,19 @@
   "project_info": {
     "project_number": "31100701763",
     "project_id": "todavenda-prod",
-    "storage_bucket": "todavenda-prod.appspot.com"
+    "storage_bucket": "todavenda-prod.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:31100701763:android:83a347e0ad7dddde5d58f6",
+        "mobilesdk_app_id": "1:31100701763:android:896bb100e3da968a5d58f6",
         "android_client_info": {
-          "package_name": "com.leandrofabianjr.todavenda"
+          "package_name": "com.leandrofabianjr.todaavenda"
         }
       },
       "oauth_client": [
         {
-          "client_id": "31100701763-e58usf29gbkv5055k0a5icbhpt3v9cnl.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.leandrofabianjr.todavenda",
-            "certificate_hash": "319bbada93d753aa219df1117a99666b8a6228b9"
-          }
-        },
-        {
-          "client_id": "31100701763-6oikhij7m05cvbmo727dd12u44s45kd7.apps.googleusercontent.com",
+          "client_id": "31100701763-8g07rstlo52vghba77hl9uo29ulig4dc.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -42,7 +34,7 @@
               "client_id": "31100701763-ic5vi9qb8fa0dqqi8e7mffr4iakt9cl7.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.leandrofabianjr.todavenda"
+                "bundle_id": "com.leandrofabianjr.todaavenda"
               }
             }
           ]

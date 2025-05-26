@@ -8,7 +8,7 @@
 PRODUCT_NAME = todavenda
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.leandrofabianjr.todavenda
+PRODUCT_BUNDLE_IDENTIFIER = com.leandrofabianjr.todaavenda
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 com.leandrofabianjr. All rights reserved.

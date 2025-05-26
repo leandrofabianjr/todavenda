@@ -27,10 +27,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -44,40 +41,56 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCO590M-lD8JdHHo3z2azoKa6d-2DBAfKE',
-    appId: '1:31100701763:web:b5450ff4f9544e3e5d58f6',
+    apiKey: 'AIzaSyBPvzNIp7LtRuNcxmFaGNLVZUhZhZceC1s',
+    appId: '1:31100701763:web:1cf6bdb02eea3ae25d58f6',
     messagingSenderId: '31100701763',
     projectId: 'todavenda-prod',
     authDomain: 'todavenda-prod.firebaseapp.com',
-    storageBucket: 'todavenda-prod.appspot.com',
-    measurementId: 'G-ECPBGQ6HWP',
+    storageBucket: 'todavenda-prod.firebasestorage.app',
+    measurementId: 'G-C5L0N8ENGH',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBk76HDnJsvATD4ttE0N8ceylUwz_l1CaA',
-    appId: '1:31100701763:android:83a347e0ad7dddde5d58f6',
+    appId: '1:31100701763:android:896bb100e3da968a5d58f6',
     messagingSenderId: '31100701763',
     projectId: 'todavenda-prod',
-    storageBucket: 'todavenda-prod.appspot.com',
+    storageBucket: 'todavenda-prod.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBJJOeCp6hVyNa2tgcYtemDFLFywhLCzyc',
-    appId: '1:31100701763:ios:3f7e348ea33d6bfe5d58f6',
+    appId: '1:31100701763:ios:49361b66178ec7235d58f6',
     messagingSenderId: '31100701763',
     projectId: 'todavenda-prod',
-    storageBucket: 'todavenda-prod.appspot.com',
-    iosClientId: '31100701763-ic5vi9qb8fa0dqqi8e7mffr4iakt9cl7.apps.googleusercontent.com',
-    iosBundleId: 'com.leandrofabianjr.todavenda',
+    storageBucket: 'todavenda-prod.firebasestorage.app',
+    androidClientId:
+        '31100701763-e58usf29gbkv5055k0a5icbhpt3v9cnl.apps.googleusercontent.com',
+    iosClientId:
+        '31100701763-ic5vi9qb8fa0dqqi8e7mffr4iakt9cl7.apps.googleusercontent.com',
+    iosBundleId: 'com.leandrofabianjr.todaavenda',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyBJJOeCp6hVyNa2tgcYtemDFLFywhLCzyc',
-    appId: '1:31100701763:ios:7fcd118985baab655d58f6',
+    appId: '1:31100701763:ios:49361b66178ec7235d58f6',
     messagingSenderId: '31100701763',
     projectId: 'todavenda-prod',
-    storageBucket: 'todavenda-prod.appspot.com',
-    iosClientId: '31100701763-oa8fu8nt63o2pd3iv9re1ngvvla60ccr.apps.googleusercontent.com',
-    iosBundleId: 'com.leandrofabianjr.todavenda.RunnerTests',
+    storageBucket: 'todavenda-prod.firebasestorage.app',
+    androidClientId:
+        '31100701763-e58usf29gbkv5055k0a5icbhpt3v9cnl.apps.googleusercontent.com',
+    iosClientId:
+        '31100701763-ic5vi9qb8fa0dqqi8e7mffr4iakt9cl7.apps.googleusercontent.com',
+    iosBundleId: 'com.leandrofabianjr.todaavenda',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyBPvzNIp7LtRuNcxmFaGNLVZUhZhZceC1s',
+    appId: '1:31100701763:web:40bf4e5de461273a5d58f6',
+    messagingSenderId: '31100701763',
+    projectId: 'todavenda-prod',
+    authDomain: 'todavenda-prod.firebaseapp.com',
+    storageBucket: 'todavenda-prod.firebasestorage.app',
+    measurementId: 'G-SKN4LH9WME',
   );
 }
