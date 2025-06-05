@@ -48,8 +48,6 @@ android {
             keyPassword = keystoreProperties["keyPassword"] as String
             storeFile = keystoreProperties["storeFile"]?.let { file(it) }
             storePassword = keystoreProperties["storePassword"] as String
-            enableV1Signing = true
-            enableV2Signing = false
         }
     }
 
